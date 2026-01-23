@@ -159,7 +159,7 @@ C_dw3  =  (C_dw2 & !Q7 & !Q6 & !Q5 & !Q4);      " enable next digit to decrement
 
 Q8   :=  (!CountDown & ((C_up3 & !Q8) # (!C_up3 & Q8))) #
          (CountDown & ((C_dw3 & !Q8) # (!C_dw3 & Q8)));
-Q9   :=  (!CountDown & ((C_up3 & !Q11 & !Q9 & Q8) # (Q9 & Q8) # (!C_up3 & Q9))) #
+Q9   :=  (!CountDown & ((C_up3 & !Q11 & !Q9 & Q8) # (Q9 & !Q8) # (!C_up3 & Q9))) #
          (CountDown & ((C_dw3 & Q10 & !Q9 & !Q8) # (C_dw3 & Q11 & !Q8) # (Q9 & Q8) # (!C_dw3 & Q9)));
 Q10  :=  (!CountDown & ((C_up3 & !Q10 & Q9 & Q8) # (Q10 & !Q9) # (Q10 & !Q8) # (!C_up3 & Q10))) #
          (CountDown & ((Q10 & Q8) # (Q10 & Q9) # (C_dw3 & Q11 & !Q8) # (!C_dw3 & Q10)));
