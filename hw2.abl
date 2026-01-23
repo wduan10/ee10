@@ -12,7 +12,7 @@ TITLE      'Up/Down Decade Counter'
 " Revision History:
 " 01/22/26   Wilson Duan  Initial Writeup
 " 01/22/26   Wilson Duan  Fix typos and bugs
-
+" 01/23/26   Wilson Duan  Fix bug
 
 
 " Pins
@@ -143,7 +143,7 @@ C_dw2 = (!Q3 & !Q2 & !Q1 & !Q0);    " enable next digit to decrement when at 0
 Q4  :=  (!CountDown & ((C_up2 & !Q4) # (!C_up2 & Q4))) #
         (CountDown & ((C_dw2 & !Q4) # (!C_dw2 & Q4)));
 Q5  :=  (!CountDown & ((C_up2 & !Q7 & !Q5 & Q4) # (Q5 & !Q4) # (!C_up2 & Q5))) #
-        (CountDown & ((C_dw2 & Q6 & !Q5 & !Q4) # (C_dw2 & Q7 & !Q4) # (!C_dw2 & Q5)));
+        (CountDown & ((C_dw2 & Q6 & !Q5 & !Q4) # (C_dw2 & Q7 & !Q4) # (Q5 & Q4) # (!C_dw2 & Q5)));
 Q6  :=  (!CountDown & ((C_up2 & !Q6 & Q5 & Q4) # (Q6 & !Q5) # (Q6 & !Q4) # (!C_up2 & Q6))) #
         (CountDown & ((Q6 & Q4) # (Q6 & Q5) # (C_dw2 & Q7 & !Q4) # (!C_dw2 & Q6)));
 Q7  :=  (!CountDown & ((Q7 & !Q4) # (C_up2 & Q6 & Q5 & Q4) # (!C_up2 & Q7))) #
