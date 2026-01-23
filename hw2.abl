@@ -11,10 +11,6 @@ TITLE      'Up/Down Decade Counter'
 
 " Revision History:
 " 01/22/26   Wilson Duan  Initial Writeup
-" 10/13/07   Glen George  Changed CountUp pin to be called CountDown (its
-"                         active high meaning)
-" 10/13/07   Glen George  Updated comments
-" 01/12/18   Glen George  Updated pinout to match new PCB (v2.0)
 
 
 
@@ -98,7 +94,7 @@ Clock           pin 39;                 "input   clock
 C_up2   node;
 C_up3   node;
 C_dw2   node;
-C_dw2   node;
+C_dw3   node;
 
 " Macros
 
