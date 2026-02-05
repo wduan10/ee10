@@ -116,7 +116,7 @@ Sum0 = A0 $ (B0 $ Subtract) $ Subtract;
 CarryOut0 = (A0 & (B0 $ Subtract)) # (Subtract & (A0 $ (B0 $ Subtract)));
 
 Sum1 = A1 $ (B1 $ Subtract) $ CarryOut0;
-CarryOut1 = (A1 & (B1 & Subtract)) # (CarryOut0 & (A1 $ (B1 $ Subtract)));
+CarryOut1 = (A1 & (B1 $ Subtract)) # (CarryOut0 & (A1 $ (B1 $ Subtract)));
 
 Sum2 = A2 $ (B2 $ Subtract) $ CarryOut1;
 CarryOut2 = (A2 & (B2 $ Subtract)) # (CarryOut1 & (A2 $ (B2 $ Subtract)));
