@@ -122,10 +122,10 @@ Sum2 = A2 $ (B2 $ Subtract) $ CarryOut1;
 CarryOut2 = (A2 & (B2 $ Subtract)) # (CarryOut1 & (A2 $ (B2 $ Subtract)));
 
 Sum3 = A3 $ (B3 $ Subtract) $ CarryOut2;
-Sum4 = (A3 & (B3 $ Subtract)) # (CarryOut2 & (A3 $ (B3 $ Subtract)));
+Sum4 = Subtract $ ((A3 & (B3 $ Subtract)) # (CarryOut2 & (A3 $ (B3 $ Subtract))));
 
 " compute the flags
-Carry = Subtract $ Sum4;
+Carry = Sum4;
 Zero = !(Sum4 # Sum3 # Sum2 # Sum1 # Sum0);
 Sign = Sum3;
 Overflow = CarryOut2 $ Sum4;
