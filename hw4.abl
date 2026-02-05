@@ -5,7 +5,7 @@ TITLE      'Adder/Subtracter with Flags'
 " addsub        DEVICE  'MACH4032'
 
 
-" Description:  This is the skeleton file for Homework #4.  It implements a
+" Description:  This is file for Homework #4.  It implements a
 "               4-bit Adder/Subtracter which includes flags summarizing the
 "               result (zero, carry/borrow, overflow, and sign).  It also has
 "               outputs that output the comparison result (assuming a
@@ -15,7 +15,7 @@ TITLE      'Adder/Subtracter with Flags'
 " Revision History:
 " 02/04/26   Wilson Duan  Initial writeup
 " 02/04/26   Wilson Duan  Flip B bits when subtracting
-" 02/04/26   Wilson Duan  Fix bug
+" 02/04/26   Wilson Duan  Fix typo that confused & with $
 
 
 
@@ -112,6 +112,8 @@ EQUATIONS
 
 " a 4-bit full adder
 "    note that CarryIn[i] = CarryOut[i - 1]
+"    Subtract is the CarryIn0 as per hw3's circuit
+"    We apply XORs between all Bi and Subtract to flip bit if subtracting
 Sum0 = A0 $ (B0 $ Subtract) $ Subtract;
 CarryOut0 = (A0 & (B0 $ Subtract)) # (Subtract & (A0 $ (B0 $ Subtract)));
 
@@ -128,6 +130,8 @@ Sum4 = Subtract $ ((A3 & (B3 $ Subtract)) # (CarryOut2 & (A3 $ (B3 $ Subtract)))
 Carry = Sum4;
 Zero = !(Sum3 # Sum2 # Sum1 # Sum0);
 Sign = Sum3;
+" overflow occurs when CarryIn into the most significant bit differs from the
+" CarryOut of the most significant bit
 Overflow = CarryOut2 $ (Subtract $ Sum4);
 
 " compute unsigned comparisons
