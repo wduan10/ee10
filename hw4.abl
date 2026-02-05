@@ -14,6 +14,7 @@ TITLE      'Adder/Subtracter with Flags'
 
 " Revision History:
 " 02/04/26   Wilson Duan  Initial writeup
+" 02/04/26   Wilson Duan  Flip B bits when subtracting
 
 
 
@@ -110,17 +111,17 @@ EQUATIONS
 
 " a 4-bit full adder
 "    note that CarryIn[i] = CarryOut[i - 1]
-Sum0 = A0 $ B0 $ Subtract;
-CarryOut0 = (A0 & B0) # (Subtract & (A0 $ B0));
+Sum0 = A0 $ (B0 $ Subtract) $ Subtract;
+CarryOut0 = (A0 & (B0 $ Subtract)) # (Subtract & (A0 $ (B0 $ Subtract)));
 
-Sum1 = A1 $ B1 $ CarryOut0;
-CarryOut1 = (A1 & B1) # (CarryOut0 & (A1 $ B1));
+Sum1 = A1 $ (B1 & Subtract) $ CarryOut0;
+CarryOut1 = (A1 & (B1 & Subtract)) # (CarryOut0 & (A1 $ (B1 $ Subtract)));
 
-Sum2 = A2 $ B2 $ CarryOut1;
-CarryOut2 = (A2 & B2) # (CarryOut1 & (A2 $ B2));
+Sum2 = A2 $ (B2 $ Subtract) $ CarryOut1;
+CarryOut2 = (A2 & (B2 $ Subtract)) # (CarryOut1 & (A2 $ (B2 $ Subtract)));
 
-Sum3 = A3 $ B3 $ CarryOut2;
-Sum4 = (A3 & B3) # (CarryOut2 & (A3 $ B3));
+Sum3 = A3 $ (B3 $ Subtract) $ CarryOut2;
+Sum4 = (A3 & (B3 $ Subtract)) # (CarryOut2 & (A3 $ (B3 $ Subtract)));
 
 " compute the flags
 Carry = Subtract $ Sum4;
