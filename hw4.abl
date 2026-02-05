@@ -15,6 +15,7 @@ TITLE      'Adder/Subtracter with Flags'
 " Revision History:
 " 02/04/26   Wilson Duan  Initial writeup
 " 02/04/26   Wilson Duan  Flip B bits when subtracting
+" 02/04/26   Wilson Duan  Fix bug
 
 
 
@@ -114,7 +115,7 @@ EQUATIONS
 Sum0 = A0 $ (B0 $ Subtract) $ Subtract;
 CarryOut0 = (A0 & (B0 $ Subtract)) # (Subtract & (A0 $ (B0 $ Subtract)));
 
-Sum1 = A1 $ (B1 & Subtract) $ CarryOut0;
+Sum1 = A1 $ (B1 $ Subtract) $ CarryOut0;
 CarryOut1 = (A1 & (B1 & Subtract)) # (CarryOut0 & (A1 $ (B1 $ Subtract)));
 
 Sum2 = A2 $ (B2 $ Subtract) $ CarryOut1;
