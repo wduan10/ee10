@@ -7,6 +7,7 @@
 ;
 ; Revision History
 ;     11 Feb 26  Wilson Duan      Initial revision
+;     11 Feb 26  Wilson Duan      Fix bug: populate zero flag to check if b is 0
 
 
             start:
