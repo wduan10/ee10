@@ -21,7 +21,7 @@
 0006  1F80;     NOP                     ;branch slot
 0007  8000;     LDD   a
 0008  1001;     SUB   b                 ;this line and the below line does
-0009  A001;     STD   a                 ;a = a - b
+0009  A000;     STD   a                 ;a = a - b
 000A  C003;     JMP   SubtractLoop      ;continue the subtraction loop
 000B  1F80;     NOP                     ;branch slot
             
