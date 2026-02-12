@@ -11,6 +11,7 @@
 
             start:
                 LDD   b			        ;get the value of b in accumulator
+                CMPI  0                 ;check if b is 0, populates flags
                 JZ    Done		        ;if b is 0, we're done
                 NOP                     ;branch slot
 
