@@ -116,7 +116,7 @@ MuxOut = (Direct & AbsoluteAddr) #
          ([Offset7, Offset7, Offset7, Offset7, Offset7, Offset7..Offset0] & RelativeAddr) #
          " pad the offset with zeros as appropriate for stack variables to reach 13 bits
          ([0, 0, 0, 0, 0, Offset7..Offset0] & StackLower) #
-         ([Offset4..Offset0, 0, 0, 0, 0, 0, 0, 0, 0] & StackUpper) #
+         ([Offset4..Offset0, ProgAddr7..ProgAddr0] & StackUpper) #
          (ONE & Step) #
          (0 & (Reset # Hold));
 
