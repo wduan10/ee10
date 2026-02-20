@@ -125,7 +125,8 @@ MuxOut = (Direct & AbsoluteAddr) #
 
 " since the equations are calculated simultaneously, we put both CarryIn and CarryOut
 " into the same Carry array and calculate both together
-Carry = ((PC & relative) & MuxOut) # ([Carry12..Carry0, 0] & ((PC & relative) $ MuxOut));
+Carry0 = 0; " the CarryIn for the lowest order bit is zero
+[Carry13..Carry1] = ((PC & relative) & MuxOut) # ([Carry12..Carry0] & ((PC & relative) $ MuxOut));
 PC = (PC & relative) $ MuxOut $ Carry;
 
 
