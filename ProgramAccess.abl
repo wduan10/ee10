@@ -77,6 +77,11 @@ PC12..PC0               pin ISTYPE 'REG';   "output  13 bits of program counter
 relative            node;       "equals 1 when doing relative PC operations
                                 "this term is combined with PC in an AND gate
                                 "before the adder
+SignExtendedOffset  node;       "sign extend offset from 8 bits to 13 bits
+StackLowerOffset    node;       "pad offset with zeros to get 13 bit representation
+                                "of lower part of stack address
+StackUpperOffset    node;       "pad offset with zeros to get 13 bit representation
+                                "of upper part of stack address
 Carry13..Carry0     node;       "14 bits of carry to perform addition
                                 "note that CarryIn[i] = CarryOut[i-1]
 MuxOut12..MuxOut0   node;       "13 bits of output of mux from lecture slides
@@ -104,7 +109,9 @@ EQUATIONS
 " clock for the program counter output
 PC.CLK = Clock;
 
+" sign extend the offset to preserve its sign during addition
 SignExtendedOffset = [Offset7, Offset7, Offset7, Offset7, Offset7, Offset7..Offset0];
+" pad the offset with zeros as appropriate for stack variables
 StackLowerOffset = [0, 0, 0, 0, 0, Offset7..Offset0];
 StackUpperOffset = [Offset4..Offset0, 0, 0, 0, 0, 0, 0, 0, 0];
 
