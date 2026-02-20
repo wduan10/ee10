@@ -41,6 +41,7 @@ TITLE      'Program Address Unit'
 
 " Revision History:
 " 02/19/26   Wilson Duan  Initial Revision
+" 02/19/26   Wilson Duan  Fix bug by defining intermediate terms
 
 
 
@@ -73,9 +74,13 @@ PC12..PC0               pin ISTYPE 'REG';   "output  13 bits of program counter
 
 
 " Intermediate Terms
-relative        node;       "equals 1 when doing relative PC operations
-                            "this term is combined with PC in an AND gate
-                            "before the adder
+relative            node;       "equals 1 when doing relative PC operations
+                                "this term is combined with PC in an AND gate
+                                "before the adder
+Carry13..Carry0     node;       "14 bits of carry to perform addition
+                                "note that CarryIn[i] = CarryOut[i-1]
+MuxOut12..MuxOut0   node;       "13 bits of output of mux from lecture slides
+                                "this MuxOut is fed into the adder
 
 " Buses
 
@@ -84,6 +89,8 @@ Direct     =  [Direct12..Direct0];		"13 bits of address or data
 ProgAddr   =  [ProgAddr12..ProgAddr0];	"13 bits of program address bus
 PC         =  [PC12..PC0];              "13 bits of program counter
 Carry      =  [Carry13..Carry0];        "14 bits of carry to perform addition
+MuxOut     =  [MuxOut12..MuxOut0];      "13 bits of output of mux from lecture slides
+                                        "this MuxOut is fed into the adder
 
 
 " Constants
@@ -109,6 +116,8 @@ MuxOut = (Direct & AbsoluteAddr) #
          (ONE & Step) #
          (0 & Reset);
 
+" since the equations are calculated simultaneously, we put both CarryIn and CarryOut
+" into the same Carry array and calculate both together
 Carry = ((PC & relative) & MuxOut) # ([Carry12..Carry0, 0] & ((PC & relative) $ MuxOut));
 PC = (PC & relative) $ MuxOut $ Carry;
 
