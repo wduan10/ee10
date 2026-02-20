@@ -69,7 +69,7 @@ Clock           	pin;	    "input  system clock
 
 " Outputs
 
-ProgAddr12..ProgAddr0   pin;                "output  13 bits of program address bus
+ProgAddr12..ProgAddr0   pin ISTYPE 'COM';                "output  13 bits of program address bus
 PC12..PC0               pin ISTYPE 'REG';   "output  13 bits of program counter
 
 
