@@ -78,10 +78,10 @@ PCNode12..PCNode0                           node;   "create copy of PC to avoid 
 relative                                    node;   "equals 1 when doing relative PC operations
                                                     "this term is combined with PC in an AND gate
                                                     "before the adder
-SignExtendedOffset12..SignExtendedOffset0   node;   "sign extend offset from 8 bits to 13 bits
-StackLowerAddr12..StackLowerAddr0           node;   "pad offset with zeros to get 13 bit representation
+"SignExtendedOffset12..SignExtendedOffset0   node;   "sign extend offset from 8 bits to 13 bits
+"StackLowerAddr12..StackLowerAddr0           node;   "pad offset with zeros to get 13 bit representation
                                                     "of lower part of stack address
-StackUpperAddr12..StackUpperAddr0           node;   "pad offset with zeros to get 13 bit representation
+"StackUpperAddr12..StackUpperAddr0           node;   "pad offset with zeros to get 13 bit representation
                                                     "of upper part of stack address
 Carry13..Carry0                             node;   "14 bits of carry to perform addition
                                                     "note that CarryIn[i] = CarryOut[i-1]
@@ -95,9 +95,9 @@ Offset              =  [Offset7..Offset0];		"8 bits of data or offset
 Direct              =  [Direct12..Direct0];		"13 bits of address or data
 ProgAddr            =  [ProgAddr12..ProgAddr0];	"13 bits of program address bus
 PC                  =  [PC12..PC0];             "13 bits of program counter
-SignExtendedOffset  =  [SignExtendedOffset12..SignExtendedOffset0]; "13 bits of sign extended offset
-StackLowerAddr      =  [StackLowerAddr12..StackLowerAddr0];         "13 bits containing padded lower stack address"
-StackUpperAddr      =  [StackUpperAddr12..StackUpperAddr0];         "13 bits containing padded upper stack address"
+"SignExtendedOffset  =  [SignExtendedOffset12..SignExtendedOffset0]; "13 bits of sign extended offset
+"StackLowerAddr      =  [StackLowerAddr12..StackLowerAddr0];         "13 bits containing padded lower stack address"
+"StackUpperAddr      =  [StackUpperAddr12..StackUpperAddr0];         "13 bits containing padded upper stack address"
 Carry               =  [Carry13..Carry0];        "14 bits of carry to perform addition
 MuxOut              =  [MuxOut12..MuxOut0];      "13 bits of output of mux from lecture slides
                                         "this MuxOut is fed into the adder
@@ -115,17 +115,17 @@ EQUATIONS
 PC.CLK = Clock;
 
 " sign extend the offset to preserve its sign during addition
-SignExtendedOffset = [Offset7, Offset7, Offset7, Offset7, Offset7, Offset7..Offset0];
+"SignExtendedOffset = [Offset7, Offset7, Offset7, Offset7, Offset7, Offset7..Offset0];
 " pad the offset with zeros as appropriate for stack variables
-StackLowerAddr = [0, 0, 0, 0, 0, Offset7..Offset0];
-StackUpperAddr = [Offset4..Offset0, 0, 0, 0, 0, 0, 0, 0, 0];
+"StackLowerAddr = [0, 0, 0, 0, 0, Offset7..Offset0];
+"StackUpperAddr = [Offset4..Offset0, 0, 0, 0, 0, 0, 0, 0, 0];
 
 " relative occurs when stepping or when using RelativeAddr control path
 relative = RelativeAddr # Step;
 MuxOut = (Direct & AbsoluteAddr) #
-         (SignExtendedOffset & RelativeAddr) #
-         (StackLowerAddr & StackLower) #
-         (StackUpperAddr & StackUpper) #
+         ([Offset7, Offset7, Offset7, Offset7, Offset7, Offset7..Offset0] & RelativeAddr) #
+         ([0, 0, 0, 0, 0, Offset7..Offset0] & StackLower) #
+         ([Offset4..Offset0, 0, 0, 0, 0, 0, 0, 0, 0] & StackUpper) #
          (ONE & Step) #
          (0 & Reset);
 
