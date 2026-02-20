@@ -90,9 +90,9 @@ Offset              =  [Offset7..Offset0];		"8 bits of data or offset
 Direct              =  [Direct12..Direct0];		"13 bits of address or data
 ProgAddr            =  [ProgAddr12..ProgAddr0];	"13 bits of program address bus
 PC                  =  [PC12..PC0];             "13 bits of program counter
-Carry               =  [Carry13..Carry0];        "14 bits of carry to perform addition
-MuxOut              =  [MuxOut12..MuxOut0];      "13 bits of output of mux from lecture slides
-                                        "this MuxOut is fed into the adder
+Carry               =  [Carry13..Carry0];       "14 bits of carry to perform addition
+MuxOut              =  [MuxOut12..MuxOut0];     "13 bits of output of mux from lecture slides
+                                                "this MuxOut is fed into the adder
 
 
 " Constants
