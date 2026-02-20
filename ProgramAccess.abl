@@ -69,8 +69,8 @@ Clock           	pin;	    "input  system clock
 
 " Outputs
 
-ProgAddr12..ProgAddr0   pin ISTYPE 'COM';                "output  13 bits of program address bus
-PC12..PC0               pin ISTYPE 'REG';   "output  13 bits of program counter
+ProgAddr12..ProgAddr0   pin ISTYPE 'REG';                "output  13 bits of program address bus
+PC12..PC0               pin ISTYPE 'COM';   "output  13 bits of program counter
 
 
 " Intermediate Terms
@@ -82,6 +82,7 @@ Carry13..Carry0                             node;   "14 bits of carry to perform
                                                     "note that CarryIn[i] = CarryOut[i-1]
 MuxOut12..MuxOut0                           node;   "13 bits of output of mux from lecture slides
                                                     "this MuxOut is fed into the adder
+Hold                                        node;   "whether we should hold the program address value
 
 " Buses
 
@@ -104,10 +105,12 @@ ONE   =  [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ];    " 13-bit value of 1
 EQUATIONS
 
 " clock for the program counter output
-PC.CLK = Clock;
+ProgAddr.CLK = Clock;
+
+Hold = !(AbsoluteAddr # RelativeAddr # StackLower # StackUpper # Step);
 
 " relative occurs when stepping or when using RelativeAddr control path
-relative = RelativeAddr # Step;
+relative = RelativeAddr # Step # Hold;
 MuxOut = (Direct & AbsoluteAddr) #
          " sign extend the offset to preserve its sign during addition and reach 13 bits
          ([Offset7, Offset7, Offset7, Offset7, Offset7, Offset7..Offset0] & RelativeAddr) #
@@ -115,7 +118,7 @@ MuxOut = (Direct & AbsoluteAddr) #
          ([0, 0, 0, 0, 0, Offset7..Offset0] & StackLower) #
          ([Offset4..Offset0, 0, 0, 0, 0, 0, 0, 0, 0] & StackUpper) #
          (ONE & Step) #
-         (0 & Reset);
+         (0 & (Reset # Hold));
 
 " since the equations are calculated simultaneously, we put both CarryIn and CarryOut
 " into the same Carry array and calculate both together
@@ -123,7 +126,7 @@ Carry0 = 0; " the CarryIn for the lowest order bit is zero
 [Carry13..Carry1] = ((PCNode & relative) & MuxOut) # ([Carry12..Carry0] & ((PCNode & relative) $ MuxOut));
 PCNode = (PCNode & relative) $ MuxOut $ [Carry12..Carry0];
 
-PC := PCNode;
-ProgAddr = PCNode;
+ProgAddr := PCNode;
+PC = PCNode;
 
 END  ProgramAccess
