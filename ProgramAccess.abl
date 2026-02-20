@@ -107,7 +107,7 @@ EQUATIONS
 " clock for the program counter output
 ProgAddr.CLK = Clock;
 
-Hold = !(AbsoluteAddr # RelativeAddr # StackLower # StackUpper # Step);
+Hold = !(AbsoluteAddr # RelativeAddr # StackLower # StackUpper # Step # Reset);
 
 " relative occurs when stepping or when using RelativeAddr control path
 relative = RelativeAddr # Step # Hold;
