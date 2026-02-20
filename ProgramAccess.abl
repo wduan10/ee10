@@ -120,6 +120,7 @@ SignExtendedOffset = [Offset7, Offset7, Offset7, Offset7, Offset7, Offset7..Offs
 StackLowerAddr = [0, 0, 0, 0, 0, Offset7..Offset0];
 StackUpperAddr = [Offset4..Offset0, 0, 0, 0, 0, 0, 0, 0, 0];
 
+" relative occurs when stepping or when using RelativeAddr control path
 relative = RelativeAddr # Step;
 MuxOut = (Direct & AbsoluteAddr) #
          (SignExtendedOffset & RelativeAddr) #
