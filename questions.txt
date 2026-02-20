@@ -1,0 +1,8 @@
+what is the difference between ProgAddr and PC? my guess is that ProgAddr = PC + 1
+how do I add two files to lattice tool?
+how do I run test vectors?
+when getting stack info, how is data passed in? through direct or offset?
+
+
+
+when defining carry our muxout, do I need to declare intermediate variables?

@@ -1,0 +1,116 @@
+MODULE      ProgramAccess
+INTERFACE  (Offset7..Offset0, Direct12..Direct0,
+            AbsoluteAddr, RelativeAddr, StackLower, StackUpper, Step,
+            Reset, Clock
+            -> ProgAddr12..ProgAddr0, PC12..PC0);
+
+TITLE      'Program Address Unit'
+
+
+" Description:  This module implements the Program Memory Access Unit of the CPU.
+"               It is responsible for generating the program memory address used
+"               to fetch the next instruction.  The unit maintains the Program
+"               Counter (PC), updates it on each clock cycle, and selects the
+"               next PC value based on control signals. Control signals use one
+"               hot encoding.
+"
+"               Depending on the active control inputs, the Program Counter may
+"               be incremented, loaded with a direct address, updated using
+"               a signed offset for program-relative addressing, or replaced
+"               with a stack address.  The module outputs both the current
+"               Program Counter value and the computed program address bus.
+"
+" Inputs:       Offset[7..0]     - 8 bits of data or offset input
+"               Direct[12..0]    - 13 bits of address or data input
+"               AbsoluteAddr     - control input for absolute address
+"               RelativeAddr     - control input for relative address
+"               StackLower       - control input for updating lower 8 bits of
+"                                  the address with the lower 8 bits of the
+"                                  stack address, provided as Offset[7..0]
+"               StackUpper       - control input for updating upper 5 bits of
+"                                  the address with the upper 5 bits of the
+"                                  stack address, provided as Offset[4..0]
+"               Step             - control input for incrementing program counter
+"                                  by 1
+"               Reset            - system reset
+"               Clock            - system clock
+"
+" Outputs:      ProgAddr[12..0]  - 13 bits of program address bus
+"               PC[12..0]        - 13 bits of program counter
+
+
+" Revision History:
+" 02/19/26   Wilson Duan  Initial Revision
+
+
+
+" Pin/Signal Declarations
+
+" Inputs
+
+Offset7..Offset0    pin;        "input  8 bits of data or offset input
+Direct12..Direct0   pin;        "input  13 bits of address or data input
+
+" Control Inputs
+AbsoluteAddr        pin;        "input  control input for absolute address
+RelativeAddr        pin;        "input  control input for relative address
+StackLower          pin;        "input  control input for updating lower 8 bits of
+                                "       the address with the lower 8 bits of the
+                                "       stack address, provided as Offset[7..0]
+StackUpper          pin;        "input  control input for updating upper 5 bits of
+                                "       the address with the upper 5 bits of the
+                                "       stack address, provided as Offset[4..0]
+Step                pin;        "input  control input for incrementing program counter
+
+Reset			    pin;	    "input  system reset
+Clock           	pin;	    "input  system clock
+
+
+" Outputs
+
+ProgAddr12..ProgAddr0   pin;                "output  13 bits of program address bus
+PC12..PC0               pin ISTYPE 'REG';   "output  13 bits of program counter
+
+
+" Intermediate Terms
+relative        node;       "equals 1 when doing relative PC operations
+                            "this term is combined with PC in an AND gate
+                            "before the adder
+
+" Buses
+
+Offset     =  [Offset7..Offset0];		"8 bits of data or offset
+Direct     =  [Direct12..Direct0];		"13 bits of address or data
+ProgAddr   =  [ProgAddr12..ProgAddr0];	"13 bits of program address bus
+PC         =  [PC12..PC0];              "13 bits of program counter
+Carry      =  [Carry13..Carry0];        "14 bits of carry to perform addition
+
+
+" Constants
+
+ONE   =  [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ];    " 13-bit value of 1
+
+
+
+EQUATIONS
+
+" clock for the program counter output
+PC.CLK = Clock;
+
+SignExtendedOffset = [Offset7, Offset7, Offset7, Offset7, Offset7, Offset7..Offset0];
+StackLowerOffset = [0, 0, 0, 0, 0, Offset7..Offset0];
+StackUpperOffset = [Offset4..Offset0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+relative = RelativeAddr # Step;
+MuxOut = (Direct & AbsoluteAddr) #
+         (SignExtendedOffset & RelativeAddr) #
+         (StackLowerOffset & StackLower) #
+         (StackUpperOffset & StackUpper) #
+         (ONE & Step) #
+         (0 & Reset);
+
+Carry = ((PC & relative) & MuxOut) # ([Carry12..Carry0, 0] & ((PC & relative) $ MuxOut));
+PC = (PC & relative) $ MuxOut $ Carry;
+
+
+END  ProgramAccess
