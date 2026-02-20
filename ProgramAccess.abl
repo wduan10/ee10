@@ -74,6 +74,7 @@ PC12..PC0               pin ISTYPE 'REG';   "output  13 bits of program counter
 
 
 " Intermediate Terms
+PCNode12..PCNode0                           node;   "create copy of PC to avoid pin error
 relative                                    node;   "equals 1 when doing relative PC operations
                                                     "this term is combined with PC in an AND gate
                                                     "before the adder
@@ -89,6 +90,7 @@ MuxOut12..MuxOut0                           node;   "13 bits of output of mux fr
 
 " Buses
 
+PCNode              =  [PCNode12..PCNode0]      "copy of PC to avoid pin error
 Offset              =  [Offset7..Offset0];		"8 bits of data or offset
 Direct              =  [Direct12..Direct0];		"13 bits of address or data
 ProgAddr            =  [ProgAddr12..ProgAddr0];	"13 bits of program address bus
@@ -130,7 +132,9 @@ MuxOut = (Direct & AbsoluteAddr) #
 " into the same Carry array and calculate both together
 Carry0 = 0; " the CarryIn for the lowest order bit is zero
 [Carry13..Carry1] = ((PC & relative) & MuxOut) # ([Carry12..Carry0] & ((PC & relative) $ MuxOut));
-PC = (PC & relative) $ MuxOut $ [Carry12..Carry0];
+PCNode = (PC & relative) $ MuxOut $ [Carry12..Carry0];
 
+PC = PCNode;
+ProgAddr = PCNode;
 
 END  ProgramAccess
