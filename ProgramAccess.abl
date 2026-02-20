@@ -130,7 +130,7 @@ MuxOut = (Direct & AbsoluteAddr) #
 " into the same Carry array and calculate both together
 Carry0 = 0; " the CarryIn for the lowest order bit is zero
 [Carry13..Carry1] = ((PC & relative) & MuxOut) # ([Carry12..Carry0] & ((PC & relative) $ MuxOut));
-PC = (PC & relative) $ MuxOut $ Carry;
+PC = (PC & relative) $ MuxOut $ [Carry12..Carry0];
 
 
 END  ProgramAccess
