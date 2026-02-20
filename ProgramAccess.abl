@@ -74,27 +74,30 @@ PC12..PC0               pin ISTYPE 'REG';   "output  13 bits of program counter
 
 
 " Intermediate Terms
-relative            node;       "equals 1 when doing relative PC operations
-                                "this term is combined with PC in an AND gate
-                                "before the adder
-SignExtendedOffset  node;       "sign extend offset from 8 bits to 13 bits
-StackLowerOffset    node;       "pad offset with zeros to get 13 bit representation
-                                "of lower part of stack address
-StackUpperOffset    node;       "pad offset with zeros to get 13 bit representation
-                                "of upper part of stack address
-Carry13..Carry0     node;       "14 bits of carry to perform addition
-                                "note that CarryIn[i] = CarryOut[i-1]
-MuxOut12..MuxOut0   node;       "13 bits of output of mux from lecture slides
-                                "this MuxOut is fed into the adder
+relative                                    node;   "equals 1 when doing relative PC operations
+                                                    "this term is combined with PC in an AND gate
+                                                    "before the adder
+SignExtendedOffset13..SignExtendedOffset0   node;   "sign extend offset from 8 bits to 13 bits
+StackLower13..StackLower0                   node;   "pad offset with zeros to get 13 bit representation
+                                                    "of lower part of stack address
+StackUpper13..StackUpper0                   node;   "pad offset with zeros to get 13 bit representation
+                                                    "of upper part of stack address
+Carry13..Carry0                             node;   "14 bits of carry to perform addition
+                                                    "note that CarryIn[i] = CarryOut[i-1]
+MuxOut12..MuxOut0                           node;   "13 bits of output of mux from lecture slides
+                                                    "this MuxOut is fed into the adder
 
 " Buses
 
-Offset     =  [Offset7..Offset0];		"8 bits of data or offset
-Direct     =  [Direct12..Direct0];		"13 bits of address or data
-ProgAddr   =  [ProgAddr12..ProgAddr0];	"13 bits of program address bus
-PC         =  [PC12..PC0];              "13 bits of program counter
-Carry      =  [Carry13..Carry0];        "14 bits of carry to perform addition
-MuxOut     =  [MuxOut12..MuxOut0];      "13 bits of output of mux from lecture slides
+Offset              =  [Offset7..Offset0];		"8 bits of data or offset
+Direct              =  [Direct12..Direct0];		"13 bits of address or data
+ProgAddr            =  [ProgAddr12..ProgAddr0];	"13 bits of program address bus
+PC                  =  [PC12..PC0];              "13 bits of program counter
+SignExtendedOffset  =  [SignExtendedOffset13..SignExtendedOffset0] "13 bits of sign extended offset
+StackLower          =  [StackLower13..StackLower0]                 "13 bits containing padded lower stack address"
+StackUpper          =  [StackUpper13..StackUpper0]                 "13 bits containing padded upper stack address"
+Carry               =  [Carry13..Carry0];        "14 bits of carry to perform addition
+MuxOut              =  [MuxOut12..MuxOut0];      "13 bits of output of mux from lecture slides
                                         "this MuxOut is fed into the adder
 
 
