@@ -86,7 +86,6 @@ ProgramAccess INTERFACE  (Offset7..Offset0, Direct12..Direct0,
                           AbsoluteAddr, RelativeAddr, StackLower, StackUpper, Step,
                           Reset, Clock
                           -> ProgAddr12..ProgAddr0, PC12..PC0);
-PC0.
 
 " create an instance of the unit to be tested
 
