@@ -74,13 +74,13 @@ PC12..PC0               pin ISTYPE 'REG';   "output  13 bits of program counter
 
 
 " Intermediate Terms
-PCNode12..PCNode0                           node ISTYPE 'COM';   "create copy of PC to avoid pin error
-relative                                    node ISTYPE 'COM';   "equals 1 when doing relative PC operations
+PCNode12..PCNode0                           node;   "create copy of PC to avoid pin error
+relative                                    node;   "equals 1 when doing relative PC operations
                                                     "this term is combined with PC in an AND gate
                                                     "before the adder
-Carry13..Carry0                             node ISTYPE 'COM';   "14 bits of carry to perform addition
+Carry13..Carry0                             node;   "14 bits of carry to perform addition
                                                     "note that CarryIn[i] = CarryOut[i-1]
-MuxOut12..MuxOut0                           node ISTYPE 'COM';   "13 bits of output of mux from lecture slides
+MuxOut12..MuxOut0                           node;   "13 bits of output of mux from lecture slides
                                                     "this MuxOut is fed into the adder
 
 " Buses
