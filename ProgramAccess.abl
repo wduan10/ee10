@@ -90,7 +90,7 @@ MuxOut12..MuxOut0                           node;   "13 bits of output of mux fr
 
 " Buses
 
-PCNode              =  [PCNode12..PCNode0]      "copy of PC to avoid pin error
+PCNode              =  [PCNode12..PCNode0];     "copy of PC to avoid pin error
 Offset              =  [Offset7..Offset0];		"8 bits of data or offset
 Direct              =  [Direct12..Direct0];		"13 bits of address or data
 ProgAddr            =  [ProgAddr12..ProgAddr0];	"13 bits of program address bus
