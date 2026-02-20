@@ -131,8 +131,8 @@ MuxOut = (Direct & AbsoluteAddr) #
 " since the equations are calculated simultaneously, we put both CarryIn and CarryOut
 " into the same Carry array and calculate both together
 Carry0 = 0; " the CarryIn for the lowest order bit is zero
-[Carry13..Carry1] = ((PC & relative) & MuxOut) # ([Carry12..Carry0] & ((PC & relative) $ MuxOut));
-PCNode = (PC & relative) $ MuxOut $ [Carry12..Carry0];
+[Carry13..Carry1] = ((PCNode & relative) & MuxOut) # ([Carry12..Carry0] & ((PCNode & relative) $ MuxOut));
+PCNode = (PCNode & relative) $ MuxOut $ [Carry12..Carry0];
 
 PC = PCNode;
 ProgAddr = PCNode;
