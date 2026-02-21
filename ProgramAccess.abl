@@ -42,7 +42,7 @@ TITLE      'Program Address Unit'
 " Revision History:
 " 02/19/26   Wilson Duan  Initial Revision
 " 02/19/26   Wilson Duan  Fix bug by defining intermediate terms
-
+" 02/20/26   Wilson Duan  Fix Reset functionality
 
 
 " Pin/Signal Declarations
@@ -107,7 +107,7 @@ EQUATIONS
 " clock for the program counter output
 ProgAddr.CLK = Clock;
 
-Hold = !(AbsoluteAddr # RelativeAddr # StackLower # StackUpper # Step # Reset);
+Hold = !(AbsoluteAddr # RelativeAddr # StackLower # StackUpper # Step # !Reset);
 
 " relative occurs when stepping or when using RelativeAddr control path
 relative = RelativeAddr # Step # Hold;
@@ -116,9 +116,10 @@ MuxOut = (Direct & AbsoluteAddr) #
          ([Offset7, Offset7, Offset7, Offset7, Offset7, Offset7..Offset0] & RelativeAddr) #
          " pad the offset with zeros as appropriate for stack variables to reach 13 bits
          ([0, 0, 0, 0, 0, Offset7..Offset0] & StackLower) #
+         " when setting the upper bits, we assume the lower bits have already been set correctly
          ([Offset4..Offset0, ProgAddr7..ProgAddr0] & StackUpper) #
          (ONE & Step) #
-         (0 & (Reset # Hold));
+         (0 & (!Reset # Hold));
 
 " since the equations are calculated simultaneously, we put both CarryIn and CarryOut
 " into the same Carry array and calculate both together
@@ -127,6 +128,7 @@ Carry0 = 0; " the CarryIn for the lowest order bit is zero
 PCNode = (ProgAddr & relative) $ MuxOut $ [Carry12..Carry0];
 
 PC = PCNode;
-ProgAddr := PC;
+ProgAddr := PCNode;
+ProgAddr.CLR = !Reset;
 
 END  ProgramAccess
