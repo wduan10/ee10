@@ -134,6 +134,7 @@ ALUnit.ADD = Control14;
 ALUnit.NOT = Control15;
 ALUnit.OR  = Control16;
 ALUnit.XOR = Control17;
+ALUnit.TST = Control18;
 
 ALUnit.Reset  =  Reset;
 ALUnit.Clock  =  Clock;
