@@ -50,10 +50,10 @@ FunctionOperation       pin;    "input  if op is logic/function
 ShiftRotateOperation    pin;    "input  if op is shift/rotate
 
 " Outputs
-SignFlag                pin;    "output  sign flag
-OverflowFlag            pin;    "output  overflow flag for signed arithmetic
-CarryFlag               pin;    "output  carry/borrow or shift carry
-ZeroFlag                pin;    "output  zero flag
+SignFlag                pin ISTYPE 'REG';    "output  sign flag
+OverflowFlag            pin ISTYPE 'REG';    "output  overflow flag for signed arithmetic
+CarryFlag               pin ISTYPE 'REG';    "output  carry/borrow or shift carry
+ZeroFlag                pin ISTYPE 'REG';    "output  zero flag
 
 
 EQUATIONS

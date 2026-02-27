@@ -89,10 +89,10 @@ LSR, ASR, ROR, RRC pin;         "input  shift/rotate right controls
 LSL, ROL, RLC      pin;         "input  shift/rotate left controls
 
 " Outputs
-Accum7..Accum0          pin;    "output  accumulator register output
-CarryOutMSB             pin;    "output  adder carry out of MSB (Carry8)
-CarryInMSB              pin;    "output  adder carry into MSB (Carry7)
-ShiftRotateCarryOut     pin;    "output  bit shifted out (for flags)
+Accum7..Accum0          pin ISTYPE 'REG';   "output  accumulator register output
+CarryOutMSB             pin;                "output  adder carry out of MSB (Carry8)
+CarryInMSB              pin;                "output  adder carry into MSB (Carry7)
+ShiftRotateCarryOut     pin;                "output  bit shifted out (for flags)
 
 " Buses
 Data    = [Data7..Data0];       "operand bus
