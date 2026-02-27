@@ -10,7 +10,7 @@ INTERFACE  (Data7..Data0,
             LSR, ASR, ROR, RRC, " shifts/rotations to the right
             LSL, ROL, RLC, " shifts/rotations to the left
 
-            Clock, Reset
+            Clock, Reset, Hold
             -> Accum7..Accum0, MuxOut7..MuxOut0, CarryOutMSB, CarryInMSB, ShiftRotateCarryOut);
 
 TITLE       'Accumulator For Accumulator Operations'
@@ -68,6 +68,7 @@ TITLE       'Accumulator For Accumulator Operations'
 "
 "               Clock,            - system clock
 "               Reset             - system reset
+"               Hold              - active high when we should hold
 "
 " Outputs:      Accum[7..0]       - current accumulator register contents (also
 "                                   the computed result when updated)
@@ -97,6 +98,7 @@ LSL, ROL, RLC      pin;         "input  shift/rotate left controls
 
 Reset	pin;	"input  system reset
 Clock   pin;	"input  system clock
+Hold    pin;    "input  if we should hold
 
 " Outputs
 Accum7..Accum0          pin ISTYPE 'REG';   "output  accumulator register output
@@ -200,7 +202,7 @@ MuxOut = (AdderOut & !ShiftRotateOperation) #
 
 " todo: comment about comparison
 Comparison = CMP # TST;
-Accum := (Accum & Comparison) # (MuxOut & !Comparison);
+Accum := (Accum & (Comparison # Hold)) # (MuxOut & !Comparison);
 
 CarryInMSB = Carry7;
 CarryOutMSB = Carry8;

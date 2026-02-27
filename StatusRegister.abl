@@ -5,7 +5,7 @@ INTERFACE  (MuxOut7..MuxOut0,
 
             Subtract,
             ArithmeticOperation, FunctionOperation, ShiftRotateOperation,
-            Clock, Reset
+            Clock, Reset, Hold
             -> SignFlag, OverflowFlag, CarryFlag, ZeroFlag);
 
 TITLE       'StatusRegister for Flag Updates'
@@ -28,6 +28,7 @@ TITLE       'StatusRegister for Flag Updates'
 "               ShiftRotateOperation     - active high when current op is shift/rotate
 "               Clock                    - system clock
 "               Reset                    - system reset
+"               Hold                     - active high when we should hold
 "
 " Outputs:      SignFlag                 - sign flag
 "               OverflowFlag             - overflow flag for signed arithmetic
@@ -56,6 +57,7 @@ ShiftRotateOperation    pin;    "input  if op is shift/rotate
 
 Reset	pin;	"input  system reset
 Clock   pin;	"input  system clock
+Hold    pin;    "input  if we should hold
 
 " Outputs
 SignFlag                pin ISTYPE 'REG';    "output  sign flag
