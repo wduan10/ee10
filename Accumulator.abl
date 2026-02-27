@@ -110,11 +110,15 @@ Accum   = [Accum7..Accum0];     "accumulator bus
 Op      = [Op3..Op0];           "opcode bus
 
 " Internal nodes/buses (intermediates)
-F                   node;       "F-block output
-A                   node;       "adder A operand
-B                   node;       "adder B operand
+F3..F0              node;       "F-block output (8 bits)
+F = [F3..F0];                   "F-block bus
+A7..A0              node;       "adder A operand (8 bits)
+A = [A7..A0];                   "adder A operand bus
+B7..B0              node;       "adder B operand (8 bits)
+B = [B7..B0];                   "adder B operand bus
 Carry8..Carry0      node;       "carry for addition
-AdderOut            node;       "adder sum output
+AdderOut7..AdderOut0 node;      "adder sum output
+AdderOut = [AdderOut7..AdderOut0]; "adder sum output bus
 
 ArithmeticOperation node;       "any arithmetic op active
 ShiftRotateOperation node;      "any shift/rotate op active
