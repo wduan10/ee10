@@ -100,12 +100,14 @@ Clock   pin;	"input  system clock
 
 " Outputs
 Accum7..Accum0          pin ISTYPE 'REG';   "output  accumulator register output
+MuxOut7..MuxOut0        pin;                "final selected result bus
 CarryOutMSB             pin;                "output  adder carry out of MSB (Carry8)
 CarryInMSB              pin;                "output  adder carry into MSB (Carry7)
 ShiftRotateCarryOut     pin;                "output  bit shifted out (for flags)
 
 " Buses
 Data    = [Data7..Data0];       "operand bus
+MuxOut  = [MuxOut7..MuxOut0];   "mux output bus
 Accum   = [Accum7..Accum0];     "accumulator bus
 Op      = [Op3..Op0];           "opcode bus
 
@@ -127,9 +129,6 @@ Comparison          node;       "CMP or TST (no Accum update)
 
 ShiftedOutput7..ShiftedOutput0 node;       "shift/rotate result bus
 ShiftedOutput = [ShiftedOutput7..ShiftedOutput0];
-
-MuxOut7..MuxOut0     node;      "final selected result bus
-MuxOut = [MuxOut7..MuxOut0];
 
 EQUATIONS
 
