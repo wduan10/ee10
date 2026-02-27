@@ -82,7 +82,7 @@ Flags      =  [Flags7..Flags0];	    "the flags (8 bits)
 ArithmeticOperation node;       "any arithmetic op active
 ShiftRotateOperation node;      "any shift/rotate op active
 FunctionOperation node;         "any function op active
-
+Subtract node;                  "if current operation performs subtraction
 
 " Constants
 " this is the collection of all Op3..Op0 values we care about for the F-block
