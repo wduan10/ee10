@@ -88,7 +88,7 @@ TITLE       'Accumulator For Accumulator Operations'
 Data7..Data0            pin;    "input  8-bit operand input
 CarryFlagIn             pin;    "input  carry/borrow in (ADC/SBB, RRC/RLC)
 
-ADC, ADD, CMP, DEC, INC, SBB, SUB pin;     "input  arithmetic controls
+ADC, ADD, CMP, DEC, INC, SBB, SUB, TST pin;     "input  arithmetic controls
 
 Op3..Op0                pin;    "input  F-block function select
 
