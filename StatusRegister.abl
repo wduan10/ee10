@@ -1,0 +1,80 @@
+Module      StatusRegister
+INTERFACE  (Accum7..Accum0,
+            CarryOutMSB, CarryInMSB,
+            ShiftRotateCarryOut,
+
+            Subtract,
+            ArithmeticOperation, FunctionOperation, ShiftRotateOperation
+            -> SignFlag, OverflowFlag, CarryFlag, ZeroFlag);
+
+TITLE       'StatusRegister for Flag Updates'
+
+
+" Description:  This module computes and updates the ALU status flags given
+"               the accumulator output, adder block output, and shift block output.
+"               The SignFlag and ZeroFlag are affected by every operation, so they are
+"               always computed. On the other hand, CarryFlag and OverflowFlag are affected
+"               only by Arithmetic operations or Shift/Rotate operations, so the equations
+"               reflect this (via a mux).
+" Inputs:       Accum[7..0]              - 8-bit ALU accumulator value
+"               CarryOutMSB              - carry out of the MSB from the adder
+"               CarryInMSB               - carry into the MSB from the adder
+"               ShiftRotateCarryOut      - bit shifted out during shift/rotate
+"
+"               Subtract                 - active high when operation is subtraction-type
+"               ArithmeticOperation      - active high when current op is arithmeti
+"               FunctionOperation        - active high when current op is logical/function
+"               ShiftRotateOperation     - active high when current op is shift/rotate
+"
+" Outputs:      SignFlag                 - sign flag
+"               OverflowFlag             - overflow flag for signed arithmetic
+"               CarryFlag                - carry/borrow flag or shift carry
+"               ZeroFlag                 - zero flag
+
+
+" Revision History:
+" 02/26/26   Wilson Duan  Initial revision
+
+
+" Pin/Signal Declarations
+
+" Inputs
+Accum7..Accum0          pin;    "input  accumulator/result bus (8-bit)
+CarryOutMSB             pin;    "input  carry out of MSB from adder
+CarryInMSB              pin;    "input  carry into MSB from adder
+ShiftRotateCarryOut     pin;    "input  bit shifted out during shift/rotate
+
+Subtract                pin;    "input  if op is subtraction-type (CMP/DEC/SBB/SUB)
+ArithmeticOperation     pin;    "input  if op is arithmetic
+FunctionOperation       pin;    "input  if op is logic/function
+ShiftRotateOperation    pin;    "input  if op is shift/rotate
+
+" Outputs
+SignFlag                pin;    "output  sign flag
+OverflowFlag            pin;    "output  overflow flag for signed arithmetic
+CarryFlag               pin;    "output  carry/borrow or shift carry
+ZeroFlag                pin;    "output  zero flag
+
+
+EQUATIONS
+
+
+" compute sign and zero flags
+" these are affected by all operations, so no need to enable
+SignFlag := Accum7;
+ZeroFlag := !(Accum7 # Accum6 # Accum5 # Accum4 #
+              Accum3 # Accum2 # Accum1 # Accum0);
+
+" compute carry and overflow flags
+" these are modified by arithmetic or shifts, but not functional operations
+CarryFlag := ((CarryOutMSB $ Subtract) & ArithmeticOperation) #
+             (ShiftRotateCarryOut & ShiftRotateOperation) #
+             (CarryFlag & FunctionOperation);
+
+" ShiftRotateOverflow = LogicalShiftLeft & (Accum7 $ ShiftRotateCarryOut);
+" ask TA about overflow for left shifts
+OverflowFlag := ((CarryOutMSB $ CarryInMSB) & ArithmeticOperation) #
+                (0 & ShiftRotateOperation) #
+                (OverflowFlag & FunctionOperation);
+
+End         StatusRegister

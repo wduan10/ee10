@@ -1,0 +1,176 @@
+MODULE      ALU
+INTERFACE  (Data7..Data0,
+
+            " control inputs for Arithmetic
+            ADC, ADD, CMP, DEC, INC, SBB, SUB,
+
+            " control inputs for Shift/Rotate
+            LSR, ASR, ROR, RRC, " shifts/rotations to the right
+            LSL, ROL, RLC, " shifts/rotations to the left
+
+            " control inputs for Logical Functions
+            AND, NOT, OR, XOR, TST,
+
+            Reset, Clock
+            -> Accum7..Accum0, Flags7..Flags0);
+
+TITLE       'ALU to Perform Logic and Arithmetic'
+
+" Description:  This module implements the CPU's 8-bit Arithmetic Logic Unit (ALU).
+"               It performs arithmetic, logical, and shift/rotate operations on an
+"               8-bit operand input (Data[7..0]) and an internal accumulator value.
+"               The ALU is composed of two sub-units: the AccumulatorUnit, which
+"               computes operation results and updates the accumulator, and the
+"               StatusRegisterUnit, which performs flag calculation and enabling.
+"
+"               Control inputs are expected to be one-hot encoded. This module routes
+"               the active control to the appropriate sub-units and selects the function
+"               opcode (Op[3..0]) for logical/function operations.
+
+"
+" Inputs:       Data[7..0]   - 8-bit operand input to the ALU
+"
+"               Arithmetic control inputs:
+"                   ADC, ADD, CMP, DEC, INC, SBB, SUB
+"
+"               Shift/Rotate control inputs:
+"                   LSR, ASR, ROR, RRC, LSL, ROL, RLC
+"
+"               Logical/function control inputs:
+"                   AND, NOT, OR, XOR, TST
+"
+"               Reset        - system reset
+"               Clock        - system clock
+"
+" Outputs:      Accum[7..0]  - 8-bit accumulator output
+"               Flags[7..0]  - 8-bit status flags output
+
+" Revision History:
+" 02/26/26   Wilson Duan  Initial revision
+
+" Pin/Signal Declarations
+
+" Inputs
+
+Data7..Data6    pin;    "input  8-bit data input
+
+ADC, ADD, CMP, DEC, INC, SBB, SUB pin;  "input  control inputs for Arithmetic
+LSR, ASR, ROR, RRC pin; "input  control inputs for Shift/Rotate (right)
+LSL, ROL, RLC pin;  "input  control inputs for Shift/Rotate (left)
+AND, NOT, OR, XOR, TST pin; "input control inputs for Logical Functions
+
+Reset	pin;	"input  system reset
+Clock   pin;	"input  system clock
+
+
+" Outputs
+
+Accum7..Accum0	pin;	"output  8 bits of accumulator
+Flags7..Flags0	pin;	"output  the flags (8 bits, active low)
+
+
+
+" Buses
+
+Data       =  [Data7..Data0];		"8 bits of data
+Accum      =  [Accum7..Accum0];	    "accumulator (8 bits)
+Flags      =  [Flags7..Flags0];	    "the flags (8 bits)
+
+
+" these are the modules used by the ALU
+Accumulator INTERFACE  (Data7..Data0,
+                        CarryFlagIn, " used for both arithmetic and shifts
+
+                        " control inputs for F-block and Adder
+                        ADC, ADD, CMP, DEC, INC, SBB, SUB,
+                        Op3..Op0,
+
+                        " control inputs for Shift/Rotate
+                        LSR, ASR, ROR, RRC, " shifts/rotations to the right
+                        LSL, ROL, RLC, " shifts/rotations to the left
+
+                        -> Accum7..Accum0, CarryOutMSB, CarryInMSB, ShiftRotateCarryOut);
+
+StatusRegister INTERFACE   (Accum7..Accum0,
+                            CarryOutMSB, CarryInMSB,
+                            ShiftRotateCarryOut,
+
+                            Subtract,
+                            ArithmeticOperation, FunctionOperation, ShiftRotateOperation
+                            -> SignFlag, OverflowFlag, CarryFlag, ZeroFlag);
+
+" create instances of the accumulator and status register
+AccumulatorUnit     FUNCTIONAL_BLOCK    Accumulator;
+StatusRegisterUnit  FUNCTIONAL_BLOCK    StatusRegister;
+
+
+EQUATIONS
+
+
+" calculate intermediate nodes that clarify what type of operation we are performing
+ArithmeticOperation = ADC # ADD # CMP # DEC # INC # SBB # SUB;
+ShiftRotateOperation = LSR # ASR # ROR # RRC # LSL # ROL # RLC;
+FunctionOperation = !ArithmeticOperation & !ShiftRotateOperation;
+
+# variable that stores if ALU is doing a subtraction operation
+Subtract = CMP # DEC # SBB # SUB;
+
+" Accumulator inputs
+AccumulatorUnit.[Data7..Data0] = [Data7..Data0];
+AccumulatorUnit.CarryFlagIn = Flags1;
+AccumulatorUnit.ADC = ADC;
+AccumulatorUnit.ADD = ADD;
+AccumulatorUnit.CMP = CMP;
+AccumulatorUnit.DEC = DEC;
+AccumulatorUnit.INC = INC;
+AccumulatorUnit.SBB = SBB;
+AccumulatorUnit.SUB = SUB;
+AccumulatorUnit.LSR = LSR;
+AccumulatorUnit.ASR = ASR;
+AccumulatorUnit.ROR = ROR;
+AccumulatorUnit.RRC = RRC;
+AccumulatorUnit.LSL = LSL;
+AccumulatorUnit.ROL = ROL;
+AccumulatorUnit.RLC = RLC;
+
+" this is the set of all Op3..Op0 values we care about
+OpAND = [1, 0, 0, 0];
+OpOR = [1, 1, 1, 0];
+OpXOR = [0, 1, 1, 0];
+OpNotA = [0, 0, 1, 1];
+OpNotB = [0, 1, 0, 1];
+OpB = [1, 0, 1, 0];
+
+AccumulatorUnit.[Op3..Op0] = (OpAND & (AND # TST)) # " both AND and TST perform AND on two operands
+                             (OpOR & OR) #
+                             (OpXOR & XOR) #
+                             (OpB & (ADD # ADC)) # " when adding, output of F block should be B
+                             (OpNotA & NOT) #
+                             (OpNotB & (SUB # SBB # CMP)) # " the F block inverts B when we do any subtraction,
+                                                            " which includes CMP since CMP subtracts operand
+                                                            " B from operand A
+                             (0 & INC) #
+                             (1 & DEC); " decrementing by one is equivalent to adding (-1), which is a bus
+                                        " full of 1's
+
+" Accumulator outputs
+[Accum7..Accum0] = AccumulatorUnit.[Accum7..Accum0];
+
+" StatusRegister inputs (many are outputs of the accumulator)
+StatusRegisterUnit.[Accum7..Accum0] = AccumulatorUnit.[Accum7..Accum0];
+StatusRegisterUnit.CarryInMSB = AccumulatorUnit.CarryInMSB;
+StatusRegisterUnit.CarryOutMSB = AccumulatorUnit.CarryOutMSB;
+StatusRegisterUnit.ShiftRotateCarryOut = AccumulatorUnit.ShiftRotateCarryOut;
+StatusRegisterUnit.Subtract = Subtract;
+StatusRegisterUnit.ArithmeticOperation = ArithmeticOperation;
+StatusRegisterUnit.FunctionOperation = FunctionOperation;
+StatusRegisterUnit.ShiftRotateOperation = ShiftRotateOperation;
+
+" StatusRegister outputs
+[Flags7..Flags4] := 0;
+Flags3 := StatusRegisterUnit.SignFlag;
+Flags2 := StatusRegisterUnit.OverflowFlag;
+Flags1 := StatusRegisterUnit.CarryFlag;
+Flags0 := StatusRegisterUnit.ZeroFlag;
+
+END ALU

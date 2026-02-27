@@ -1,0 +1,192 @@
+MODULE      Accumulator
+INTERFACE  (Data7..Data0,
+            CarryFlagIn, " CarryFlag is used as input for both arithmetic and shifts
+
+            " control inputs for F-block and Adder
+            ADC, ADD, CMP, DEC, INC, SBB, SUB,
+            Op3..Op0,
+
+            " control inputs for Shift/Rotate
+            LSR, ASR, ROR, RRC, " shifts/rotations to the right
+            LSL, ROL, RLC, " shifts/rotations to the left
+
+            -> Accum7..Accum0, CarryOutMSB, CarryInMSB, ShiftRotateCarryOut);
+
+TITLE       'Accumulator For Accumulator Operations'
+
+" Description:  This module implements the 8-bit accumulator datapath used by the
+"               CPU's ALU.  It contains the combinational logic needed to compute
+"               arithmetic, logical/function, and shift/rotate results, and it
+"               contains the accumulator register itself.
+"
+"               The module is organized into three conceptual blocks:
+"
+"                 1) F-Block (function/select block):
+"                    - Computes an intermediate operand F from the current Accum
+"                      and the input Data[7..0], under control of Op[3..0]
+"                    - Op[3..0] selects one of the standard ALU “function” forms
+"                      (e.g., AND/OR/XOR/pass B/invert B, etc.).  The output F is
+"                      used as the B input to the adder for arithmetic and also
+"                      supports logical operations
+"
+"                 2) 8-bit ripple-carry adder:
+"                    - Adds A and B with Carry0 to produce AdderOut
+"                    - A is the current accumulator value for arithmetic
+"                      operations, and otherwise 0 for non-arithmetic cases
+"                    - B is the F-block output
+"                    - Carry0 is derived from the active arithmetic control
+"                      (ADD/ADC/SUB/SBB/INC/DEC) to implement two’s-complement
+"                      addition/subtraction and carry/borrow semantics
+"                    - Produces carry signals CarryInMSB and CarryOutMSB for flag generation
+"
+"                 3) Shift/Rotate block:
+"                    - Computes ShiftedOutput[7..0] from Data[7..0] using the active
+"                      shift/rotate control input (LSR/ASR/ROR/RRC/LSL/ROL/RLC)
+"                    - Uses CarryFlagIn as the “through-carry” input for RRC/RLC
+"                    - Produces ShiftRotateCarryOut to indicate the bit shifted out
+"                      (used later by the status/flag logic)
+"
+"               A final mux selects between the adder result and the shift/rotate
+"               result. For comparison-style operations, the accumulator register
+"               is not updated, as the operation is intended to affect flags only.
+
+"
+" Inputs:       Data[7..0]        - 8-bit operand input used by the ALU datapath
+"               CarryFlagIn       - carry/borrow input used for ADC/SBB and for
+"                                   rotate-through-carry operations (RRC/RLC)
+"
+"               Arithmetic control inputs (one-hot):
+"                 ADC, ADD, CMP, DEC, INC, SBB, SUB
+"
+"               Function-select inputs:
+"                 Op[3..0]        - selects the F-block function (e.g., AND/OR/XOR/
+"                                   pass B/invert B, etc.) as defined by equations
+"
+"               Shift/Rotate control inputs (one-hot):
+"                 LSR, ASR, ROR, RRC, LSL, ROL, RLC
+"
+" Outputs:      Accum[7..0]       - current accumulator register contents (also
+"                                   the computed result when updated)
+"               Carry8            - carry out of the MSB from the ripple adder
+"               Carry7            - carry into the MSB (used for overflow logic)
+"               ShiftRotateCarryOut - bit shifted out during shift/rotate (for flags)
+
+
+" Revision History:
+" 02/26/26   Wilson Duan  Initial revision
+
+
+" Pin/Signal Declarations
+" Inputs
+Data7..Data0            pin;    "input  8-bit operand input
+CarryFlagIn             pin;    "input  carry/borrow in (ADC/SBB, RRC/RLC)
+
+ADC, ADD, CMP, DEC, INC, SBB, SUB pin;     "input  arithmetic controls
+
+Op3..Op0                pin;    "input  F-block function select
+
+LSR, ASR, ROR, RRC pin;         "input  shift/rotate right controls
+LSL, ROL, RLC      pin;         "input  shift/rotate left controls
+
+" Outputs
+Accum7..Accum0          pin;    "output  accumulator register output
+CarryOutMSB             pin;    "output  adder carry out of MSB (Carry8)
+CarryInMSB              pin;    "output  adder carry into MSB (Carry7)
+ShiftRotateCarryOut     pin;    "output  bit shifted out (for flags)
+
+" Buses
+Data    = [Data7..Data0];       "operand bus
+Accum   = [Accum7..Accum0];     "accumulator bus
+Op      = [Op3..Op0];           "opcode bus
+
+" Internal nodes/buses (intermediates)
+F                   node;       "F-block output
+A                   node;       "adder A operand
+B                   node;       "adder B operand
+Carry8..Carry0      node;       "carry for addition
+AdderOut            node;       "adder sum output
+
+ArithmeticOperation node;       "any arithmetic op active
+ShiftRotateOperation node;      "any shift/rotate op active
+ShiftDirection      node;       "1=right, 0=left
+Comparison          node;       "CMP or TST (no Accum update)
+
+ShiftedOutput7..ShiftedOutput0 node;       "shift/rotate result bus
+ShiftedOutput = [ShiftedOutput7..ShiftedOutput0];
+
+MuxOut7..MuxOut0     node;      "final selected result bus
+MuxOut = [MuxOut7..MuxOut0];
+
+EQUATIONS
+
+
+" calculate intermediate nodes that clarify what type of operation we are performing
+ArithmeticOperation = ADC # ADD # CMP # DEC # INC # SBB # SUB;
+ShiftRotateOperation = LSR # ASR # ROR # RRC # LSL # ROL # RLC;
+
+" handle F-Block
+" if we are adding, then Op3..Op0 will be a function that returns B
+" if we are subtracting, then Op3..Op0 will be a function that returns !B
+F = (Op0 & !Accum & !Data) #
+    (Op1 & !Accum & Data) #
+    (Op2 & Accum & !Data) #
+    (Op3 & Accum & Data);
+
+" handle 8-bit Addition
+A = Accum & ArithmeticOperation; " we select what's inside the accumulator if we
+                                 " are doing arithmetic. otherwise, A = 0, which
+                                 " occurs when we want to do functional logic
+B = F; " output of F-Block is fed into adder as operand B
+
+" calculate carry in for the adder block
+Carry0 = (0 & (ADD # DEC)) # " if we are adding or decrementing, no carry in
+         (CarryFlagIn & ADC) # " if we are adding with carry, then carry in is the CarryFlag
+         (1 & (SUB # INC)) # " if we are subtracting, then we need to set carry in equal to 1
+                             " to account for the +1 in the -B = !B + 1 two's complement equation
+                             " if we are incrementing, then we set carry in equal to 1 as well
+         (!CarryFlagIn & SBB); " if we are subtracting with borrow, then A = A - B - C = A + (!B + 1) - C
+                             " thus, carry in equals 0 if CarryFlag, and equals 1 otherwise
+
+" perform the addition
+[Carry8..Carry1] = (A & B) # ([Carry7..Carry0] & (A $ B));
+AdderOut = A $ B $ [Carry7..Carry0];
+
+" handle Shift/Rotate
+
+" ShiftDirection is active high for right direction, active low for left direction
+ShiftDirection = LSR # ASR # ROR # RRC;
+
+" for middle bits, ShiftedOutput[i] = Data[i + 1] if shifting right, and Data[i - 1] if shifting left
+[ShiftedOutput6..ShiftedOutput1] = (ShiftDirection & [Data7..Data2]) #
+                                   (!ShiftDirection & [Data5..Data0]);
+
+" find high bit of shifted output
+ShiftedOutput7 = (Data7 & ASR) # " for arithmetic shift right
+                 (0 & LSR) # " for logical shift right
+                 (Data6 & !LSL) # for left shift or left rotate
+                 (Data0 & ROR) # " for rotate right
+                 (CarryFlagIn & RRC); " for rotate right through carry
+
+" find low bit of shifted output
+ShiftedOutput0 = (Data1 & ShiftDirection) # " for shifts/rotates right, it is Data1
+                 (Data7 & ROL) # " for rotating left
+                 (CarryFlagIn & RLC) # " for rotating left through carry
+                 (0 & LSL); " for logical shift left
+
+" Shifted-out bit for flags
+ShiftRotateCarryOut =
+    (Data0 & ShiftDirection) #     "for right ops, shift out LSB
+    (Data7 & !ShiftDirection);     "for left ops, shift out MSB
+
+" 2:1 mux to select either Adder output or Shift/Rotate output
+MuxOut = (AdderOut & !ShiftRotateOperation) #
+         (ShiftedOutput & ShiftRotateOperation);
+
+" todo: comment about comparison
+Comparison = CMP # TST;
+Accum := (Accum & Comparison) # (MuxOut & !Comparison);
+
+CarryInMSB = Carry7;
+CarryOutMSB = Carry8;
+
+END         Accumulator
