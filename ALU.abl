@@ -58,7 +58,7 @@ TITLE       'ALU to Perform Logic and Arithmetic'
 
 Data7..Data0    pin;    "input  8-bit data input
 
-Function Operation pin; " input  if current op is function
+FunctionOperation pin; " input  if current op is function
 ArithmeticOperation pin; " input  if current op is arithmetic
 Subtract pin; " input  arithmetic control input for subtraction
 WithCarry pin; " input  arithmetic control input for ADC and SBB

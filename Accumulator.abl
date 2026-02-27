@@ -95,7 +95,7 @@ TITLE       'Accumulator For Accumulator Operations'
 Data7..Data0            pin;    "input  8-bit operand input
 CarryFlagIn             pin;    "input  carry/borrow in (ADC/SBB, RRC/RLC)
 
-Function Operation pin; " input  if current op is function
+FunctionOperation pin; " input  if current op is function
 ArithmeticOperation pin; " input  if current op is arithmetic
 Subtract pin; " input  arithmetic control input for subtraction
 WithCarry pin; " input  arithmetic control input for ADC and SBB
@@ -165,7 +165,7 @@ B = F; " output of F-Block is fed into adder as operand B
 " calculate carry in for the adder block
 Carry0 = (0 & ((!Subtract & !WithCarry & !IncDec) # (Subtract & IncDec))) # " if we are adding or decrementing, no carry in
          (CarryFlagIn & (!Subtract & WithCarry)) # " if we are adding with carry, then carry in is the CarryFlag
-         (1 & ((Subtract & !WithCarry & !IncDec) # (!Subtract # Increment))) # " if we are subtracting, then we need to set carry in equal to 1
+         (1 & ((Subtract & !WithCarry & !IncDec) # (!Subtract # IncDec))) # " if we are subtracting, then we need to set carry in equal to 1
                              " to account for the +1 in the -B = !B + 1 two's complement equation
                              " if we are incrementing, then we set carry in equal to 1 as well
          (!CarryFlagIn & (Subtract & WithCarry)); " if we are subtracting with borrow, then A = A - B - C = A + (!B + 1) - C
