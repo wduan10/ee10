@@ -91,7 +91,7 @@ CarryFlag := ((CarryOutMSB $ Subtract) & ArithmeticOperation) #
              (ShiftRotateCarryOut & ShiftRotateOperation) #
              (CarryFlag & (FunctionOperation # Hold));
 
-" ShiftRotateOverflow = LogicalShiftLeft & (MuxOut7 $ ShiftRotateCarryOut);
+" ShiftRotateOverflow = LSL & (MuxOut7 $ ShiftRotateCarryOut);
 " ask TA about overflow for left shifts
 OverflowFlag := ((CarryOutMSB $ CarryInMSB) & ArithmeticOperation) #
                 (0 & ShiftRotateOperation) #
