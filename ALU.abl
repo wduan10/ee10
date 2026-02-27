@@ -78,6 +78,12 @@ Accum      =  [Accum7..Accum0];	    "accumulator (8 bits)
 Flags      =  [Flags7..Flags0];	    "the flags (8 bits)
 
 
+" Intermediate nodes
+ArithmeticOperation node;       "any arithmetic op active
+ShiftRotateOperation node;      "any shift/rotate op active
+FunctionOperation node;         "any function op active
+
+
 " Constants
 " this is the collection of all Op3..Op0 values we care about for the F-block
 OpAND = [1, 0, 0, 0]; " Op values for function AND
@@ -125,7 +131,7 @@ ArithmeticOperation = ADC # ADD # CMP # DEC # INC # SBB # SUB;
 ShiftRotateOperation = LSR # ASR # ROR # RRC # LSL # ROL # RLC;
 FunctionOperation = !ArithmeticOperation & !ShiftRotateOperation;
 
-# variable that stores if ALU is doing a subtraction operation
+" variable that stores if ALU is doing a subtraction operation
 Subtract = CMP # DEC # SBB # SUB;
 
 " Accumulator inputs
