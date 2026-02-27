@@ -109,7 +109,7 @@ Accumulator INTERFACE  (Data7..Data0,
                         Clock, Reset
                         -> Accum7..Accum0, MuxOut7..MuxOut0, CarryOutMSB, CarryInMSB, ShiftRotateCarryOut);
 
-StatusRegister INTERFACE   (Accum7..Accum0,
+StatusRegister INTERFACE   (MuxOut7..MuxOut0,
                             CarryOutMSB, CarryInMSB,
                             ShiftRotateCarryOut,
 
@@ -185,10 +185,10 @@ StatusRegisterUnit.Clock = Clock;
 StatusRegisterUnit.Reset = Reset;
 
 " StatusRegister outputs
-[Flags7..Flags4] := 0;
-Flags3 := StatusRegisterUnit.SignFlag;
-Flags2 := StatusRegisterUnit.OverflowFlag;
-Flags1 := StatusRegisterUnit.CarryFlag;
-Flags0 := StatusRegisterUnit.ZeroFlag;
+[Flags7..Flags4] = 0;
+Flags3 = StatusRegisterUnit.SignFlag;
+Flags2 = StatusRegisterUnit.OverflowFlag;
+Flags1 = StatusRegisterUnit.CarryFlag;
+Flags0 = StatusRegisterUnit.ZeroFlag;
 
 END ALU
