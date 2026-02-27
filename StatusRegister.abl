@@ -70,11 +70,11 @@ EQUATIONS
 
 " set clocks and reset
 SignFlag.CLK = Clock;
-SignFlag.CLR = Reset;
+SignFlag.CLR = !Reset;
 OverflowFlag.CLK = Clock;
-OverflowFlag.CLR = Reset;
+OverflowFlag.CLR = !Reset;
 CarryFlag.CLK = Clock;
-CarryFlag.CLR = Reset;
+CarryFlag.CLR = !Reset;
 ZeroFlag.CLK = Clock;
 ZeroFlag.CLR = !Reset;
 
