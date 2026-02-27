@@ -78,6 +78,16 @@ Accum      =  [Accum7..Accum0];	    "accumulator (8 bits)
 Flags      =  [Flags7..Flags0];	    "the flags (8 bits)
 
 
+" Constants
+" this is the collection of all Op3..Op0 values we care about for the F-block
+OpAND = [1, 0, 0, 0]; " Op values for function AND
+OpOR = [1, 1, 1, 0]; " Op values for function OR
+OpXOR = [0, 1, 1, 0]; " Op values for function XOR
+OpNotA = [0, 0, 1, 1]; " Op values for function NotA
+OpNotB = [0, 1, 0, 1]; " Op values for function NotB
+OpB = [1, 0, 1, 0]; " Op values for function B
+
+
 " these are the modules used by the ALU
 Accumulator INTERFACE  (Data7..Data0,
                         CarryFlagIn, " used for both arithmetic and shifts
@@ -138,14 +148,6 @@ AccumulatorUnit.RLC = RLC;
 
 AccumulatorUnit.Clock = Clock;
 AccumulatorUnit.Reset = Reset;
-
-" this is the set of all Op3..Op0 values we care about
-OpAND = [1, 0, 0, 0];
-OpOR = [1, 1, 1, 0];
-OpXOR = [0, 1, 1, 0];
-OpNotA = [0, 0, 1, 1];
-OpNotB = [0, 1, 0, 1];
-OpB = [1, 0, 1, 0];
 
 AccumulatorUnit.[Op3..Op0] = (OpAND & (AND # TST)) # " both AND and TST perform AND on two operands
                              (OpOR & OR) #
