@@ -53,7 +53,7 @@ TITLE       'ALU to Perform Logic and Arithmetic'
 
 " Inputs
 
-Data7..Data6    pin;    "input  8-bit data input
+Data7..Data0    pin;    "input  8-bit data input
 
 ADC, ADD, CMP, DEC, INC, SBB, SUB pin;  "input  control inputs for Arithmetic
 LSR, ASR, ROR, RRC pin; "input  control inputs for Shift/Rotate (right)
