@@ -10,7 +10,7 @@ INTERFACE  (Data7..Data0,
             LSR, ASR, ROR, RRC, " shifts/rotations to the right
             LSL, ROL, RLC, " shifts/rotations to the left
 
-            -> Accum7..Accum0, CarryOutMSB, CarryInMSB, ShiftRotateCarryOut);
+            -> Accum7..Accum0, MuxOut7..MuxOut0, CarryOutMSB, CarryInMSB, ShiftRotateCarryOut);
 
 TITLE       'Accumulator For Accumulator Operations'
 
@@ -67,6 +67,7 @@ TITLE       'Accumulator For Accumulator Operations'
 "
 " Outputs:      Accum[7..0]       - current accumulator register contents (also
 "                                   the computed result when updated)
+"               MuxOut[7..0]      - the output of the mux (used by status register)
 "               Carry8            - carry out of the MSB from the ripple adder
 "               Carry7            - carry into the MSB (used for overflow logic)
 "               ShiftRotateCarryOut - bit shifted out during shift/rotate (for flags)
@@ -74,6 +75,8 @@ TITLE       'Accumulator For Accumulator Operations'
 
 " Revision History:
 " 02/26/26   Wilson Duan  Initial revision
+" 02/27/26   Wilson Duan  Add MuxOut as output
+
 
 
 " Pin/Signal Declarations
@@ -156,27 +159,27 @@ AdderOut = A $ B $ [Carry7..Carry0];
 " ShiftDirection is active high for right direction, active low for left direction
 ShiftDirection = LSR # ASR # ROR # RRC;
 
-" for middle bits, ShiftedOutput[i] = Data[i + 1] if shifting right, and Data[i - 1] if shifting left
-[ShiftedOutput6..ShiftedOutput1] = (ShiftDirection & [Data7..Data2]) #
-                                   (!ShiftDirection & [Data5..Data0]);
+" for middle bits, ShiftedOutput[i] = Accum[i + 1] if shifting right, and Accum[i - 1] if shifting left
+[ShiftedOutput6..ShiftedOutput1] = (ShiftDirection & [Accum7..Accum2]) #
+                                   (!ShiftDirection & [Accum5..Accum0]);
 
 " find high bit of shifted output
-ShiftedOutput7 = (Data7 & ASR) # " for arithmetic shift right
+ShiftedOutput7 = (Accum7 & ASR) # " for arithmetic shift right
                  (0 & LSR) # " for logical shift right
-                 (Data6 & !LSL) # for left shift or left rotate
-                 (Data0 & ROR) # " for rotate right
+                 (Accum6 & !LSL) # for left shift or left rotate
+                 (Accum0 & ROR) # " for rotate right
                  (CarryFlagIn & RRC); " for rotate right through carry
 
 " find low bit of shifted output
-ShiftedOutput0 = (Data1 & ShiftDirection) # " for shifts/rotates right, it is Data1
-                 (Data7 & ROL) # " for rotating left
+ShiftedOutput0 = (Accum1 & ShiftDirection) # " for shifts/rotates right, it is Data1
+                 (Accum7 & ROL) # " for rotating left
                  (CarryFlagIn & RLC) # " for rotating left through carry
                  (0 & LSL); " for logical shift left
 
 " Shifted-out bit for flags
 ShiftRotateCarryOut =
-    (Data0 & ShiftDirection) #     "for right ops, shift out LSB
-    (Data7 & !ShiftDirection);     "for left ops, shift out MSB
+    (Accum0 & ShiftDirection) #     "for right ops, shift out LSB
+    (Accum7 & !ShiftDirection);     "for left ops, shift out MSB
 
 " 2:1 mux to select either Adder output or Shift/Rotate output
 MuxOut = (AdderOut & !ShiftRotateOperation) #

@@ -1,5 +1,5 @@
 Module      StatusRegister
-INTERFACE  (Accum7..Accum0,
+INTERFACE  (MuxOut7..MuxOut0,
             CarryOutMSB, CarryInMSB,
             ShiftRotateCarryOut,
 
@@ -16,7 +16,7 @@ TITLE       'StatusRegister for Flag Updates'
 "               always computed. On the other hand, CarryFlag and OverflowFlag are affected
 "               only by Arithmetic operations or Shift/Rotate operations, so the equations
 "               reflect this (via a mux).
-" Inputs:       Accum[7..0]              - 8-bit ALU accumulator value
+" Inputs:       MuxOut[7..0]             - 8-bit mux output from accumulator block
 "               CarryOutMSB              - carry out of the MSB from the adder
 "               CarryInMSB               - carry into the MSB from the adder
 "               ShiftRotateCarryOut      - bit shifted out during shift/rotate
@@ -34,12 +34,14 @@ TITLE       'StatusRegister for Flag Updates'
 
 " Revision History:
 " 02/26/26   Wilson Duan  Initial revision
+" 02/27/26   Wilson Duan  Pass MuxOut into status register instead of Accum
+
 
 
 " Pin/Signal Declarations
 
 " Inputs
-Accum7..Accum0          pin;    "input  accumulator/result bus (8-bit)
+MuxOut7..MuxOut0          pin;  "input  8-bit mux output from accumulator block
 CarryOutMSB             pin;    "input  carry out of MSB from adder
 CarryInMSB              pin;    "input  carry into MSB from adder
 ShiftRotateCarryOut     pin;    "input  bit shifted out during shift/rotate
@@ -61,9 +63,9 @@ EQUATIONS
 
 " compute sign and zero flags
 " these are affected by all operations, so no need to enable
-SignFlag := Accum7;
-ZeroFlag := !(Accum7 # Accum6 # Accum5 # Accum4 #
-              Accum3 # Accum2 # Accum1 # Accum0);
+SignFlag := MuxOut7;
+ZeroFlag := !(MuxOut7 # MuxOut6 # MuxOut5 # MuxOut4 #
+              MuxOut3 # MuxOut2 # MuxOut1 # MuxOut0);
 
 " compute carry and overflow flags
 " these are modified by arithmetic or shifts, but not functional operations
@@ -71,7 +73,7 @@ CarryFlag := ((CarryOutMSB $ Subtract) & ArithmeticOperation) #
              (ShiftRotateCarryOut & ShiftRotateOperation) #
              (CarryFlag & FunctionOperation);
 
-" ShiftRotateOverflow = LogicalShiftLeft & (Accum7 $ ShiftRotateCarryOut);
+" ShiftRotateOverflow = LogicalShiftLeft & (MuxOut7 $ ShiftRotateCarryOut);
 " ask TA about overflow for left shifts
 OverflowFlag := ((CarryOutMSB $ CarryInMSB) & ArithmeticOperation) #
                 (0 & ShiftRotateOperation) #

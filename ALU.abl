@@ -47,6 +47,7 @@ TITLE       'ALU to Perform Logic and Arithmetic'
 
 " Revision History:
 " 02/26/26   Wilson Duan  Initial revision
+" 02/27/26   Wilson Duan  Pass MuxOut into status register instead of Accum
 
 " Pin/Signal Declarations
 
@@ -89,7 +90,7 @@ Accumulator INTERFACE  (Data7..Data0,
                         LSR, ASR, ROR, RRC, " shifts/rotations to the right
                         LSL, ROL, RLC, " shifts/rotations to the left
 
-                        -> Accum7..Accum0, CarryOutMSB, CarryInMSB, ShiftRotateCarryOut);
+                        -> Accum7..Accum0, MuxOut7..MuxOut0, CarryOutMSB, CarryInMSB, ShiftRotateCarryOut);
 
 StatusRegister INTERFACE   (Accum7..Accum0,
                             CarryOutMSB, CarryInMSB,
@@ -157,7 +158,7 @@ AccumulatorUnit.[Op3..Op0] = (OpAND & (AND # TST)) # " both AND and TST perform 
 [Accum7..Accum0] = AccumulatorUnit.[Accum7..Accum0];
 
 " StatusRegister inputs (many are outputs of the accumulator)
-StatusRegisterUnit.[Accum7..Accum0] = AccumulatorUnit.[Accum7..Accum0];
+StatusRegisterUnit.[MuxOut7..MuxOut0] = AccumulatorUnit.[MuxOut7..MuxOut0];
 StatusRegisterUnit.CarryInMSB = AccumulatorUnit.CarryInMSB;
 StatusRegisterUnit.CarryOutMSB = AccumulatorUnit.CarryOutMSB;
 StatusRegisterUnit.ShiftRotateCarryOut = AccumulatorUnit.ShiftRotateCarryOut;
