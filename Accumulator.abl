@@ -1,14 +1,19 @@
 MODULE      Accumulator
 INTERFACE  (Data7..Data0,
-            CarryFlagIn, " CarryFlag is used as input for both arithmetic and shifts
+            CarryFlagIn, " used for both arithmetic and shifts
 
-            " control inputs for F-block and Adder
-            ADC, ADD, CMP, DEC, INC, SBB, SUB, TST,
-            Op3..Op0,
+            " Type of operation
+            FunctionOperation, ArithmeticOperation,
 
-            " control inputs for Shift/Rotate
+            " Arithmetic control inputs
+            Subtract, WithCarry, Comparison, IncDec,
+
+            " Shift control inputs
             LSR, ASR, ROR, RRC, " shifts/rotations to the right
             LSL, ROL, RLC, " shifts/rotations to the left
+
+            " Logical function control inputs
+            Op3..Op0,
 
             Clock, Reset, Hold
             -> Accum7..Accum0, MuxOut7..MuxOut0, CarryOutMSB, CarryInMSB, ShiftRotateCarryOut);
@@ -56,15 +61,16 @@ TITLE       'Accumulator For Accumulator Operations'
 "               CarryFlagIn       - carry/borrow input used for ADC/SBB and for
 "                                   rotate-through-carry operations (RRC/RLC)
 "
-"               Arithmetic control inputs (one-hot):
-"                 ADC, ADD, CMP, DEC, INC, SBB, SUB, TST
-"
-"               Function-select inputs:
-"                 Op[3..0]        - selects the F-block function (e.g., AND/OR/XOR/
-"                                   pass B/invert B, etc.) as defined by equations
-"
-"               Shift/Rotate control inputs (one-hot):
-"                 LSR, ASR, ROR, RRC, LSL, ROL, RLC,
+"               FunctionOperation                   - if current op is function
+"               ArithmeticOperation                 - if current op is arithmetic
+"               Subtract                            - arithmetic control input, active high for subtraction
+"                                                   - and active low for addition
+"               WithCarry                           - arithmetic control input, active high for addition with carry
+"                                                     and subtraction with borrow, active low otherwise
+"               Comparison                          - if current op is comparison (CMP or TST)
+"               IncDec                              - if current op is INC or DEC
+"               LSR, ASR, ROR, RRC, LSL, ROL, RLC   - shift/rotate control inputs
+"               Op3..Op0                            - 4 bit control input prescribing an F-block function
 "
 "               Clock,            - system clock
 "               Reset             - system reset
@@ -89,12 +95,15 @@ TITLE       'Accumulator For Accumulator Operations'
 Data7..Data0            pin;    "input  8-bit operand input
 CarryFlagIn             pin;    "input  carry/borrow in (ADC/SBB, RRC/RLC)
 
-ADC, ADD, CMP, DEC, INC, SBB, SUB, TST pin;     "input  arithmetic controls
-
-Op3..Op0                pin;    "input  F-block function select
-
-LSR, ASR, ROR, RRC pin;         "input  shift/rotate right controls
-LSL, ROL, RLC      pin;         "input  shift/rotate left controls
+Function Operation pin; " input  if current op is function
+ArithmeticOperation pin; " input  if current op is arithmetic
+Subtract pin; " input  arithmetic control input for subtraction
+WithCarry pin; " input  arithmetic control input for ADC and SBB
+Comparison pin; " input  if current op is CMP or TST
+IncDec pin; " input  if current op is INC or DEC
+LSR, ASR, ROR, RRC pin; "input  control inputs for Shift/Rotate (right)
+LSL, ROL, RLC pin;  "input  control inputs for Shift/Rotate (left)
+Op3..Op0 pin; " input  control input prescribing F-block function
 
 Reset	pin;	"input  system reset
 Clock   pin;	"input  system clock
@@ -124,10 +133,8 @@ Carry8..Carry0      node;       "carry for addition
 AdderOut7..AdderOut0 node;      "adder sum output
 AdderOut = [AdderOut7..AdderOut0]; "adder sum output bus
 
-ArithmeticOperation node;       "any arithmetic op active
 ShiftRotateOperation node;      "any shift/rotate op active
 ShiftDirection      node;       "1=right, 0=left
-Comparison          node;       "CMP or TST (no Accum update)
 
 ShiftedOutput7..ShiftedOutput0 node;       "shift/rotate result bus
 ShiftedOutput = [ShiftedOutput7..ShiftedOutput0];
@@ -139,7 +146,6 @@ Accum.CLK = Clock;
 Accum.CLR = !Reset;
 
 " calculate intermediate nodes that clarify what type of operation we are performing
-ArithmeticOperation = ADC # ADD # CMP # DEC # INC # SBB # SUB;
 ShiftRotateOperation = LSR # ASR # ROR # RRC # LSL # ROL # RLC;
 
 " handle F-Block
@@ -157,12 +163,12 @@ A = Accum & ArithmeticOperation; " we select what's inside the accumulator if we
 B = F; " output of F-Block is fed into adder as operand B
 
 " calculate carry in for the adder block
-Carry0 = (0 & (ADD # DEC)) # " if we are adding or decrementing, no carry in
-         (CarryFlagIn & ADC) # " if we are adding with carry, then carry in is the CarryFlag
-         (1 & (SUB # INC)) # " if we are subtracting, then we need to set carry in equal to 1
+Carry0 = (0 & ((!Subtract & !WithCarry & !IncDec) # (Subtract & IncDec))) # " if we are adding or decrementing, no carry in
+         (CarryFlagIn & (!Subtract & WithCarry)) # " if we are adding with carry, then carry in is the CarryFlag
+         (1 & ((Subtract & !WithCarry & !IncDec) # (!Subtract # Increment))) # " if we are subtracting, then we need to set carry in equal to 1
                              " to account for the +1 in the -B = !B + 1 two's complement equation
                              " if we are incrementing, then we set carry in equal to 1 as well
-         (!CarryFlagIn & SBB); " if we are subtracting with borrow, then A = A - B - C = A + (!B + 1) - C
+         (!CarryFlagIn & (Subtract & WithCarry)); " if we are subtracting with borrow, then A = A - B - C = A + (!B + 1) - C
                              " thus, carry in equals 0 if CarryFlag, and equals 1 otherwise
 
 " perform the addition
@@ -200,8 +206,7 @@ ShiftRotateCarryOut =
 MuxOut = (AdderOut & !ShiftRotateOperation) #
          (ShiftedOutput & ShiftRotateOperation);
 
-" todo: comment about comparison
-Comparison = CMP # TST;
+" we keep the value of accum if we are comparing or holding
 Accum := (Accum & (Comparison # Hold)) # (MuxOut & !(Comparison # Hold));
 
 CarryInMSB = Carry7;

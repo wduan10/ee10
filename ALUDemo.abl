@@ -84,15 +84,18 @@ SReg       =  [SReg7..SReg0];			"8 bit S-Register
 " declare the unit to be tested
 
 ALU INTERFACE  (Data7..Data0,
+                " Type of operation
+                FunctionOperation, ArithmeticOperation,
+
                 " Arithmetic control inputs
-                ADC, ADD, CMP, DEC, INC, SBB, SUB, TST,
+                Subtract, WithCarry, Comparison, IncDec,
 
                 " Shift control inputs
                 LSR, ASR, ROR, RRC, " shifts/rotations to the right
                 LSL, ROL, RLC, " shifts/rotations to the left
 
                 " Logical function control inputs
-                AND, NOT, OR, XOR,
+                Op3..Op0,
 
                 Reset, Clock
                 -> Accum7..Accum0, Flags7..Flags0);
@@ -116,25 +119,23 @@ ALUnit.[Data7..Data0]  =  [DataOff7..DataOff0];
 " ALU Control Inputs
 
 " connect each ALU control signal/bus to a subset of Control29..Control0
-ALUnit.ADC = Control0;
-ALUnit.ADD = Control1;
-ALUnit.CMP = Control2;
-ALUnit.DEC = Control3;
-ALUnit.INC = Control4;
-ALUnit.SBB = Control5;
-ALUnit.SUB = Control6;
-ALUnit.LSR = Control7;
-ALUnit.ASR = Control8;
-ALUnit.ROR = Control9;
-ALUnit.RRC = Control10;
-ALUnit.LSL = Control11;
-ALUnit.ROL = Control12;
-ALUnit.RLC = Control13;
-ALUnit.AND = Control14;
-ALUnit.NOT = Control15;
-ALUnit.OR  = Control16;
-ALUnit.XOR = Control17;
-ALUnit.TST = Control18;
+ALUnit.Op0 = Control0;
+ALUnit.Op1 = Control1;
+ALUnit.Op2 = Control2;
+ALUnit.Op3 = Control3;
+ALUnit.FunctionOperation = Control4;
+ALUnit.ArithmeticOperation = Control5;
+ALUnit.Subtract = Control6;
+ALUnit.WithCarry = Control7;
+ALUnit.Comparison = Control8;
+ALUnit.IncDec = Control9;
+ALUnit.LSR = Control10;
+ALUnit.ASR = Control11;
+ALUnit.ROR = Control12;
+ALUnit.RRC = Control13;
+ALUnit.LSL = Control14;
+ALUnit.ROL = Control15;
+ALUnit.RLC = Control16;
 
 ALUnit.Reset  =  Reset;
 ALUnit.Clock  =  Clock;

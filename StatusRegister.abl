@@ -79,21 +79,22 @@ ZeroFlag.CLK = Clock;
 ZeroFlag.CLR = !Reset;
 
 " compute sign and zero flags
-" these are affected by all operations, so no need to enable
-SignFlag := MuxOut7;
-ZeroFlag := !(MuxOut7 # MuxOut6 # MuxOut5 # MuxOut4 #
-              MuxOut3 # MuxOut2 # MuxOut1 # MuxOut0);
+" these are affected by all operations except hold
+SignFlag := (MuxOut7 & !Hold) # (SignFlag & Hold);
+ZeroFlag := (!(MuxOut7 # MuxOut6 # MuxOut5 # MuxOut4 #
+              MuxOut3 # MuxOut2 # MuxOut1 # MuxOut0) & !Hold) #
+            (ZeroFlag & Hold);
 
 " compute carry and overflow flags
 " these are modified by arithmetic or shifts, but not functional operations
 CarryFlag := ((CarryOutMSB $ Subtract) & ArithmeticOperation) #
              (ShiftRotateCarryOut & ShiftRotateOperation) #
-             (CarryFlag & FunctionOperation);
+             (CarryFlag & (FunctionOperation # Hold));
 
 " ShiftRotateOverflow = LogicalShiftLeft & (MuxOut7 $ ShiftRotateCarryOut);
 " ask TA about overflow for left shifts
 OverflowFlag := ((CarryOutMSB $ CarryInMSB) & ArithmeticOperation) #
                 (0 & ShiftRotateOperation) #
-                (OverflowFlag & FunctionOperation);
+                (OverflowFlag & (FunctionOperation # Hold));
 
 End         StatusRegister
