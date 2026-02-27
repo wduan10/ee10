@@ -93,7 +93,7 @@ Accumulator INTERFACE  (Data7..Data0,
                         CarryFlagIn, " used for both arithmetic and shifts
 
                         " control inputs for F-block and Adder
-                        ADC, ADD, CMP, DEC, INC, SBB, SUB,
+                        ADC, ADD, CMP, DEC, INC, SBB, SUB, TST,
                         Op3..Op0,
 
                         " control inputs for Shift/Rotate
@@ -138,6 +138,7 @@ AccumulatorUnit.DEC = DEC;
 AccumulatorUnit.INC = INC;
 AccumulatorUnit.SBB = SBB;
 AccumulatorUnit.SUB = SUB;
+AccumulatorUnit.TST = TST;
 AccumulatorUnit.LSR = LSR;
 AccumulatorUnit.ASR = ASR;
 AccumulatorUnit.ROR = ROR;

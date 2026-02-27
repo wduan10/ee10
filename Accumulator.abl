@@ -3,7 +3,7 @@ INTERFACE  (Data7..Data0,
             CarryFlagIn, " CarryFlag is used as input for both arithmetic and shifts
 
             " control inputs for F-block and Adder
-            ADC, ADD, CMP, DEC, INC, SBB, SUB,
+            ADC, ADD, CMP, DEC, INC, SBB, SUB, TST,
             Op3..Op0,
 
             " control inputs for Shift/Rotate
@@ -57,7 +57,7 @@ TITLE       'Accumulator For Accumulator Operations'
 "                                   rotate-through-carry operations (RRC/RLC)
 "
 "               Arithmetic control inputs (one-hot):
-"                 ADC, ADD, CMP, DEC, INC, SBB, SUB
+"                 ADC, ADD, CMP, DEC, INC, SBB, SUB, TST
 "
 "               Function-select inputs:
 "                 Op[3..0]        - selects the F-block function (e.g., AND/OR/XOR/
