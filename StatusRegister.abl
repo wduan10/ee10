@@ -4,7 +4,8 @@ INTERFACE  (MuxOut7..MuxOut0,
             ShiftRotateCarryOut,
 
             Subtract,
-            ArithmeticOperation, FunctionOperation, ShiftRotateOperation
+            ArithmeticOperation, FunctionOperation, ShiftRotateOperation,
+            Clock, Reset
             -> SignFlag, OverflowFlag, CarryFlag, ZeroFlag);
 
 TITLE       'StatusRegister for Flag Updates'
@@ -25,6 +26,8 @@ TITLE       'StatusRegister for Flag Updates'
 "               ArithmeticOperation      - active high when current op is arithmeti
 "               FunctionOperation        - active high when current op is logical/function
 "               ShiftRotateOperation     - active high when current op is shift/rotate
+"               Clock                    - system clock
+"               Reset                    - system reset
 "
 " Outputs:      SignFlag                 - sign flag
 "               OverflowFlag             - overflow flag for signed arithmetic
@@ -41,7 +44,7 @@ TITLE       'StatusRegister for Flag Updates'
 " Pin/Signal Declarations
 
 " Inputs
-MuxOut7..MuxOut0          pin;  "input  8-bit mux output from accumulator block
+MuxOut7..MuxOut0        pin;  "input  8-bit mux output from accumulator block
 CarryOutMSB             pin;    "input  carry out of MSB from adder
 CarryInMSB              pin;    "input  carry into MSB from adder
 ShiftRotateCarryOut     pin;    "input  bit shifted out during shift/rotate
@@ -50,6 +53,9 @@ Subtract                pin;    "input  if op is subtraction-type (CMP/DEC/SBB/S
 ArithmeticOperation     pin;    "input  if op is arithmetic
 FunctionOperation       pin;    "input  if op is logic/function
 ShiftRotateOperation    pin;    "input  if op is shift/rotate
+
+Reset	pin;	"input  system reset
+Clock   pin;	"input  system clock
 
 " Outputs
 SignFlag                pin ISTYPE 'REG';    "output  sign flag
@@ -60,6 +66,15 @@ ZeroFlag                pin ISTYPE 'REG';    "output  zero flag
 
 EQUATIONS
 
+" set clocks and reset
+SignFlag.CLK = Clock;
+SignFlag.CLR = !Reset;
+OverflowFlag.CLK = Clock;
+OverflowFlag.CLR = !Reset;
+CarryFlag.CLK = Clock;
+CarryFlag.CLR = !Reset;
+ZeroFlag.CLK = Clock;
+ZeroFlag.CLR = !Reset;
 
 " compute sign and zero flags
 " these are affected by all operations, so no need to enable

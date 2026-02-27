@@ -90,6 +90,7 @@ Accumulator INTERFACE  (Data7..Data0,
                         LSR, ASR, ROR, RRC, " shifts/rotations to the right
                         LSL, ROL, RLC, " shifts/rotations to the left
 
+                        Clock, Reset
                         -> Accum7..Accum0, MuxOut7..MuxOut0, CarryOutMSB, CarryInMSB, ShiftRotateCarryOut);
 
 StatusRegister INTERFACE   (Accum7..Accum0,
@@ -97,7 +98,8 @@ StatusRegister INTERFACE   (Accum7..Accum0,
                             ShiftRotateCarryOut,
 
                             Subtract,
-                            ArithmeticOperation, FunctionOperation, ShiftRotateOperation
+                            ArithmeticOperation, FunctionOperation, ShiftRotateOperation,
+                            Clock, Reset
                             -> SignFlag, OverflowFlag, CarryFlag, ZeroFlag);
 
 " create instances of the accumulator and status register
@@ -134,6 +136,9 @@ AccumulatorUnit.LSL = LSL;
 AccumulatorUnit.ROL = ROL;
 AccumulatorUnit.RLC = RLC;
 
+AccumulatorUnit.Clock = Clock;
+AccumulatorUnit.Reset = Reset;
+
 " this is the set of all Op3..Op0 values we care about
 OpAND = [1, 0, 0, 0];
 OpOR = [1, 1, 1, 0];
@@ -166,6 +171,9 @@ StatusRegisterUnit.Subtract = Subtract;
 StatusRegisterUnit.ArithmeticOperation = ArithmeticOperation;
 StatusRegisterUnit.FunctionOperation = FunctionOperation;
 StatusRegisterUnit.ShiftRotateOperation = ShiftRotateOperation;
+
+StatusRegisterUnit.Clock = Clock;
+StatusRegisterUnit.Reset = Reset;
 
 " StatusRegister outputs
 [Flags7..Flags4] := 0;

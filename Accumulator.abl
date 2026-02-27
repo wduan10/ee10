@@ -10,6 +10,7 @@ INTERFACE  (Data7..Data0,
             LSR, ASR, ROR, RRC, " shifts/rotations to the right
             LSL, ROL, RLC, " shifts/rotations to the left
 
+            Clock, Reset
             -> Accum7..Accum0, MuxOut7..MuxOut0, CarryOutMSB, CarryInMSB, ShiftRotateCarryOut);
 
 TITLE       'Accumulator For Accumulator Operations'
@@ -63,7 +64,10 @@ TITLE       'Accumulator For Accumulator Operations'
 "                                   pass B/invert B, etc.) as defined by equations
 "
 "               Shift/Rotate control inputs (one-hot):
-"                 LSR, ASR, ROR, RRC, LSL, ROL, RLC
+"                 LSR, ASR, ROR, RRC, LSL, ROL, RLC,
+"
+"               Clock,            - system clock
+"               Reset             - system reset
 "
 " Outputs:      Accum[7..0]       - current accumulator register contents (also
 "                                   the computed result when updated)
@@ -90,6 +94,9 @@ Op3..Op0                pin;    "input  F-block function select
 
 LSR, ASR, ROR, RRC pin;         "input  shift/rotate right controls
 LSL, ROL, RLC      pin;         "input  shift/rotate left controls
+
+Reset	pin;	"input  system reset
+Clock   pin;	"input  system clock
 
 " Outputs
 Accum7..Accum0          pin ISTYPE 'REG';   "output  accumulator register output
@@ -122,6 +129,9 @@ MuxOut = [MuxOut7..MuxOut0];
 
 EQUATIONS
 
+" set clock and reset
+Accum.CLK = Clock;
+Accum.CLR = !Reset;
 
 " calculate intermediate nodes that clarify what type of operation we are performing
 ArithmeticOperation = ADC # ADD # CMP # DEC # INC # SBB # SUB;
