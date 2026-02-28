@@ -115,6 +115,7 @@ Accumulator INTERFACE  (Data7..Data0,
                         -> Accum7..Accum0, MuxOut7..MuxOut0, CarryOutMSB, CarryInMSB, ShiftRotateCarryOut);
 
 StatusRegister INTERFACE   (MuxOut7..MuxOut0,
+                            DataIn7..DataIn0,
                             CarryOutMSB, CarryInMSB,
                             ShiftRotateCarryOut,
 
