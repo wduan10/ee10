@@ -122,7 +122,7 @@ StatusRegister INTERFACE   (MuxOut7..MuxOut0,
                             Subtract,
                             ArithmeticOperation, FunctionOperation, ShiftRotateOperation,
                             Clock, Reset, Hold, Pop
-                            -> Flags7..Flags4, SignFlag, OverflowFlag, CarryFlag, ZeroFlag);
+                            -> Flags7..Flags0);
 
 " create instances of the accumulator and status register
 AccumulatorUnit     FUNCTIONAL_BLOCK    Accumulator;
