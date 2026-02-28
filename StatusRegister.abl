@@ -99,6 +99,8 @@ CarryFlag = ((CarryOutMSB $ Subtract) & ArithmeticOperation) #
              (ShiftRotateCarryOut & ShiftRotateOperation) #
              (Flags3 & (FunctionOperation # Hold));
 
+" overflow occurs on left shifts if the MSB differs from the previous MSB
+" current MSB is MuxOut7, previous MSB was ShiftRotateCarryOut
 ShiftRotateOverflow = (LSL # RLC) & (MuxOut7 $ ShiftRotateCarryOut);
 OverflowFlag = ((CarryOutMSB $ CarryInMSB) & ArithmeticOperation) #
                 (ShiftRotateOverflow & ShiftRotateOperation) #

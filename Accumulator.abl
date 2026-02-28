@@ -199,6 +199,11 @@ ShiftedOutput0 = (Accum1 & ShiftDirection) # " for shifts/rotates right, it is D
                  (!CarryFlagIn & RLC) # " for rotating left through carry
                  (0 & LSL); " for logical shift left
 
+" Shifted-out bit for flags
+ShiftRotateCarryOut =
+    (Accum0 & ShiftDirection) #     "for right ops, shift out LSB
+    (Accum7 & !ShiftDirection);     "for left ops, shift out MSB
+
 " 2:1 mux to select either Adder output or Shift/Rotate output
 MuxOut = (AdderOut & !ShiftRotateOperation) #
          (ShiftedOutput & ShiftRotateOperation);
@@ -206,11 +211,6 @@ MuxOut = (AdderOut & !ShiftRotateOperation) #
 " we keep the value of accum if we are comparing or holding
 Accum := (((Accum & (Comparison # Hold)) # (MuxOut & !(Comparison # Hold))) & !Load) #
          (Data & Load); " if we load, then directly set accum
-
-" Shifted-out bit for flags
-ShiftRotateCarryOut =
-    (Accum0 & ShiftDirection) #     "for right ops, shift out LSB
-    (Accum7 & !ShiftDirection);     "for left ops, shift out MSB
 
 CarryInMSB = Carry7;
 CarryOutMSB = Carry8;
