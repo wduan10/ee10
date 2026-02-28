@@ -13,7 +13,7 @@ INTERFACE  (Data7..Data0,
             " Logical function control inputs
             Op3..Op0,
 
-            Reset, Clock
+            Reset, Clock, Load, Pop
             -> Accum7..Accum0, Flags7..Flags0);
 
 TITLE       'ALU to Perform Logic and Arithmetic'
@@ -44,6 +44,8 @@ TITLE       'ALU to Perform Logic and Arithmetic'
 "
 "               Reset                               - system reset
 "               Clock                               - system clock
+"               Load                                - control input to load
+"               Pop                                 - control input to pop
 "
 " Outputs:      Accum[7..0]  - 8-bit accumulator output
 "               Flags[7..0]  - 8-bit status flags output
@@ -70,7 +72,8 @@ Op3..Op0 pin; " input  control input prescribing F-block function
 
 Reset	pin;	"input  system reset
 Clock   pin;	"input  system clock
-
+Load    pin;    "input  load control input
+Pop     pin;    "input  pop control input
 
 " Outputs
 
@@ -108,7 +111,7 @@ Accumulator INTERFACE  (Data7..Data0,
                         " Logical function control inputs
                         Op3..Op0,
 
-                        Clock, Reset, Hold
+                        Clock, Reset, Hold, Load
                         -> Accum7..Accum0, MuxOut7..MuxOut0, CarryOutMSB, CarryInMSB, ShiftRotateCarryOut);
 
 StatusRegister INTERFACE   (MuxOut7..MuxOut0,
@@ -153,6 +156,7 @@ AccumulatorUnit.[Op3..Op0] = [Op3..Op0];
 AccumulatorUnit.Clock = Clock;
 AccumulatorUnit.Reset = Reset;
 AccumulatorUnit.Hold = Hold;
+AccumulatorUnit.Load = Load;
 
 " Accumulator outputs
 [Accum7..Accum0] = AccumulatorUnit.[Accum7..Accum0];
@@ -169,13 +173,15 @@ StatusRegisterUnit.ShiftRotateOperation = ShiftRotateOperation;
 
 StatusRegisterUnit.Clock = Clock;
 StatusRegisterUnit.Reset = Reset;
-StatusRegisterUnit.Hold = Hold;
+StatusRegisterUnit.Hold = (Hold # Load);
 
 " StatusRegister outputs
 [Flags7..Flags4] = 0;
-Flags3 = StatusRegisterUnit.SignFlag;
-Flags2 = StatusRegisterUnit.OverflowFlag;
-Flags1 = StatusRegisterUnit.CarryFlag;
-Flags0 = StatusRegisterUnit.ZeroFlag;
+Flags3 = !StatusRegisterUnit.CarryFlag;
+Flags2 = !StatusRegisterUnit.OverflowFlag;
+Flags1 = !StatusRegisterUnit.SignFlag;
+Flags0 = !StatusRegisterUnit.ZeroFlag;
+
+Flags = (Flags & !Pop ) # (Accum & Pop)
 
 END ALU

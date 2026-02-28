@@ -97,7 +97,7 @@ ALU INTERFACE  (Data7..Data0,
                 " Logical function control inputs
                 Op3..Op0,
 
-                Reset, Clock
+                Reset, Clock, Load, Pop
                 -> Accum7..Accum0, Flags7..Flags0);
 
 
@@ -136,6 +136,8 @@ ALUnit.RRC = Control13;
 ALUnit.LSL = Control14;
 ALUnit.ROL = Control15;
 ALUnit.RLC = Control16;
+ALUnit.Load = Control17;
+ALUnit.Pop = Control18;
 
 ALUnit.Reset  =  Reset;
 ALUnit.Clock  =  Clock;

@@ -15,7 +15,7 @@ INTERFACE  (Data7..Data0,
             " Logical function control inputs
             Op3..Op0,
 
-            Clock, Reset, Hold
+            Clock, Reset, Hold, Load
             -> Accum7..Accum0, MuxOut7..MuxOut0, CarryOutMSB, CarryInMSB, ShiftRotateCarryOut);
 
 TITLE       'Accumulator For Accumulator Operations'
@@ -75,6 +75,7 @@ TITLE       'Accumulator For Accumulator Operations'
 "               Clock,            - system clock
 "               Reset             - system reset
 "               Hold              - active high when we should hold
+"               Load              - control input for load
 "
 " Outputs:      Accum[7..0]       - current accumulator register contents (also
 "                                   the computed result when updated)
@@ -108,6 +109,7 @@ Op3..Op0 pin; " input  control input prescribing F-block function
 Reset	pin;	"input  system reset
 Clock   pin;	"input  system clock
 Hold    pin;    "input  if we should hold
+Load    pin;    "input  control input for load
 
 " Outputs
 Accum7..Accum0          pin ISTYPE 'REG';   "output  accumulator register output
@@ -207,7 +209,8 @@ MuxOut = (AdderOut & !ShiftRotateOperation) #
          (ShiftedOutput & ShiftRotateOperation);
 
 " we keep the value of accum if we are comparing or holding
-Accum := (Accum & (Comparison # Hold)) # (MuxOut & !(Comparison # Hold));
+Accum := ((Accum & (Comparison # Hold)) # (MuxOut & !(Comparison # Hold)) & !Load) #
+         (Data & Load); " if we load, then directly set accum
 
 CarryInMSB = Carry7;
 CarryOutMSB = Carry8;
