@@ -71,7 +71,7 @@ CarryFlag               node;    "output  carry/borrow or shift carry
 ZeroFlag                node;    "output  zero flag
 
 " Buses
-Flags = [Flags7..Flags4];
+Flags = [Flags7..Flags0];
 DataIn = [DataIn7..DataIn0];
 
 
