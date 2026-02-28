@@ -100,6 +100,8 @@ OverflowFlag = ((CarryOutMSB $ CarryInMSB) & ArithmeticOperation) #
                 (0 & ShiftRotateOperation) #
                 (OverflowFlag & (FunctionOperation # Hold));
 
-Flags := (DataIn & Pop) # ([0, 0, 0, 0, CarryFlag, OverflowFlag, SignFlag, ZeroFlag] & !Pop);
+Flags := (DataIn & Pop) #
+         ([0, 0, 0, 0, CarryFlag, OverflowFlag, SignFlag, ZeroFlag] & (!Pop & !Hold)) #
+         (Flags & (!Pop & Hold));
 
 End         StatusRegister
