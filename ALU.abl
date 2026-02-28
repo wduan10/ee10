@@ -175,7 +175,7 @@ StatusRegisterUnit.ShiftRotateOperation = ShiftRotateOperation;
 
 StatusRegisterUnit.Clock = Clock;
 StatusRegisterUnit.Reset = Reset;
-StatusRegisterUnit.Hold = (Hold # Load);
+StatusRegisterUnit.Hold = Load;
 StatusRegisterUnit.Pop = Pop;
 
 " StatusRegister outputs
