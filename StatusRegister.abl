@@ -59,6 +59,7 @@ ShiftRotateOperation    pin;    "input  if op is shift/rotate
 Reset	pin;	"input  system reset
 Clock   pin;	"input  system clock
 Hold    pin;    "input  if we should hold
+Pop     pin;    "input  control input for pop
 
 " Outputs
 Flags7..Flags0          pin ISTYPE 'REG';    "output  flags
