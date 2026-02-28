@@ -209,7 +209,7 @@ MuxOut = (AdderOut & !ShiftRotateOperation) #
          (ShiftedOutput & ShiftRotateOperation);
 
 " we keep the value of accum if we are comparing or holding
-Accum := ((Accum & (Comparison # Hold)) # (MuxOut & !(Comparison # Hold)) & !Load) #
+Accum := (((Accum & (Comparison # Hold)) # (MuxOut & !(Comparison # Hold))) & !Load) #
          (Data & Load); " if we load, then directly set accum
 
 CarryInMSB = Carry7;
