@@ -3,6 +3,7 @@ INTERFACE  (MuxOut7..MuxOut0,
             DataIn7..DataIn0,
             CarryOutMSB, CarryInMSB,
             ShiftRotateCarryOut,
+            LSL, RLC,
 
             Subtract,
             ArithmeticOperation, FunctionOperation, ShiftRotateOperation,
@@ -23,6 +24,7 @@ TITLE       'StatusRegister for Flag Updates'
 "               CarryOutMSB              - carry out of the MSB from the adder
 "               CarryInMSB               - carry into the MSB from the adder
 "               ShiftRotateCarryOut      - bit shifted out during shift/rotate
+"               LSL, RLC                 - if op is LSL or RLC
 "
 "               Subtract                 - active high when operation is subtraction-type
 "               ArithmeticOperation      - active high when current op is arithmeti
@@ -65,10 +67,11 @@ Pop     pin;    "input  control input for pop
 Flags7..Flags0          pin ISTYPE 'REG';    "output  flags
 
 " Intermediate nodes
-SignFlag                node;    "output  sign flag
-OverflowFlag            node;    "output  overflow flag for signed arithmetic
-CarryFlag               node;    "output  carry/borrow or shift carry
-ZeroFlag                node;    "output  zero flag
+SignFlag                node;    "sign flag
+OverflowFlag            node;    "overflow flag for signed arithmetic
+CarryFlag               node;    "carry/borrow or shift carry
+ZeroFlag                node;    "zero flag
+ShiftRotateOverflow     node;    "stores if shift rotate op caused overflow
 
 " Buses
 Flags = [Flags7..Flags0];
@@ -94,10 +97,10 @@ CarryFlag = ((CarryOutMSB $ Subtract) & ArithmeticOperation) #
              (ShiftRotateCarryOut & ShiftRotateOperation) #
              (CarryFlag & (FunctionOperation # Hold));
 
-" ShiftRotateOverflow = LSL & (MuxOut7 $ ShiftRotateCarryOut);
+ShiftRotateOverflow = (LSL # RLC) & (MuxOut7 $ ShiftRotateCarryOut);
 " ask TA about overflow for left shifts
 OverflowFlag = ((CarryOutMSB $ CarryInMSB) & ArithmeticOperation) #
-                (0 & ShiftRotateOperation) #
+                (ShiftRotateOverflow & ShiftRotateOperation) #
                 (OverflowFlag & (FunctionOperation # Hold));
 
 Flags := (DataIn & Pop) #
