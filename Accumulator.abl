@@ -145,7 +145,7 @@ EQUATIONS
 
 " set clock and reset
 Accum.CLK = Clock;
-Accum.CLR = !Reset;
+Accum.CLR = Reset;
 
 " calculate intermediate nodes that clarify what type of operation we are performing
 ShiftRotateOperation = LSR # ASR # ROR # RRC # LSL # ROL # RLC;

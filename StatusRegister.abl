@@ -79,7 +79,7 @@ EQUATIONS
 
 " set clocks and reset
 Flags.CLK = Clock;
-Flags.CLR = !Reset;
+Flags.CLR = Reset;
 
 " compute sign and zero flags
 " these are affected by all operations except hold
