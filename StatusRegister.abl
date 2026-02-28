@@ -58,6 +58,8 @@ ArithmeticOperation     pin;    "input  if op is arithmetic
 FunctionOperation       pin;    "input  if op is logic/function
 ShiftRotateOperation    pin;    "input  if op is shift/rotate
 
+LSL, RLC                pin;    "input  if op is LSL, RLC
+
 Reset	pin;	"input  system reset
 Clock   pin;	"input  system clock
 Hold    pin;    "input  if we should hold
