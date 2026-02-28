@@ -120,8 +120,8 @@ StatusRegister INTERFACE   (MuxOut7..MuxOut0,
 
                             Subtract,
                             ArithmeticOperation, FunctionOperation, ShiftRotateOperation,
-                            Clock, Reset, Hold
-                            -> SignFlag, OverflowFlag, CarryFlag, ZeroFlag);
+                            Clock, Reset, Hold, Pop
+                            -> Flags7..Flags4, SignFlag, OverflowFlag, CarryFlag, ZeroFlag);
 
 " create instances of the accumulator and status register
 AccumulatorUnit     FUNCTIONAL_BLOCK    Accumulator;
@@ -163,6 +163,7 @@ AccumulatorUnit.Load = Load;
 
 " StatusRegister inputs (many are outputs of the accumulator)
 StatusRegisterUnit.[MuxOut7..MuxOut0] = AccumulatorUnit.[MuxOut7..MuxOut0];
+StatusRegisterUnit.[DataIn7..DataIn0] = [Accum7..Accum0];
 StatusRegisterUnit.CarryInMSB = AccumulatorUnit.CarryInMSB;
 StatusRegisterUnit.CarryOutMSB = AccumulatorUnit.CarryOutMSB;
 StatusRegisterUnit.ShiftRotateCarryOut = AccumulatorUnit.ShiftRotateCarryOut;
@@ -174,14 +175,9 @@ StatusRegisterUnit.ShiftRotateOperation = ShiftRotateOperation;
 StatusRegisterUnit.Clock = Clock;
 StatusRegisterUnit.Reset = Reset;
 StatusRegisterUnit.Hold = (Hold # Load);
+StatusRegisterUnit.Pop = Pop;
 
 " StatusRegister outputs
-[Flags7..Flags4] = 0;
-Flags3 = !StatusRegisterUnit.CarryFlag;
-Flags2 = !StatusRegisterUnit.OverflowFlag;
-Flags1 = !StatusRegisterUnit.SignFlag;
-Flags0 = !StatusRegisterUnit.ZeroFlag;
-
-Flags = (Flags & !Pop ) # (Accum & Pop);
+[Flags7..Flags0] = !StatusRegisterUnit.[Flags7..Flags0];
 
 END ALU

@@ -1,12 +1,13 @@
 Module      StatusRegister
 INTERFACE  (MuxOut7..MuxOut0,
+            DataIn7..DataIn0,
             CarryOutMSB, CarryInMSB,
             ShiftRotateCarryOut,
 
             Subtract,
             ArithmeticOperation, FunctionOperation, ShiftRotateOperation,
-            Clock, Reset, Hold
-            -> SignFlag, OverflowFlag, CarryFlag, ZeroFlag);
+            Clock, Reset, Hold, Pop
+            -> Flags7..Flags0);
 
 TITLE       'StatusRegister for Flag Updates'
 
@@ -18,6 +19,7 @@ TITLE       'StatusRegister for Flag Updates'
 "               only by Arithmetic operations or Shift/Rotate operations, so the equations
 "               reflect this (via a mux).
 " Inputs:       MuxOut[7..0]             - 8-bit mux output from accumulator block
+"               DataIn[7..0]             - 8-bit input for popping
 "               CarryOutMSB              - carry out of the MSB from the adder
 "               CarryInMSB               - carry into the MSB from the adder
 "               ShiftRotateCarryOut      - bit shifted out during shift/rotate
@@ -29,11 +31,9 @@ TITLE       'StatusRegister for Flag Updates'
 "               Clock                    - system clock
 "               Reset                    - system reset
 "               Hold                     - active high when we should hold
+"               Pop                      - control input for pop
 "
-" Outputs:      SignFlag                 - sign flag
-"               OverflowFlag             - overflow flag for signed arithmetic
-"               CarryFlag                - carry/borrow flag or shift carry
-"               ZeroFlag                 - zero flag
+" Outputs:      Flags7..Flags0           - output flags
 
 
 " Revision History:
@@ -46,6 +46,7 @@ TITLE       'StatusRegister for Flag Updates'
 
 " Inputs
 MuxOut7..MuxOut0        pin;  "input  8-bit mux output from accumulator block
+DataIn7..DataIn0        pin;  "input  8-bit data to pop onto flags
 CarryOutMSB             pin;    "input  carry out of MSB from adder
 CarryInMSB              pin;    "input  carry into MSB from adder
 ShiftRotateCarryOut     pin;    "input  bit shifted out during shift/rotate
@@ -60,41 +61,44 @@ Clock   pin;	"input  system clock
 Hold    pin;    "input  if we should hold
 
 " Outputs
-SignFlag                pin ISTYPE 'REG';    "output  sign flag
-OverflowFlag            pin ISTYPE 'REG';    "output  overflow flag for signed arithmetic
-CarryFlag               pin ISTYPE 'REG';    "output  carry/borrow or shift carry
-ZeroFlag                pin ISTYPE 'REG';    "output  zero flag
+Flags7..Flags0          pin ISTYPE 'REG';    "output  flags
+
+" Intermediate nodes
+SignFlag                node;    "output  sign flag
+OverflowFlag            node;    "output  overflow flag for signed arithmetic
+CarryFlag               node;    "output  carry/borrow or shift carry
+ZeroFlag                node;    "output  zero flag
+
+" Buses
+Flags = [Flags7..Flags4];
+DataIn = [DataIn7..DataIn0];
 
 
 EQUATIONS
 
 " set clocks and reset
-SignFlag.CLK = Clock;
-SignFlag.CLR = !Reset;
-OverflowFlag.CLK = Clock;
-OverflowFlag.CLR = !Reset;
-CarryFlag.CLK = Clock;
-CarryFlag.CLR = !Reset;
-ZeroFlag.CLK = Clock;
-ZeroFlag.CLR = !Reset;
+Flags.CLK = Clock;
+Flags.CLR = !Reset;
 
 " compute sign and zero flags
 " these are affected by all operations except hold
-SignFlag := (MuxOut7 & !Hold) # (SignFlag & Hold);
-ZeroFlag := (!(MuxOut7 # MuxOut6 # MuxOut5 # MuxOut4 #
+SignFlag = (MuxOut7 & !Hold) # (SignFlag & Hold);
+ZeroFlag = (!(MuxOut7 # MuxOut6 # MuxOut5 # MuxOut4 #
               MuxOut3 # MuxOut2 # MuxOut1 # MuxOut0) & !Hold) #
             (ZeroFlag & Hold);
 
 " compute carry and overflow flags
 " these are modified by arithmetic or shifts, but not functional operations
-CarryFlag := ((CarryOutMSB $ Subtract) & ArithmeticOperation) #
+CarryFlag = ((CarryOutMSB $ Subtract) & ArithmeticOperation) #
              (ShiftRotateCarryOut & ShiftRotateOperation) #
              (CarryFlag & (FunctionOperation # Hold));
 
 " ShiftRotateOverflow = LSL & (MuxOut7 $ ShiftRotateCarryOut);
 " ask TA about overflow for left shifts
-OverflowFlag := ((CarryOutMSB $ CarryInMSB) & ArithmeticOperation) #
+OverflowFlag = ((CarryOutMSB $ CarryInMSB) & ArithmeticOperation) #
                 (0 & ShiftRotateOperation) #
                 (OverflowFlag & (FunctionOperation # Hold));
+
+Flags := (DataIn & Pop) # ([1, 1, 1, 1, CarryFlag, OverflowFlag, SignFlag, ZeroFlag] & !Pop);
 
 End         StatusRegister
