@@ -118,6 +118,7 @@ StatusRegister INTERFACE   (MuxOut7..MuxOut0,
                             DataIn7..DataIn0,
                             CarryOutMSB, CarryInMSB,
                             ShiftRotateCarryOut,
+                            LSL, RLC,
 
                             Subtract,
                             ArithmeticOperation, FunctionOperation, ShiftRotateOperation,
@@ -172,6 +173,8 @@ StatusRegisterUnit.Subtract = Subtract;
 StatusRegisterUnit.ArithmeticOperation = ArithmeticOperation;
 StatusRegisterUnit.FunctionOperation = FunctionOperation;
 StatusRegisterUnit.ShiftRotateOperation = ShiftRotateOperation;
+StatusRegisterUnit.LSL = LSL;
+StatusRegisterUnit.RLC = RLC;
 
 StatusRegisterUnit.Clock = Clock;
 StatusRegisterUnit.Reset = Reset;
