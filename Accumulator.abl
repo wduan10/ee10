@@ -189,7 +189,7 @@ ShiftDirection = LSR # ASR # ROR # RRC;
 " find high bit of shifted output
 ShiftedOutput7 = (Accum7 & ASR) # " for arithmetic shift right
                  (0 & LSR) # " for logical shift right
-                 (Accum6 & !LSL) # " for left shift or left rotate
+                 (Accum6 & LSL) # " for left shift or left rotate
                  (Accum0 & ROR) # " for rotate right
                  (!CarryFlagIn & RRC); " for rotate right through carry
 
