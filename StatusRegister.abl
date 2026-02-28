@@ -97,13 +97,12 @@ ZeroFlag = (!(MuxOut7 # MuxOut6 # MuxOut5 # MuxOut4 #
 " these are modified by arithmetic or shifts, but not functional operations
 CarryFlag = ((CarryOutMSB $ Subtract) & ArithmeticOperation) #
              (ShiftRotateCarryOut & ShiftRotateOperation) #
-             (CarryFlag & (FunctionOperation # Hold));
+             (Flags3 & (FunctionOperation # Hold));
 
 ShiftRotateOverflow = (LSL # RLC) & (MuxOut7 $ ShiftRotateCarryOut);
-" ask TA about overflow for left shifts
 OverflowFlag = ((CarryOutMSB $ CarryInMSB) & ArithmeticOperation) #
                 (ShiftRotateOverflow & ShiftRotateOperation) #
-                (OverflowFlag & (FunctionOperation # Hold));
+                (Flags2 & (FunctionOperation # Hold));
 
 Flags := (DataIn & Pop) #
          ([0, 0, 0, 0, CarryFlag, OverflowFlag, SignFlag, ZeroFlag] & (!Pop & !Hold)) #
