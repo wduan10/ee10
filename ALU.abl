@@ -138,7 +138,7 @@ Hold = !ArithmeticOperation & !ShiftRotateOperation & !FunctionOperation;
 
 " Accumulator inputs
 AccumulatorUnit.[Data7..Data0] = [Data7..Data0];
-AccumulatorUnit.CarryFlagIn = Flags1;
+AccumulatorUnit.CarryFlagIn = Flags3;
 AccumulatorUnit.FunctionOperation = FunctionOperation;
 AccumulatorUnit.ArithmeticOperation = ArithmeticOperation;
 AccumulatorUnit.Subtract = Subtract;
