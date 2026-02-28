@@ -182,6 +182,6 @@ Flags2 = !StatusRegisterUnit.OverflowFlag;
 Flags1 = !StatusRegisterUnit.SignFlag;
 Flags0 = !StatusRegisterUnit.ZeroFlag;
 
-Flags = (Flags & !Pop ) # (Accum & Pop)
+Flags = (Flags & !Pop ) # (Accum & Pop);
 
 END ALU
