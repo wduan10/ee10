@@ -83,7 +83,9 @@ SReg       =  [SReg7..SReg0];			"8 bit S-Register
 " declare the unit to be tested
 
 DataAccess INTERFACE  (Accum7..Accum0, Offset7..Offset0,
-                       control signals,   " you must fill in 'control signals'
+                       AddrSrcOffset, AddrSrcAccum, AddrSrcXReg, AddrSrcSReg,
+                       Increment, Decrement, Pre,
+                       OffsetEn,
                        Reset, Clock
                        -> DataAddr7..DataAddr0, XReg7..XReg0, SReg7..SReg0);
 
@@ -108,6 +110,15 @@ DAUnit.[Offset7..Offset0]  =  [DataOff7..DataOff0];
 
 " connect each Data Memory Access Unit control signal or bus to a subset of
 "    Control29..Control0
+DAUnit.AddrSrcOffset = Control0;
+DAUnit.AddrSrcAccum = Control1;
+DAUnit.AddrSrcXReg = Control2;
+DAUnit.AddrSrcSReg = Control3;
+DAUnit.Increment = Control4;
+DAUnit.Decrement = Control5;
+DAUnit.Pre = Control6;
+DAUnit.OffsetEn = Control7;
+
 
 DAUnit.Reset  =  Reset;
 DAUnit.Clock  =  Clock;
