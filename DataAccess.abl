@@ -63,6 +63,7 @@ Carry8..Carry0              node; " carry bits to help with addition
 AddrIncDec7..AddrIncDec0    node; " address source data after incrementing/decrementing
 XLatchEn                    node; " latch to enable XReg
 SLatchEn                    node; " latch to enable SReg
+MuxOut7..MuxOut0            node; " mux output with pre as control signal
 
 
 " Buses
@@ -76,6 +77,7 @@ IncDecData =  [IncDecData7..IncDecData0]; "8 bits of increment or decrement data
 Carry      =  [Carry8..Carry0];         "carry bits to help with addition
 AddrIncDec =  [AddrIncDec7..AddrIncDec0]; " address source data after incrementing/decrementing
 DataAddr   =  [DataAddr7..DataAddr0];   "8 bits of data address output
+MuxOut     =  [MuxOut7..MuxOut0];       "8 bits of mux out (input to final adder)
 
 
 " Constants
@@ -111,12 +113,12 @@ Carry0 = 0;
 AddrIncDec = AddrSrc $ IncDecData $ [Carry7..Carry0];
 
 " set adder data to be either AddrSrc or AddrIncDec based on pre/post control signal
-DataAddr := (AddrSrc & Pre) #
-            (AddrIncDec & !Pre);
+MuxOut = (AddrSrc & Pre) #
+         (AddrIncDec & !Pre);
 
-" add offset to DataAddr
-[Carry8..Carry1] = (DataAddr & (Offset & OffsetEn)) # ([Carry7..Carry0] & (DataAddr $ (Offset & OffsetEn)));
-"DataAddr = DataAddr $ (Offset & OffsetEn) $ [Carry7..Carry0];
+" add offset to MuxOut
+[Carry8..Carry1] = (MuxOut & (Offset & OffsetEn)) # ([Carry7..Carry0] & (MuxOut $ (Offset & OffsetEn)));
+DataAddr := MuxOut $ (Offset & OffsetEn) $ [Carry7..Carry0];
 
 " update XReg and SReg, I am not doing extra credit so it won't work
 XLatchEn = (AddrSrcXReg & (Increment # Decrement));
