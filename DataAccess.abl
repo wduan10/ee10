@@ -97,6 +97,8 @@ AddrSrc = (Offset & AddrSrcOffset) #
           (XReg & AddrSrcXReg) #
           (SReg & AddrSrcSReg);
 
+DataAddr = AddrSrc;
+
 " implement mux for selecting increment, decrement, or neither
 IncDecData = (ONE & Increment) #
              (1 & Decrement) #
@@ -108,13 +110,12 @@ Carry0 = 0;
 AddrIncDec = AddrSrc $ IncDecData $ [Carry7..Carry0];
 
 " set adder data to be either AddrSrc or AddrIncDec based on pre/post control signal
-DataAddr = (AddrSrc & Pre) #
-           (AddrIncDec & !Pre);
+"DataAddr = (AddrSrc & Pre) #
+"           (AddrIncDec & !Pre);
 
 " add offset to DataAddr
-Carry0 = 0;
 [Carry8..Carry1] = (DataAddr & (Offset & OffsetEn)) # ([Carry7..Carry0] & (DataAddr $ (Offset & OffsetEn)));
-DataAddr = DataAddr $ (Offset & OffsetEn) $ [Carry7..Carry0];
+"DataAddr = DataAddr $ (Offset & OffsetEn) $ [Carry7..Carry0];
 
 " update XReg and SReg, I am not doing extra credit so it won't work
 XLatchEn = (AddrSrcXReg & (Increment # Decrement));
