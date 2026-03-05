@@ -50,7 +50,7 @@ Clock           	pin;	"input  system clock
 
 " Outputs
 
-DataAddr7..DataAddr0	pin ISTYPE 'REG';   "8 bits of data address output
+DataAddr7..DataAddr0	pin;   "8 bits of data address output
 XReg7..XReg0		    pin ISTYPE 'REG';	"8 bits of X register
 SReg7..SReg0		    pin ISTYPE 'REG';	"8 bits of S register
 
@@ -88,9 +88,6 @@ ONE = [0, 0, 0, 0, 0, 0, 0, 1];
 
 EQUATIONS
 
-" define clock and reset for DataAddr
-DataAddr.CLK = Clock;
-DataAddr.CLR = Reset;
 
 " define clock and reset for X, S registers
 XReg.CLK = Clock;
@@ -121,7 +118,7 @@ MuxOut = (AddrSrc & Pre) #
 " add offset to MuxOut
 CarryB0 = 0;
 [CarryB8..CarryB1] = (MuxOut & (Offset & OffsetEn)) # ([CarryB7..CarryB0] & (MuxOut $ (Offset & OffsetEn)));
-DataAddr := MuxOut $ (Offset & OffsetEn) $ [CarryB7..CarryB0];
+DataAddr = MuxOut $ (Offset & OffsetEn) $ [CarryB7..CarryB0];
 
 " update XReg and SReg, I am not doing extra credit so it won't work
 XLatchEn = (AddrSrcXReg & (Increment # Decrement));
