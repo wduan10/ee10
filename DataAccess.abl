@@ -1,0 +1,117 @@
+MODULE      DataAccess
+INTERFACE  (Accum7..Accum0, Offset7..Offset0,
+            AddrSrcOffset, AddrSrcAccum, AddrSrcXReg, AddrSrcSReg,
+            Increment, Decrement, Pre,
+            OffsetEn,
+            Reset, Clock
+            -> DataAddr7..DataAddr0, XReg7..XReg0, SReg7..SReg0);
+
+TITLE      'Data Address Unit'
+
+
+" Description:  Todo
+"
+" Inputs:       Accum[7..0]      - 8 bits of accumulator input
+"               DataOff[7..0]    - 8 bits of data or offset input
+"               
+"               AddrSrcOffset, AddrSrcAccum, AddrSrcXReg, AddrSrcSReg   - one hot encoded control signals
+"                                                                         to select address source
+"               Increment, Decrement    - one hot encoded control signals to increment or decrement registers
+"               Pre              - control signal, equals 1 for pre, equals 0 for post increment/decrement
+"               OffsetEn         - control signal to indicate if offset is enabled
+"               Reset            - system reset
+"               Clock            - system clock
+"
+" Outputs:      DataAddr[7..0]   - 8 bits of data address output
+"               XReg[7..0]       - 8 bits of X register output
+"               SReg[7..0]       - 8 bits of S register output
+
+
+" Revision History:
+" 02/06/18   Wilson Duan    Initial revision
+
+
+
+" Pin/Signal Declarations
+
+" Inputs
+
+Accum7..Accum0	    pin;	"input  8-bit accumulator input
+DataOff7..DataOff0	pin;	"input  8-bit data/offset input
+
+AddrSrcOffset, AddrSrcAccum, AddrSrcXReg, AddrSrcSReg   pin; "input  control signals for address source select
+Increment, Decrement    pin; "input  one hot encoded control signals to increment or decrement registers
+Pre                 pin;    "input  control signal for pre or post increment/decrement
+OffsetEn            pin;    "input  control signal to indicate if offset is enabled
+
+Reset			    pin;	"input  system reset
+Clock           	pin;	"input  system clock
+
+
+" Outputs
+
+DataAddr7..DataAddr0	pin;	            "8 bits of data address output
+XReg7..XReg0		    pin ISTYPE 'REG';	"8 bits of X register
+SReg7..SReg0		    pin ISTYPE 'REG";	"8 bits of S register
+
+
+" Intermediate nodes
+
+AddrSrc7..AddrSrc0          node; " address source data (output of address source mux)
+IncDecData7..IncDecData0    node; " increment/decrement data (output of increment and decrement mux)
+Carry8..Carry0              node; " carry bits to help with addition
+AddrIncDec7..AddrIncDec0    node; " address source data after incrementing/decrementing
+
+
+" Buses
+
+Accum      =  [Accum7..Accum0];         "8 bits of accumulator
+DataOff    =  [DataOff7..DataOff0];		"8 bits of data or offset
+XReg       =  [XReg7..XReg0];			"8 bit X-Register
+SReg       =  [SReg7..SReg0];			"8 bit S-Register
+AddrSrc    =  [AddrSrc7..AddrSrc0];     "8 bits of address source
+IncDecData =  [IncDecData7..IncDecData0]; "8 bits of increment or decrement data
+Carry      =  [Carry8..Carry0];         "carry bits to help with addition
+AddrIncDec =  [AddrIncDec7..AddrIncDec0]; " address source data after incrementing/decrementing
+
+
+" Constants
+ONE = [0, 0, 0, 0, 0, 0, 0, 1];
+
+
+EQUATIONS
+
+
+" define clock and reset for X, S registers
+XReg.CLK = Clock;
+XReg.CLR = !Reset;
+SReg.CLK = Clock;
+SReg.CLR = !Reset;
+
+" implement mux for address source
+AddrSrc = (Offset & AddrSrcOffset) #
+          (Accum & AddrSrcAccum) #
+          (XReg & AddrSrcXReg) #
+          (SReg & AddrSrcSReg);
+
+" implement mux for selecting increment, decrement, or neither
+IncDec = (ONE & Increment) #
+         (1 & Decrement) #
+         (0 & (!Increment & !Decrement));
+
+" add IncDec with AddrSrc to produce AddrIncDec
+Carry0 = 0;
+[Carry8..Carry1] = (AddrSrc & IncDec) # ([Carry7..Carry0] & (AddrSrc $ IncDec));
+AddrIncDec = AddrSrc $ IncDec $ [Carry7..Carry0];
+
+" set adder data to be either AddrSrc or AddrIncDec based on pre/post control signal
+AddrData = (AddrSrc & Pre) #
+           (AddrIncDec & !Pre);
+
+" add offset to AddrData
+Carry0 = 0;
+[Carry8..Carry1] = (AddrData & (Offset & OffsetEn)) # ([Carry7..Carry0] & (AddrData $ (Offset & OffsetEn)));
+AddrData = AddrData $ (Offset & OffsetEn) $ [Carry7..Carry0];
+
+
+END  DataAccess
