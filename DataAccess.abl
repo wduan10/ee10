@@ -61,6 +61,8 @@ AddrSrc7..AddrSrc0          node; " address source data (output of address sourc
 IncDecData7..IncDecData0    node; " increment/decrement data (output of increment and decrement mux)
 Carry8..Carry0              node; " carry bits to help with addition
 AddrIncDec7..AddrIncDec0    node; " address source data after incrementing/decrementing
+XLatchEn                    node; " latch to enable XReg
+SLatchEn                    node; " latch to enable SReg
 
 
 " Buses
@@ -115,7 +117,9 @@ Carry0 = 0;
 DataAddr = DataAddr $ (Offset & OffsetEn) $ [Carry7..Carry0];
 
 " update XReg and SReg, I am not doing extra credit so it won't work
-XReg := XReg;
-SReg := SReg;
+XLatchEn = (AddrSrcXReg & (Increment # Decrement));
+SLatchEn = (AddrSrcSReg & (Increment # Decrement));
+XReg := (XReg & !XLatchEn) # (AddrIncDec & XLatchEn);
+SReg := (SReg & !SLatchEn) # (AddrIncDec & SLatchEn);
 
 END  DataAccess
