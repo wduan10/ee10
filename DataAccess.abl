@@ -29,7 +29,7 @@ TITLE      'Data Address Unit'
 
 " Revision History:
 " 02/06/18   Wilson Duan    Initial revision
-
+" 02/06/18   Wilson Duan    Fix bug by adding second carry bus
 
 
 " Pin/Signal Declarations

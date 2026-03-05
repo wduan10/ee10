@@ -23,7 +23,7 @@ TITLE      'Data Address Unit Unit Demo'
 
 " Revision History:
 " 02/06/18   Wilson Duan    Copy template from website
-
+" 02/06/18   Wilson Duan    Add appropriate control signals
 
 
 " Pin/Signal Declarations
