@@ -84,6 +84,9 @@ ONE = [0, 0, 0, 0, 0, 0, 0, 1];
 
 EQUATIONS
 
+" define clock and reset for DataAddr
+DataAddr.CLK = Clock;
+DataAddr.CLR = Reset;
 
 " define clock and reset for X, S registers
 XReg.CLK = Clock;
