@@ -12,7 +12,7 @@ TITLE      'Data Address Unit'
 " Description:  Todo
 "
 " Inputs:       Accum[7..0]      - 8 bits of accumulator input
-"               DataOff[7..0]    - 8 bits of data or offset input
+"               Offset[7..0]    - 8 bits of data or offset input
 "               
 "               AddrSrcOffset, AddrSrcAccum, AddrSrcXReg, AddrSrcSReg   - one hot encoded control signals
 "                                                                         to select address source
@@ -37,7 +37,7 @@ TITLE      'Data Address Unit'
 " Inputs
 
 Accum7..Accum0	    pin;	"input  8-bit accumulator input
-DataOff7..DataOff0	pin;	"input  8-bit data/offset input
+Offset7..Offset0	pin;	"input  8-bit data/offset input
 
 AddrSrcOffset, AddrSrcAccum, AddrSrcXReg, AddrSrcSReg   pin; "input  control signals for address source select
 Increment, Decrement    pin; "input  one hot encoded control signals to increment or decrement registers
@@ -52,7 +52,7 @@ Clock           	pin;	"input  system clock
 
 DataAddr7..DataAddr0	pin;	            "8 bits of data address output
 XReg7..XReg0		    pin ISTYPE 'REG';	"8 bits of X register
-SReg7..SReg0		    pin ISTYPE 'REG";	"8 bits of S register
+SReg7..SReg0		    pin ISTYPE 'REG';	"8 bits of S register
 
 
 " Intermediate nodes
@@ -66,7 +66,7 @@ AddrIncDec7..AddrIncDec0    node; " address source data after incrementing/decre
 " Buses
 
 Accum      =  [Accum7..Accum0];         "8 bits of accumulator
-DataOff    =  [DataOff7..DataOff0];		"8 bits of data or offset
+Offset     =  [Offset7..Offset0];		"8 bits of data or offset
 XReg       =  [XReg7..XReg0];			"8 bit X-Register
 SReg       =  [SReg7..SReg0];			"8 bit S-Register
 AddrSrc    =  [AddrSrc7..AddrSrc0];     "8 bits of address source
