@@ -112,8 +112,8 @@ Carry0 = 0;
 AddrIncDec = AddrSrc $ IncDecData $ [Carry7..Carry0];
 
 " set adder data to be either AddrSrc or AddrIncDec based on pre/post control signal
-MuxOut = (AddrSrc & Pre) #
-         (AddrIncDec & !Pre);
+MuxOut = (AddrSrc & !Pre) #
+         (AddrIncDec & Pre);
 
 " add offset to MuxOut
 CarryB0 = 0;
