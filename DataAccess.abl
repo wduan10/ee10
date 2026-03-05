@@ -95,14 +95,14 @@ AddrSrc = (Offset & AddrSrcOffset) #
           (SReg & AddrSrcSReg);
 
 " implement mux for selecting increment, decrement, or neither
-IncDec = (ONE & Increment) #
-         (1 & Decrement) #
-         (0 & (!Increment & !Decrement));
+IncDecData = (ONE & Increment) #
+             (1 & Decrement) #
+             (0 & (!Increment & !Decrement));
 
-" add IncDec with AddrSrc to produce AddrIncDec
+" add IncDecData with AddrSrc to produce AddrIncDec
 Carry0 = 0;
-[Carry8..Carry1] = (AddrSrc & IncDec) # ([Carry7..Carry0] & (AddrSrc $ IncDec));
-AddrIncDec = AddrSrc $ IncDec $ [Carry7..Carry0];
+[Carry8..Carry1] = (AddrSrc & IncDecData) # ([Carry7..Carry0] & (AddrSrc $ IncDecData));
+AddrIncDec = AddrSrc $ IncDecData $ [Carry7..Carry0];
 
 " set adder data to be either AddrSrc or AddrIncDec based on pre/post control signal
 AddrData = (AddrSrc & Pre) #
