@@ -36,7 +36,7 @@ TITLE      'Data Address Unit'
 
 " Inputs
 
-Accum7..Accum0	    pin;	"input  8-bit accumulator input
+Accum7..Accum0	    pin ISTYPE 'REG';	"input  8-bit accumulator input
 Offset7..Offset0	pin;	"input  8-bit data/offset input
 
 AddrSrcOffset, AddrSrcAccum, AddrSrcXReg, AddrSrcSReg   pin; "input  control signals for address source select
