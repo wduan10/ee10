@@ -25,8 +25,8 @@ TITLE      'Caltech10 CPU'
 
 
 " Revision History:
-" 02/15/18   Glen George  Initial Revision
-" 01/05/21   Glen George  Updated comments
+" 03/11/26   Wilson Duan  Copy template from website
+" 03/11/26   Wilson Duan  Initial revision
 
 
 
@@ -66,11 +66,39 @@ SReg7..SReg0		pin;	"the 8-bit S register
 
 
 " declare the used modules
+ProgramAccess   INTERFACE  (Offset7..Offset0, Direct12..Direct0,
+                            AbsoluteAddr, RelativeAddr, StackLower, StackUpper, Step,
+                            Reset, Clock
+                            -> ProgAddr12..ProgAddr0, PC12..PC0);
 
+DataAccess      INTERFACE  (Accum7..Accum0, Offset7..Offset0,
+                            AddrSrcOffset, AddrSrcAccum, AddrSrcXReg, AddrSrcSReg,
+                            Increment, Decrement, Pre,
+                            OffsetEn,
+                            Reset, Clock
+                            -> DataAddr7..DataAddr0, XReg7..XReg0, SReg7..SReg0);
+
+ALU             INTERFACE  (Data7..Data0,
+                            " Type of operation
+                            FunctionOperation, ArithmeticOperation,
+
+                            " Arithmetic control inputs
+                            Subtract, WithCarry, Comparison, IncDec,
+
+                            " Shift control inputs
+                            LSR, ASR, ROR, RRC, " shifts/rotations to the right
+                            LSL, ROL, RLC, " shifts/rotations to the left
+
+                            " Logical function control inputs
+                            Op3..Op0,
+
+                            Reset, Clock, Load, Pop
+                            -> Accum7..Accum0, Flags7..Flags0);
 
 " create instances of the modules
-
-
+PAUnit    FUNCTIONAL_BLOCK  ProgramAccess;
+DAUnit    FUNCTIONAL_BLOCK  DataAccess;
+ALUnit    FUNCTIONAL_BLOCK  ALU;
 
 " Busses
 
