@@ -2,7 +2,7 @@ MODULE      CPU
 TITLE      'Caltech10 CPU'
 
 
-" Description:  This is a template file for implementing the Caltech10 CPU.
+" Description:  This is a file for implementing the Caltech10 CPU.
 "               It is the top-level module which will instantiate and connect
 "               all other modules.
 "

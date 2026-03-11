@@ -106,8 +106,9 @@ EQUATIONS
 
 " clock for the program counter output
 ProgAddr.CLK = Clock;
+ProgAddr.CLR = !Reset;
 
-Hold = !(AbsoluteAddr # RelativeAddr # StackLower # StackUpper # Step # !Reset);
+Hold = !(AbsoluteAddr # RelativeAddr # StackLower # StackUpper # Step);
 
 " relative occurs when stepping or when using RelativeAddr control path
 relative = RelativeAddr # Step # Hold;
@@ -115,11 +116,11 @@ MuxOut = (Direct & AbsoluteAddr) #
          " sign extend the offset to preserve its sign during addition and reach 13 bits
          ([Offset7, Offset7, Offset7, Offset7, Offset7, Offset7..Offset0] & RelativeAddr) #
          " pad the offset with zeros as appropriate for stack variables to reach 13 bits
-         ([0, 0, 0, 0, 0, Offset7..Offset0] & StackLower) #
+         ([ProgAddr12..ProgAddr8, Offset7..Offset0] & StackLower) #
          " when setting the upper bits, we assume the lower bits have already been set correctly
          ([Offset4..Offset0, ProgAddr7..ProgAddr0] & StackUpper) #
          (ONE & Step) #
-         (0 & (!Reset # Hold));
+         (0 & Hold);
 
 " since the equations are calculated simultaneously, we put both CarryIn and CarryOut
 " into the same Carry array and calculate both together
@@ -129,6 +130,5 @@ PCNode = (ProgAddr & relative) $ MuxOut $ [Carry12..Carry0];
 
 PC = PCNode;
 ProgAddr := PCNode;
-ProgAddr.CLR = !Reset;
 
 END  ProgramAccess
