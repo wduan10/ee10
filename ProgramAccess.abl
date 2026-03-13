@@ -69,8 +69,8 @@ Clock           	pin;	    "input  system clock
 
 " Outputs
 
-ProgAddr12..ProgAddr0   pin ISTYPE 'REG';                "output  13 bits of program address bus
-PC12..PC0               pin ISTYPE 'COM';   "output  13 bits of program counter
+ProgAddr12..ProgAddr0   pin ISTYPE 'COM';                "output  13 bits of program address bus
+PC12..PC0               pin ISTYPE 'REG';   "output  13 bits of program counter
 
 
 " Intermediate Terms
@@ -105,8 +105,8 @@ ONE   =  [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ];    " 13-bit value of 1
 EQUATIONS
 
 " clock for the program counter output
-ProgAddr.CLK = Clock;
-ProgAddr.CLR = Reset;
+PC.CLK = Clock;
+PC.CLR = Reset;
 
 Hold = !(AbsoluteAddr # RelativeAddr # StackLower # StackUpper # Step);
 
@@ -116,19 +116,19 @@ MuxOut = (Direct & AbsoluteAddr) #
          " sign extend the offset to preserve its sign during addition and reach 13 bits
          ([Offset7, Offset7, Offset7, Offset7, Offset7, Offset7..Offset0] & RelativeAddr) #
          " pad the offset with zeros as appropriate for stack variables to reach 13 bits
-         ([ProgAddr12..ProgAddr8, Offset7..Offset0] & StackLower) #
+         ([PC12..PC8, Offset7..Offset0] & StackLower) #
          " when setting the upper bits, we assume the lower bits have already been set correctly
-         ([Offset4..Offset0, ProgAddr7..ProgAddr0] & StackUpper) #
+         ([Offset4..Offset0, PC7..PC0] & StackUpper) #
          (ONE & Step) #
          (0 & Hold);
 
 " since the equations are calculated simultaneously, we put both CarryIn and CarryOut
 " into the same Carry array and calculate both together
 Carry0 = 0; " the CarryIn for the lowest order bit is zero
-[Carry13..Carry1] = ((ProgAddr & relative) & MuxOut) # ([Carry12..Carry0] & ((ProgAddr & relative) $ MuxOut));
-PCNode = (ProgAddr & relative) $ MuxOut $ [Carry12..Carry0];
+[Carry13..Carry1] = ((PC & relative) & MuxOut) # ([Carry12..Carry0] & ((PC & relative) $ MuxOut));
+PCNode = (PC & relative) $ MuxOut $ [Carry12..Carry0];
 
-PC = PCNode;
-ProgAddr := PCNode;
+PC := PCNode;
+ProgAddr = PCNode;
 
 END  ProgramAccess

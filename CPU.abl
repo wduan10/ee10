@@ -166,7 +166,7 @@ PAUnit.Reset = Reset;
 PAUnit.Clock = Clock;
 
 " extract output of PAUnit
-[ProgramAB12..ProgramAB0] = PAUnit.[PC12..PC0];
+[ProgramAB12..ProgramAB0] = PAUnit.[ProgAddr12..ProgAddr0];
 
 " pass in inputs to DAUnit
 DAUnit.[Accum7..Accum0] = ALUnit.[Accum7..Accum0];
