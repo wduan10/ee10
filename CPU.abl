@@ -136,7 +136,7 @@ IO = CUnit.IO;
 
 " pass in inputs to ALUnit
 ALUnit.[Data7..Data0] = (DataDB & CUnit.ALU_Source1) # (CUnit.[IR7..IR0] & CUnit.ALU_Source0);
-ALUnit.[Op3..Op0] = CUnit.ALU_Fblock;
+ALUnit.[Op3..Op0] = CUnit.[ALU_Fblock3..ALU_Fblock0];
 ALUnit.FunctionOperation = CUnit.ALU_Controls0;
 ALUnit.ArithmeticOperation = CUnit.ALU_Controls1;
 ALUnit.Subtract = CUnit.ALU_Controls2;
@@ -156,7 +156,7 @@ ALUnit.Clock = Clock;
 ALUnit.Reset = Reset;
 
 " pass in inputs to PAUnit
-PAUnit.[Offset7..Offset0] = CUnit.PAU_Offset;
+PAUnit.[Offset7..Offset0] = CUnit.[PAU_Offset7..PAU_Offset0];
 PAUnit.[Direct12..Direct0] = CUnit.[IR12..IR0];
 PAUnit.Step = CUnit.PAU_Controls0;
 PAUnit.StackUpper = CUnit.PAU_Controls1;
