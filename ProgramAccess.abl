@@ -116,7 +116,7 @@ PC.CLR = Reset;
 " calculate ProgAddr
 CarryB0 = 0; " the CarryIn for the lowest order bit is zero
 [CarryB13..CarryB1] = (PC & ONE) # ([CarryB12..CarryB0] & (PC $ ONE));
-ProgAddr = PC $ ONE $ [CarryB12..CarryB0];
+PCNodeB = PC $ ONE $ [CarryB12..CarryB0];
 
 Hold = !(AbsoluteAddr # RelativeAddr # StackLower # StackUpper # Step);
 
@@ -138,7 +138,7 @@ Carry0 = 0; " the CarryIn for the lowest order bit is zero
 [Carry13..Carry1] = ((PC & relative) & MuxOut) # ([Carry12..Carry0] & ((PC & relative) $ MuxOut));
 PCNode = (PC & relative) $ MuxOut $ [Carry12..Carry0];
 
-ProgAddr = PC;
+ProgAddr = (PCNodeB & !relative) # (PC & relative);
 PC := PCNode;
 
 END  ProgramAccess
