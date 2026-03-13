@@ -66,11 +66,50 @@ SReg7..SReg0		pin;	"the 8-bit S register
 
 
 " declare the used modules
+ProgramAccess   INTERFACE  (Offset7..Offset0, Direct12..Direct0,
+                            AbsoluteAddr, RelativeAddr, StackLower, StackUpper, Step,
+                            Reset, Clock
+                            -> ProgAddr12..ProgAddr0, PC12..PC0);
 
+DataAccess      INTERFACE  (Accum7..Accum0, Offset7..Offset0,
+                            AddrSrcOffset, AddrSrcAccum, AddrSrcXReg, AddrSrcSReg,
+                            Increment, Decrement, Pre,
+                            OffsetEn,
+                            Reset, Clock
+                            -> DataAddr7..DataAddr0, XReg7..XReg0, SReg7..SReg0);
+
+ALU             INTERFACE  (Data7..Data0,
+                            " Type of operation
+                            FunctionOperation, ArithmeticOperation,
+
+                            " Arithmetic control inputs
+                            Subtract, WithCarry, Comparison, IncDec,
+
+                            " Shift control inputs
+                            LSR, ASR, ROR, RRC, " shifts/rotations to the right
+                            LSL, ROL, RLC, " shifts/rotations to the left
+
+                            " Logical function control inputs
+                            Op3..Op0,
+
+                            Reset, Clock, Load, Pop
+                            -> Accum7..Accum0, Flags7..Flags0);
+
+CU              INTERFACE  (ProgramDB15..ProgramDB0,
+                            Flags7..Flags0,
+                            Reset, Clock
+                            -> IR15..IR0,
+                               ALU_Controls14..ALU_Controls0, ALU_Fblock3..ALU_Fblock0, ALU_Source1, ALU_Source0,
+                               PAU_Controls4..PAU_Controls0, PAU_Offset7..PAU_Offset0,
+                               DAU_Controls7..DAU_Controls0,
+                               DDB_Source3..DDB_Source0,
+                               RD, WR, IO);
 
 " create instances of the modules
-
-
+PAUnit    FUNCTIONAL_BLOCK  ProgramAccess;
+DAUnit    FUNCTIONAL_BLOCK  DataAccess;
+ALUnit    FUNCTIONAL_BLOCK  ALU;
+CUnit    FUNCTIONAL_BLOCK  CU;
 
 " Busses
 
@@ -84,10 +123,66 @@ DataDB     =  [DataDB7..DataDB0];	"8-bit Data data bus
 EQUATIONS
 
 
+" pass in inputs to CUnit
+CUnit.[ProgramDB15..ProgramDB0] = ProgramDB;
+CUnit.[Flags7..Flags0] = [Flags7..Flags0];
+CUnit.Clock = Clock;
+CUnit.Reset = Reset;
+
+" extract outputs of CUnit
+RD = CUnit.RD;
+WR = CUnit.WR;
+IO = CUnit.IO;
+
+" pass in inputs to ALUnit
+ALUnit.[Data7..Data0] = (DataDB & CUnit.ALU_Source1) # (CUnit.[IR7..IR0] & CUnit.ALUSource0);
+ALUnit.[Op3..Op0] = CUnit.ALU_Fblock;
+ALUnit.FunctionOperation = CUnit.ALU_Controls0;
+ALUnit.ArithmeticOperation = CUnit.ALU_Controls1;
+ALUnit.Subtract = CUnit.ALU_Controls2;
+ALUnit.WithCarry = CUnit.ALU_Controls3;
+ALUnit.Comparison = CUnit.ALU_Controls4;
+ALUnit.IncDec = CUnit.ALU_Controls5;
+ALUnit.LSR = CUnit.ALU_Controls6;
+ALUnit.ASR = CUnit.ALU_Controls7;
+ALUnit.ROR = CUnit.ALU_Controls8;
+ALUnit.RRC = CUnit.ALU_Controls9;
+ALUnit.LSL = CUnit.ALU_Controls10;
+ALUnit.ROL = CUnit.ALU_Controls11;
+ALUnit.RLC = CUnit.ALU_Controls12;
+ALUnit.Load = CUnit.ALU_Controls13;
+ALUnit.Pop = CUnit.ALU_Controls14;
+ALUnit.Clock = Clock;
+ALUnit.Reset = Reset;
+
+" pass in inputs to PAUnit
+PAUnit.[Offset7..Offset0] = CUnit.PAU_Offset;
+PAUnit.[Direct12..Direct0] = CUnit.[IR12..IR0];
+PAUnit.Step = CUnit.PAU_Controls0;
+PAUnit.StackUpper = CUnit.PAU_Controls1;
+PAUnit.StackLower = CUnit.PAU_Controls2;
+PAUnit.RelativeAddr = CUnit.PAU_Controls3;
+PAUnit.AbsoluteAddr = CUnit.PAU_Controls4;
+PAUnit.Reset = Reset;
+PAUnit.Clock = Clock;
+
+" pass in inputs to DAUnit
+DAUnit.[Accum7..Accum0] = ALUnit.[Accum7..Accum0]; " todo: question about order. for something like Accum <-- (m), don't we need to read first then load in accum?
+DAUnit.[Offset7..Offset0] = CUnit.[IR7..IR0];
+DAUnit.AddrSrcOffset = CUnit.DAU_Controls0;
+DAUnit.AddrSrcAccum = CUnit.DAU_Controls1;
+DAUnit.AddrSrcXReg = CUnit.DAU_Controls2;
+DAUnit.AddrSrcSReg = CUnit.DAU_Controls3;
+DAUnit.Increment = CUnit.DAU_Controls4;
+DAUnit.Decrement = CUnit.DAU_Controls5;
+DAUnit.Pre = CUnit.DAU_Controls6;
+DAUnit.OffsetEn = CUnit.DAU_Controls7;
+
+
 " output enables
 
 " Data data bus is enabled when writing
-DataDB.OE  =  control unit write signal;
+DataDB.OE  =  WR;
 
 " most signals are always enabled
 ProgramAB.OE         =  ^h1FFF;
