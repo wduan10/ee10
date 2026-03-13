@@ -177,7 +177,8 @@ DAUnit.Increment = CUnit.DAU_Controls4;
 DAUnit.Decrement = CUnit.DAU_Controls5;
 DAUnit.Pre = CUnit.DAU_Controls6;
 DAUnit.OffsetEn = CUnit.DAU_Controls7;
-
+DAUnit.Reset = Reset;
+DAUnit.Clock = Clock;
 
 " output enables
 
