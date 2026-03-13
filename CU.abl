@@ -89,7 +89,7 @@ WHEN (IR[15..0] == [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]) THEN {
 
     DDB_Source = [0, 0, 0, 0];
 
-    RD = 1; " todo: revert to 0
+    RD = 0;
     WR = 0;
     IO = 0;
 }
@@ -237,6 +237,8 @@ WHEN (IR[15..8] == [1, 0, 1, 0, 0, 0, 0, 0]) THEN {
     WR = 1;
     IO = 0;
 }
+
+[ALU_Controls7..ALU_Controls0] = IR[15..8];
 
 
 END  CU
