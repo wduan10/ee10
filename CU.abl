@@ -211,7 +211,7 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 0, 0, 0, 0]) THEN {
     PAU_Controls = [0, 0, 0, 0, 1];
     PAU_Offset = .X.;
 
-    DAU_Controls = [0, 0, 0, 0, 0, 0, 0, 0];
+    DAU_Controls = [0, 0, 0, 0, 0, 0, 0, 1];
 
     DDB_Source = [0, 0, 0, 0];
 
