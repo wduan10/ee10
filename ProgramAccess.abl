@@ -75,13 +75,10 @@ PC12..PC0               pin ISTYPE 'REG';   "output  13 bits of program counter
 
 " Intermediate Terms
 PCNode12..PCNode0                           node;   "create copy of PC to avoid pin error
-PCNodeB12..PCNodeB0                         node;   "another copy of PC to differentiate PC from ProgAddr
 relative                                    node;   "equals 1 when doing relative PC operations
                                                     "this term is combined with PC in an AND gate
                                                     "before the adder
 Carry13..Carry0                             node;   "14 bits of carry to perform addition for PC
-                                                    "note that CarryIn[i] = CarryOut[i-1]
-CarryB13..CarryB0                           node;   "14 bits of carry to perform addition for ProgAddr
                                                     "note that CarryIn[i] = CarryOut[i-1]
 MuxOut12..MuxOut0                           node;   "13 bits of output of mux from lecture slides
                                                     "this MuxOut is fed into the adder
@@ -90,13 +87,11 @@ Hold                                        node;   "whether we should hold the 
 " Buses
 
 PCNode              =  [PCNode12..PCNode0];     "copy of PC to avoid pin error
-PCNodeB             =  [PCNodeB12..PCNodeB0];   "copy of PC to differentiate PC from ProgAddr
 Offset              =  [Offset7..Offset0];		"8 bits of data or offset
 Direct              =  [Direct12..Direct0];		"13 bits of address or data
 ProgAddr            =  [ProgAddr12..ProgAddr0];	"13 bits of program address bus
 PC                  =  [PC12..PC0];             "13 bits of program counter
 Carry               =  [Carry13..Carry0];       "14 bits of carry to perform addition for PC
-CarryB              =  [CarryB13..CarryB0];     "14 bits of carry to perform addition for ProgAddr
 MuxOut              =  [MuxOut12..MuxOut0];     "13 bits of output of mux from lecture slides
                                                 "this MuxOut is fed into the adder
 
@@ -112,11 +107,6 @@ EQUATIONS
 " clock for the program counter output
 PC.CLK = Clock;
 PC.CLR = Reset;
-
-" calculate ProgAddr
-CarryB0 = 0; " the CarryIn for the lowest order bit is zero
-[CarryB13..CarryB1] = (PC & ONE) # ([CarryB12..CarryB0] & (PC $ ONE));
-PCNodeB = PC $ ONE $ [CarryB12..CarryB0];
 
 Hold = !(AbsoluteAddr # RelativeAddr # StackLower # StackUpper # Step);
 
@@ -138,7 +128,7 @@ Carry0 = 0; " the CarryIn for the lowest order bit is zero
 [Carry13..Carry1] = ((PC & relative) & MuxOut) # ([Carry12..Carry0] & ((PC & relative) $ MuxOut));
 PCNode = (PC & relative) $ MuxOut $ [Carry12..Carry0];
 
-ProgAddr = (PCNodeB & !relative) # (PC & relative);
+ProgAddr = (PC & !relative) # (PCNode & relative);
 PC := PCNode;
 
 END  ProgramAccess
