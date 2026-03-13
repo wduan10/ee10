@@ -188,7 +188,7 @@ DAUnit.Reset = Reset;
 DAUnit.Clock = Clock;
 
 " extract output of DAUnit
-ProgramAB = DAUnit.[DataAddr7..DataAddr0];
+DataAB = DAUnit.[DataAddr7..DataAddr0];
 [XReg7..XReg0] = DAUnit.[XReg7..XReg0];
 [SReg7..SReg0] = DAUnit.[SReg7..SReg0];
 
