@@ -167,7 +167,7 @@ PAUnit.Reset = Reset;
 PAUnit.Clock = Clock;
 
 " pass in inputs to DAUnit
-DAUnit.[Accum7..Accum0] = ALUnit.[Accum7..Accum0]; " todo: question about order. for something like Accum <-- (m), don't we need to read first then load in accum?
+DAUnit.[Accum7..Accum0] = ALUnit.[Accum7..Accum0];
 DAUnit.[Offset7..Offset0] = CUnit.[IR7..IR0];
 DAUnit.AddrSrcOffset = CUnit.DAU_Controls0;
 DAUnit.AddrSrcAccum = CUnit.DAU_Controls1;
