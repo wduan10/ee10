@@ -128,7 +128,7 @@ Carry0 = 0; " the CarryIn for the lowest order bit is zero
 [Carry13..Carry1] = ((PC & relative) & MuxOut) # ([Carry12..Carry0] & ((PC & relative) $ MuxOut));
 PCNode = (PC & relative) $ MuxOut $ [Carry12..Carry0];
 
+ProgAddr = PC;
 PC := PCNode;
-ProgAddr = PCNode;
 
 END  ProgramAccess
