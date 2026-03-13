@@ -1,4 +1,4 @@
-MODULE      Control
+MODULE      CU
 INTERFACE  (ProgramDB15..ProgramDB0,
             Flags7..Flags0,
             Reset, Clock
