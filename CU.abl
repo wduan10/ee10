@@ -336,7 +336,7 @@ WHEN (IR[15..13] == [1, 1, 0]) THEN {
 
 " SECTION: SUBROUTINE / STACK INSTRUCTIONS
 
-" PUSHF: push flag register onto track
+" PUSHF: push flag register onto stack
 WHEN (IR[15..0] == [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
     ALU_Controls = 0;
     ALU_Fblock = 0;
@@ -352,6 +352,24 @@ WHEN (IR[15..0] == [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
     RD = 0;
     WR = 1;
     IO = 0;
-}todo
+}
+
+" POPF: pop flag register off of stack
+WHEN (IR[15..0] == [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
+    ALU_Controls = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    ALU_Fblock = [0, 0, 0, 0];
+    ALU_Source = [1, 0];
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [0, 0, 0, 1, 1, 0, 0, 0];
+
+    DDB_Source = [0, 0, 0, 0];
+
+    RD = 0;
+    WR = 0;
+    IO = 0;
+}
 
 END  CU
