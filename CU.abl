@@ -35,7 +35,7 @@ Clock pin; "input  system clock
 
 IR15..IR0 pin; "output  16-bit instruction register bus
 ALU_Controls14..ALU_Controls0 pin; "output  15 control signals passed to the ALU
-ALU_Fblock3..ALUFblock0 pin; "output  4 bits prescribing an F-block function in ALU
+ALU_Fblock3..ALU_Fblock0 pin; "output  4 bits prescribing an F-block function in ALU
 ALU_Source1, ALU_Source0 pin; "output  one hot encoded signals indicating where ALU should source its input from
                               "        ALU_Source1 equals 1 when input comes from Data Data Buses
                               "        ALU_Source0 equals 1 when input comes from instruction register
