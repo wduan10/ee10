@@ -238,7 +238,5 @@ WHEN (IR[15..8] == [1, 0, 1, 0, 0, 0, 0, 0]) THEN {
     IO = 0;
 }
 
-[ALU_Controls7..ALU_Controls0] = IR[15..8];
-
 
 END  CU

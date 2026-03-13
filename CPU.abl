@@ -151,8 +151,7 @@ ALUnit.Clock = Clock;
 ALUnit.Reset = Reset;
 
 " extract outputs of ALUnit
-"[Accum7..Accum0] = ALUnit.[Accum7..Accum0];
-[Accum7..Accum0] = CUnit.[ALU_Controls7..ALU_Controls0];
+[Accum7..Accum0] = ALUnit.[Accum7..Accum0];
 [Flags7..Flags0] = ALUnit.[Flags7..Flags0];
 
 " pass in inputs to PAUnit
@@ -167,7 +166,6 @@ PAUnit.Reset = Reset;
 PAUnit.Clock = Clock;
 
 " extract output of PAUnit
-"[ProgramAB12..ProgramAB0] = PAUnit.[ProgAddr12..ProgAddr0];
 [ProgramAB12..ProgramAB0] = PAUnit.[PC12..PC0];
 
 " pass in inputs to DAUnit
