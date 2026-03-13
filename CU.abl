@@ -44,7 +44,7 @@ PAU_Offset7..PAU_Offset0 pin; "output  8 bits of data/offset passed to PAU
 DAU_Controls7..DAU_Controls0 pin; "output  8 control signals passed to DAU
 DDB_Source3..DDB_Source0 pin; "output  one hot encoded signals indicating how to set Data Data Bus
                               "        DDB_Source3 equals 1 when input comes from Accumulator
-                              "        DDB_Source2 equals 1 when 
+                              "        DDB_Source2 equals 1 when input comes from Flags
                               "        DDB_Source1 equals 1 when 
                               "        DDB_Source0 equals 1 when input comes from reading Data Address Bus
 
@@ -298,9 +298,9 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 0, 0, 0, 0]) THEN {
 
 " STD: store Accum at (m)
 WHEN (IR[15..8] == [1, 0, 1, 0, 0, 0, 0, 0]) THEN {
-    ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    ALU_Fblock = [0, 0, 0, 0];
-    ALU_Source = [0, 0];
+    ALU_Controls = 0;
+    ALU_Fblock = 0;
+    ALU_Source = 0;
 
     PAU_Controls = [0, 0, 0, 0, 1];
     PAU_Offset = .X.;
@@ -318,9 +318,9 @@ WHEN (IR[15..8] == [1, 0, 1, 0, 0, 0, 0, 0]) THEN {
 
 " JMP: jump to a
 WHEN (IR[15..13] == [1, 1, 0]) THEN {
-    ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    ALU_Fblock = [0, 0, 0, 0];
-    ALU_Source = [0, 0];
+    ALU_Controls = 0;
+    ALU_Fblock = 0;
+    ALU_Source = 0;
 
     PAU_Controls = [1, 0, 0, 0, 0];
     PAU_Offset = .X.;
@@ -333,5 +333,25 @@ WHEN (IR[15..13] == [1, 1, 0]) THEN {
     WR = 0;
     IO = 0;
 }
+
+" SECTION: SUBROUTINE / STACK INSTRUCTIONS
+
+" PUSHF: push flag register onto track
+WHEN (IR[15..0] == [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
+    ALU_Controls = 0;
+    ALU_Fblock = 0;
+    ALU_Source = 0;
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [0, 0, 1, 0, 1, 0, 0, 0];
+
+    DDB_Source = [0, 1, 0, 0];
+
+    RD = 0;
+    WR = 1;
+    IO = 0;
+}todo
 
 END  CU
