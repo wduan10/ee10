@@ -89,7 +89,7 @@ WHEN (IR[15..0] == [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]) THEN {
 
     DDB_Source = [0, 0, 0, 0];
 
-    RD = 0;
+    RD = 1; " todo: revert to 0
     WR = 0;
     IO = 0;
 }
