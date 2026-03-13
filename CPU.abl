@@ -135,7 +135,7 @@ WR = CUnit.WR;
 IO = CUnit.IO;
 
 " pass in inputs to ALUnit
-ALUnit.[Data7..Data0] = (DataDB & CUnit.ALU_Source1) # (CUnit.[IR7..IR0] & CUnit.ALUSource0);
+ALUnit.[Data7..Data0] = (DataDB & CUnit.ALU_Source1) # (CUnit.[IR7..IR0] & CUnit.ALU_Source0);
 ALUnit.[Op3..Op0] = CUnit.ALU_Fblock;
 ALUnit.FunctionOperation = CUnit.ALU_Controls0;
 ALUnit.ArithmeticOperation = CUnit.ALU_Controls1;
