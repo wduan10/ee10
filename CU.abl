@@ -72,7 +72,7 @@ DDB_Source = [DDB_Source3..DDB_Source0]; "one hot encoded signals indicating how
 EQUATIONS
 
 IR.CLK = Clock;
-IR.CLR = !Reset;
+IR.CLR = Reset;
 
 IR := ProgramDB;
 

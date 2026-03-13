@@ -109,7 +109,7 @@ CU              INTERFACE  (ProgramDB15..ProgramDB0,
 PAUnit    FUNCTIONAL_BLOCK  ProgramAccess;
 DAUnit    FUNCTIONAL_BLOCK  DataAccess;
 ALUnit    FUNCTIONAL_BLOCK  ALU;
-CUnit    FUNCTIONAL_BLOCK  CU;
+CUnit     FUNCTIONAL_BLOCK  CU;
 
 " Busses
 

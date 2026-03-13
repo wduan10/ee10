@@ -106,9 +106,9 @@ EQUATIONS
 
 " define clock and reset for X, S registers
 XReg.CLK = Clock;
-XReg.CLR = !Reset;
+XReg.CLR = Reset;
 SReg.CLK = Clock;
-SReg.CLR = !Reset;
+SReg.CLR = Reset;
 
 " implement mux for address source
 AddrSrc = (Offset & AddrSrcOffset) #
