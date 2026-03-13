@@ -43,7 +43,7 @@ PAU_Controls4..PAU_Controls0 pin; "output  5 control signals passed to PAU
 PAU_Offset7..PAU_Offset0 pin; "output  8 bits of data/offset passed to PAU
 DAU_Controls7..DAU_Controls0 pin; "output  8 control signals passed to DAU
 DDB_Source3..DDB_Source0 pin; "output  one hot encoded signals indicating how to set Data Data Bus
-                              "        DDB_Source3 equals 1 when 
+                              "        DDB_Source3 equals 1 when input comes from Accumulator
                               "        DDB_Source2 equals 1 when 
                               "        DDB_Source1 equals 1 when 
                               "        DDB_Source0 equals 1 when input comes from reading Data Address Bus
@@ -76,7 +76,25 @@ IR.CLR = !Reset;
 
 IR := ProgramDB;
 
-" Add Accum and (m) with Carry
+" NOP: No operation
+WHEN (IR[15..0] == [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]) THEN {
+    ALU_Controls = 0;
+    ALU_Fblock = 0;
+    ALU_Source = 0;
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = 0;
+
+    DDB_Source = [0, 0, 0, 0];
+
+    RD = 0;
+    WR = 0;
+    IO = 0;
+}
+
+" ADC: Add Accum and (m) with Carry
 WHEN (IR[15..8] == [0, 1, 1, 0, 0, 0, 0, 0]) THEN {
     ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0];
     ALU_Fblock = [1, 0, 1, 0];
@@ -94,7 +112,7 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 0, 0, 0, 0]) THEN {
     IO = 0;
 }
 
-" Add Accum and (X+O) with Carry
+" ADC: Add Accum and (X+O) with Carry
 WHEN (IR[15..8] == [0, 1, 1, 0, 0, 0, 0, 1]) THEN {
     ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0];
     ALU_Fblock = [1, 0, 1, 0];
@@ -112,7 +130,7 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 0, 0, 0, 1]) THEN {
     IO = 0;
 }
 
-" Add Accum and (S+O) with Carry
+" ADC: Add Accum and (S+O) with Carry
 WHEN (IR[15..8] == [0, 1, 1, 0, 0, 0, 1, 0]) THEN {
     ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0];
     ALU_Fblock = [1, 0, 1, 0];
@@ -130,7 +148,7 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 0, 0, 1, 0]) THEN {
     IO = 0;
 }
 
-" Add Accum and k with Carry
+" ADCI: Add Accum and k with Carry
 WHEN (IR[15..8] == [0, 1, 1, 0, 0, 0, 1, 1]) THEN {
     ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0];
     ALU_Fblock = [1, 0, 1, 0];
@@ -143,12 +161,12 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 0, 0, 1, 1]) THEN {
 
     DDB_Source = [0, 0, 0, 0];
 
-    RD = 1;
+    RD = 0;
     WR = 0;
     IO = 0;
 }
 
-" Add Accum and (m)
+" ADD: Add Accum and (m)
 WHEN (IR[15..8] == [0, 1, 1, 0, 1, 0, 0, 0]) THEN {
     ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0];
     ALU_Fblock = [1, 0, 1, 0];
@@ -166,21 +184,57 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 1, 0, 0, 0]) THEN {
     IO = 0;
 }
 
-" Add Accum and (X+O)
-WHEN (IR[15..8] == [0, 1, 1, 0, 1, 0, 0, 1]) THEN {
-    ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0];
-    ALU_Fblock = [1, 0, 1, 0];
+" LDI: load Accum with k
+WHEN (IR[15..8] == [1, 0, 0, 0, 1, 0, 0, 1]) THEN {
+    ALU_Controls = [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    ALU_Fblock = [0, 0, 0, 0];
+    ALU_Source = [0, 1];
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [0, 0, 0, 0, 0, 0, 0, 0];
+
+    DDB_Source = [0, 0, 0, 0];
+
+    RD = 0;
+    WR = 0;
+    IO = 0;
+}
+
+" LDD: load Accum with (m)
+WHEN (IR[15..8] == [1, 0, 0, 0, 0, 0, 0, 0]) THEN {
+    ALU_Controls = [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    ALU_Fblock = [0, 0, 0, 0];
     ALU_Source = [1, 0];
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [0, 0, 0, 0, 0, 0, 0, 0];
+
+    DDB_Source = [0, 0, 0, 0];
+
+    RD = 1;
+    WR = 0;
+    IO = 0;
+}
+
+" STD: store Accum at (m)
+WHEN (IR[15..8] == [1, 0, 1, 0, 0, 0, 0, 0]) THEN {
+    ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    ALU_Fblock = [0, 0, 0, 0];
+    ALU_Source = [0, 0];
 
     PAU_Controls = [0, 0, 0, 0, 1];
     PAU_Offset = .X.;
 
     DAU_Controls = [0, 0, 0, 0, 0, 0, 0, 1];
 
-    DDB_Source = [0, 0, 0, 1];
+    DDB_Source = [1, 0, 0, 0];
 
-    RD = 1;
-    WR = 0;
+    RD = 0;
+    WR = 1;
     IO = 0;
 }
 

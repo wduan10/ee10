@@ -129,11 +129,6 @@ CUnit.[Flags7..Flags0] = [Flags7..Flags0];
 CUnit.Clock = Clock;
 CUnit.Reset = Reset;
 
-" extract outputs of CUnit
-RD = CUnit.RD;
-WR = CUnit.WR;
-IO = CUnit.IO;
-
 " pass in inputs to ALUnit
 ALUnit.[Data7..Data0] = (DataDB & CUnit.ALU_Source1) # (CUnit.[IR7..IR0] & CUnit.ALU_Source0);
 ALUnit.[Op3..Op0] = CUnit.[ALU_Fblock3..ALU_Fblock0];
@@ -191,6 +186,12 @@ DAUnit.Clock = Clock;
 DataAB = DAUnit.[DataAddr7..DataAddr0];
 [XReg7..XReg0] = DAUnit.[XReg7..XReg0];
 [SReg7..SReg0] = DAUnit.[SReg7..SReg0];
+
+" extract outputs of CUnit
+DataDB = (Accum & CUnit.DBBSource3) # (DataDB & CUnit.DBBSource0);
+RD = CUnit.RD;
+WR = CUnit.WR;
+IO = CUnit.IO;
 
 " output enables
 

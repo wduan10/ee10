@@ -9,7 +9,22 @@ INTERFACE  (Accum7..Accum0, Offset7..Offset0,
 TITLE      'Data Address Unit'
 
 
-" Description:  Todo
+" Description:  This module implements the Caltech10 CPU data address unit.
+"               It generates the 8-bit data memory / I/O address used for
+"               load, store, and indexed addressing operations, and it also
+"               contains the X and S index registers.
+"
+"               The address source is selected by one-hot control signals and
+"               may come from:
+"                 - the Offset field directly,
+"                 - the Accumulator,
+"                 - the X register, or
+"                 - the S register.
+"
+"               If Increment or Decrement is asserted, the selected X or S
+"               register value may be incremented or decremented by 1.
+"               The Pre control determines whether this modification happens
+"               before or after address generation.
 "
 " Inputs:       Accum[7..0]      - 8 bits of accumulator input
 "               Offset[7..0]    - 8 bits of data or offset input
