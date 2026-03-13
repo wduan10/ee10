@@ -189,7 +189,7 @@ DataAB = DAUnit.[DataAddr7..DataAddr0];
 
 " extract outputs of CUnit
 DataDB = ([Accum7..Accum0] & CUnit.DDB_Source3) #
-         ([Flags7..Flags0] & CUnit.DDB_Source2) #
+         (![Flags7..Flags0] & CUnit.DDB_Source2) #
          (DataDB & CUnit.DDB_Source0);
 RD = CUnit.RD;
 WR = CUnit.WR;
