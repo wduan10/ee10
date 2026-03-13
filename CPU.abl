@@ -153,8 +153,8 @@ ALUnit.Reset = Reset;
 " extract outputs of ALUnit
 "[Accum7..Accum0] = ALUnit.[Accum7..Accum0];
 Accum7 = 1;
-Accum0 = ALU_Source0;
-Accum1 = ALU_Source1;
+Accum0 = CUnit.ALU_Source0;
+Accum1 = CUnit.ALU_Source1;
 [Flags7..Flags0] = ALUnit.[Flags7..Flags0];
 
 " pass in inputs to PAUnit
