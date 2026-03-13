@@ -121,6 +121,7 @@ TEST_VECTORS ( [ Reset, Clock, ProgramDB, DataDB ] ->
 [ 0, 1, ^H1F80, ^H84 ] -> [    .X.,  .X., .X., .X., .X.,  .X. ]; " 
 
 " ; test implied operand instructions
+" time: 2600 ns
 
 [ 0, 0, ^HD000, ^H03 ] -> [ ^H000A,  .X.,  0 ,  0 ,  0 ,  .X. ]; "    JMP	$1000
 [ 0, 1, ^HD000, ^H89 ] -> [    .X.,  .X., .X., .X., .X.,  .X. ]; " ;unconditional jump to set PC
