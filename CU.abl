@@ -744,6 +744,78 @@ WHEN (IR[15..8] == [0, 0, 0, 1, 0, 0, 1, 1]) THEN {
     IO = 0;
 }
 
+" TST: update flags based on Accum AND (m)
+WHEN (IR[15..8] == [0, 1, 0, 0, 1, 1, 0, 0]) THEN {
+    ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1];
+    ALU_Fblock = [1, 0, 0, 0];
+    ALU_Source = [1, 0];
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [0, 0, 0, 0, 0, 0, 0, 1];
+
+    DDB_Source = [0, 0, 0, 1];
+
+    RD = 1;
+    WR = 0;
+    IO = 0;
+}
+
+" TST: update flags based on Accum AND (X+O)
+WHEN (IR[15..8] == [0, 1, 0, 0, 1, 1, 0, 1]) THEN {
+    ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1];
+    ALU_Fblock = [1, 0, 0, 0];
+    ALU_Source = [1, 0];
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [0, 0, 0, 0, 0, 1, 0, 0];
+
+    DDB_Source = [0, 0, 0, 1];
+
+    RD = 1;
+    WR = 0;
+    IO = 0;
+}
+
+" TST: update flags based on Accum AND (S+O)
+WHEN (IR[15..8] == [0, 1, 0, 0, 1, 1, 1, 0]) THEN {
+    ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1];
+    ALU_Fblock = [1, 0, 0, 0];
+    ALU_Source = [1, 0];
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [0, 0, 0, 0, 1, 0, 0, 0];
+
+    DDB_Source = [0, 0, 0, 1];
+
+    RD = 1;
+    WR = 0;
+    IO = 0;
+}
+
+" TSTI: update flags based on Accum AND k
+WHEN (IR[15..8] == [0, 1, 0, 0, 1, 1, 1, 1]) THEN {
+    ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1];
+    ALU_Fblock = [1, 0, 0, 0];
+    ALU_Source = [0, 1];
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [0, 0, 0, 0, 0, 0, 0, 0];
+
+    DDB_Source = [0, 0, 0, 0];
+
+    RD = 0;
+    WR = 0;
+    IO = 0;
+}
+
 " SECTION: LOAD / STORE INSTRUCTIONS
 
 " LDI: load Accum with k
