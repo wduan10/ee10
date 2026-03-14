@@ -980,6 +980,96 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 0, 0, 0, 0]) THEN {
     IO = 0;
 }
 
+" LD: load Accumulator indirect from (X+O)
+WHEN (IR[15..8] == [1, 0, 0, 1, 0, 1, 1, 1]) THEN {
+    ALU_Controls = [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    ALU_Fblock = [0, 0, 0, 0];
+    ALU_Source = [1, 0];
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [1, 0, 0, 0, 0, 1, 0, 0];
+
+    DDB_Source = [0, 0, 0, 0];
+
+    RD = 1;
+    WR = 0;
+    IO = 0;
+}
+
+" LD: load Accumulator indirect from (X+O) then post increment X
+WHEN (IR[15..8] == [1, 0, 0, 1, 0, 1, 1, 0]) THEN {
+    ALU_Controls = [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    ALU_Fblock = [0, 0, 0, 0];
+    ALU_Source = [1, 0];
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [1, 0, 0, 1, 0, 1, 0, 0];
+
+    DDB_Source = [0, 0, 0, 0];
+
+    RD = 1;
+    WR = 0;
+    IO = 0;
+}
+
+" LD: load Accumulator indirect from (X+O) then post decrement X
+WHEN (IR[15..8] == [1, 0, 0, 1, 1, 1, 1, 0]) THEN {
+    ALU_Controls = [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    ALU_Fblock = [0, 0, 0, 0];
+    ALU_Source = [1, 0];
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [1, 0, 1, 0, 0, 1, 0, 0];
+
+    DDB_Source = [0, 0, 0, 0];
+
+    RD = 1;
+    WR = 0;
+    IO = 0;
+}
+
+" LD: load Accumulator indirect from (X+O) after pre increment X
+WHEN (IR[15..8] == [1, 0, 0, 0, 0, 1, 1, 0]) THEN {
+    ALU_Controls = [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    ALU_Fblock = [0, 0, 0, 0];
+    ALU_Source = [1, 0];
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [1, 1, 0, 1, 0, 1, 0, 0];
+
+    DDB_Source = [0, 0, 0, 0];
+
+    RD = 1;
+    WR = 0;
+    IO = 0;
+}
+
+" LD: load Accumulator indirect from (X+O) after pre decrement X
+WHEN (IR[15..8] == [1, 0, 0, 0, 1, 1, 1, 0]) THEN {
+    ALU_Controls = [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    ALU_Fblock = [0, 0, 0, 0];
+    ALU_Source = [1, 0];
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [1, 1, 1, 0, 0, 1, 0, 0];
+
+    DDB_Source = [0, 0, 0, 0];
+
+    RD = 1;
+    WR = 0;
+    IO = 0;
+}
+
 " STD: store Acc at (m)
 WHEN (IR[15..8] == [1, 0, 1, 0, 0, 0, 0, 0]) THEN {
     ALU_Controls = 0;
