@@ -1508,6 +1508,24 @@ WHEN (IR[15..8] == [1, 0, 1, 0, 1, 1, 1, 1]) THEN {
     IO = 0;
 }
 
+" JGE: if S = V then PC = PC + r + 1
+WHEN (IR[15..8] == [1, 0, 1, 1, 1, 0, 1, 1]) THEN {
+    ALU_Controls = 0;
+    ALU_Fblock = 0;
+    ALU_Source = 0;
+
+    PAU_Controls = [0, !(Flags1 $ Flags2), 0, 0, Flags1 $ Flags2];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [0, 0, 0, 0, 0, 0, 0, 0];
+
+    DDB_Source = [0, 0, 0, 0];
+
+    RD = 0;
+    WR = 0;
+    IO = 0;
+}
+
 " SECTION: SUBROUTINE / STACK INSTRUCTIONS
 
 " PUSHF: push flag register onto stack
