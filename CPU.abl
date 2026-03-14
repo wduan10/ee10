@@ -56,7 +56,7 @@ IO			pin;	"output  accessing memory (0) or I/O (1)
 " Debugging/Status Outputs
 
 Accum7..Accum0		pin;	"the 8-bit accumulator
-Flags7..Flags0		pin;	"the flags (8 bits)
+Flags7..Flags0	pin;	"the flags (8 bits)
 XReg7..XReg0		pin;	"the 8-bit X register
 SReg7..SReg0		pin;	"the 8-bit S register
 
@@ -189,7 +189,7 @@ DataAB = DAUnit.[DataAddr7..DataAddr0];
 
 " extract outputs of CUnit
 DataDB = ([Accum7..Accum0] & CUnit.DDB_Source3) #
-         (![Flags7..Flags0] & CUnit.DDB_Source2) #
+         ([Flags7..Flags0] & CUnit.DDB_Source2) #
          (DataDB & CUnit.DDB_Source0);
 RD = CUnit.RD;
 WR = CUnit.WR;

@@ -165,7 +165,7 @@ AccumulatorUnit.Load = Load;
 
 " StatusRegister inputs (many are outputs of the accumulator)
 StatusRegisterUnit.[MuxOut7..MuxOut0] = AccumulatorUnit.[MuxOut7..MuxOut0];
-StatusRegisterUnit.[DataIn7..DataIn0] = [Data7..Data0];
+StatusRegisterUnit.[DataIn7..DataIn0] = [Data7, 0, Data5, 0, Data3..Data0]; " flags6 and flags4 are always 0
 StatusRegisterUnit.CarryInMSB = AccumulatorUnit.CarryInMSB;
 StatusRegisterUnit.CarryOutMSB = AccumulatorUnit.CarryOutMSB;
 StatusRegisterUnit.ShiftRotateCarryOut = AccumulatorUnit.ShiftRotateCarryOut;
