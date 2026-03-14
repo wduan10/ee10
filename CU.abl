@@ -96,7 +96,7 @@ WHEN (IR[15..0] == [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]) THEN {
 
 " SECTION: ACCUMULATOR INSTRUCTIONS
 
-" ADC: Add Accum and (m) with Carry
+" ADC: Add Acc and (m) with Carry
 WHEN (IR[15..8] == [0, 1, 1, 0, 0, 0, 0, 0]) THEN {
     ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0];
     ALU_Fblock = [1, 0, 1, 0];
@@ -114,7 +114,7 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 0, 0, 0, 0]) THEN {
     IO = 0;
 }
 
-" ADC: Add Accum and (X+O) with Carry
+" ADC: Add Acc and (X+O) with Carry
 WHEN (IR[15..8] == [0, 1, 1, 0, 0, 0, 0, 1]) THEN {
     ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0];
     ALU_Fblock = [1, 0, 1, 0];
@@ -132,7 +132,7 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 0, 0, 0, 1]) THEN {
     IO = 0;
 }
 
-" ADC: Add Accum and (S+O) with Carry
+" ADC: Add Acc and (S+O) with Carry
 WHEN (IR[15..8] == [0, 1, 1, 0, 0, 0, 1, 0]) THEN {
     ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0];
     ALU_Fblock = [1, 0, 1, 0];
@@ -150,7 +150,7 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 0, 0, 1, 0]) THEN {
     IO = 0;
 }
 
-" ADCI: Add Accum and k with Carry
+" ADCI: Add Acc and k with Carry
 WHEN (IR[15..8] == [0, 1, 1, 0, 0, 0, 1, 1]) THEN {
     ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0];
     ALU_Fblock = [1, 0, 1, 0];
@@ -168,7 +168,7 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 0, 0, 1, 1]) THEN {
     IO = 0;
 }
 
-" ADD: Add Accum and (m)
+" ADD: Add Acc and (m)
 WHEN (IR[15..8] == [0, 1, 1, 0, 1, 0, 0, 0]) THEN {
     ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0];
     ALU_Fblock = [1, 0, 1, 0];
@@ -186,7 +186,7 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 1, 0, 0, 0]) THEN {
     IO = 0;
 }
 
-" ADD: Add Accum and (X+O)
+" ADD: Add Acc and (X+O)
 WHEN (IR[15..8] == [0, 1, 1, 0, 1, 0, 0, 1]) THEN {
     ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0];
     ALU_Fblock = [1, 0, 1, 0];
@@ -195,7 +195,7 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 1, 0, 0, 1]) THEN {
     PAU_Controls = [0, 0, 0, 0, 1];
     PAU_Offset = .X.;
 
-    DAU_Controls = [0, 0, 0, 0, 0, 1, 0, 0];
+    DAU_Controls = [1, 0, 0, 0, 0, 1, 0, 0];
 
     DDB_Source = [0, 0, 0, 1];
 
@@ -204,7 +204,7 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 1, 0, 0, 1]) THEN {
     IO = 0;
 }
 
-" ADD: Add Accum and (S+O)
+" ADD: Add Acc and (S+O)
 WHEN (IR[15..8] == [0, 1, 1, 0, 1, 0, 1, 0]) THEN {
     ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0];
     ALU_Fblock = [1, 0, 1, 0];
@@ -213,7 +213,7 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 1, 0, 1, 0]) THEN {
     PAU_Controls = [0, 0, 0, 0, 1];
     PAU_Offset = .X.;
 
-    DAU_Controls = [0, 0, 0, 0, 1, 0, 0, 0];
+    DAU_Controls = [1, 0, 0, 0, 1, 0, 0, 0];
 
     DDB_Source = [0, 0, 0, 1];
 
@@ -222,7 +222,7 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 1, 0, 1, 0]) THEN {
     IO = 0;
 }
 
-" ADDI: Add Accum and k
+" ADDI: Add Acc and k
 WHEN (IR[15..8] == [0, 1, 1, 0, 1, 0, 1, 1]) THEN {
     ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0];
     ALU_Fblock = [1, 0, 1, 0];
@@ -240,7 +240,61 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 1, 0, 1, 1]) THEN {
     IO = 0;
 }
 
-" ANDI: Accum = Accum AND k
+" AND: Acc = Acc AND (m)
+WHEN (IR[15..8] == [0, 1, 0, 0, 0, 1, 0, 0]) THEN {
+    ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
+    ALU_Fblock = [1, 0, 0, 0];
+    ALU_Source = [1, 0];
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [0, 0, 0, 0, 0, 0, 0, 1];
+
+    DDB_Source = [0, 0, 0, 1];
+
+    RD = 1;
+    WR = 0;
+    IO = 0;
+}
+
+" AND: Acc = Acc AND (X+O)
+WHEN (IR[15..8] == [0, 1, 0, 0, 0, 1, 0, 1]) THEN {
+    ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
+    ALU_Fblock = [1, 0, 0, 0];
+    ALU_Source = [1, 0];
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [1, 0, 0, 0, 0, 1, 0, 0];
+
+    DDB_Source = [0, 0, 0, 1];
+
+    RD = 1;
+    WR = 0;
+    IO = 0;
+}
+
+" AND: Acc = Acc AND (S+O)
+WHEN (IR[15..8] == [0, 1, 0, 0, 0, 1, 1, 0]) THEN {
+    ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
+    ALU_Fblock = [1, 0, 0, 0];
+    ALU_Source = [1, 0];
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [1, 0, 0, 0, 1, 0, 0, 0];
+
+    DDB_Source = [0, 0, 0, 1];
+
+    RD = 1;
+    WR = 0;
+    IO = 0;
+}
+
+" ANDI: Acc = Acc AND k
 WHEN (IR[15..8] == [0, 1, 0, 0, 0, 1, 1, 1]) THEN {
     ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
     ALU_Fblock = [1, 0, 0, 0];
@@ -330,7 +384,7 @@ WHEN (IR[15..8] == [0, 0, 1, 1, 0, 0, 1, 1]) THEN {
     IO = 0;
 }
 
-" DEC: Accum = Accum - 1
+" DEC: Acc = Acc - 1
 WHEN (IR[15..0] == [0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
     ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0];
     ALU_Fblock = [1, 1, 1, 1];
@@ -348,7 +402,7 @@ WHEN (IR[15..0] == [0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
     IO = 0;
 }
 
-" INC: Accum = Accum + 1
+" INC: Acc = Acc + 1
 WHEN (IR == 0) THEN {
     ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0];
     ALU_Fblock = [0, 0, 0, 0];
@@ -366,7 +420,7 @@ WHEN (IR == 0) THEN {
     IO = 0;
 }
 
-" NEG: Accum = -Accum = !Accum + 1
+" NEG: Acc = -Acc = !Acc + 1
 WHEN (IR[15..0] == [0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
     ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0];
     ALU_Fblock = [0, 0, 1, 1];
@@ -384,7 +438,7 @@ WHEN (IR[15..0] == [0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
     IO = 0;
 }
 
-" NOT: Accum = !Accum
+" NOT: Acc = !Acc
 WHEN (IR[15..0] == [0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
     ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
     ALU_Fblock = [0, 0, 1, 1];
@@ -402,7 +456,7 @@ WHEN (IR[15..0] == [0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
     IO = 0;
 }
 
-" OR: Accum = Accum OR (m)
+" OR: Acc = Acc OR (m)
 WHEN (IR[15..8] == [0, 1, 1, 1, 0, 1, 0, 0]) THEN {
     ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
     ALU_Fblock = [1, 1, 1, 0];
@@ -420,7 +474,7 @@ WHEN (IR[15..8] == [0, 1, 1, 1, 0, 1, 0, 0]) THEN {
     IO = 0;
 }
 
-" OR: Accum = Accum OR (X+O)
+" OR: Acc = Acc OR (X+O)
 WHEN (IR[15..8] == [0, 1, 1, 1, 0, 1, 0, 1]) THEN {
     ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
     ALU_Fblock = [1, 1, 1, 0];
@@ -429,7 +483,7 @@ WHEN (IR[15..8] == [0, 1, 1, 1, 0, 1, 0, 1]) THEN {
     PAU_Controls = [0, 0, 0, 0, 1];
     PAU_Offset = .X.;
 
-    DAU_Controls = [0, 0, 0, 0, 0, 1, 0, 0];
+    DAU_Controls = [1, 0, 0, 0, 0, 1, 0, 0];
 
     DDB_Source = [0, 0, 0, 1];
 
@@ -438,7 +492,7 @@ WHEN (IR[15..8] == [0, 1, 1, 1, 0, 1, 0, 1]) THEN {
     IO = 0;
 }
 
-" OR: Accum = Accum OR (S+O)
+" OR: Acc = Acc OR (S+O)
 WHEN (IR[15..8] == [0, 1, 1, 1, 0, 1, 1, 0]) THEN {
     ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
     ALU_Fblock = [1, 1, 1, 0];
@@ -447,7 +501,7 @@ WHEN (IR[15..8] == [0, 1, 1, 1, 0, 1, 1, 0]) THEN {
     PAU_Controls = [0, 0, 0, 0, 1];
     PAU_Offset = .X.;
 
-    DAU_Controls = [0, 0, 0, 0, 1, 0, 0, 0];
+    DAU_Controls = [1, 0, 0, 0, 1, 0, 0, 0];
 
     DDB_Source = [0, 0, 0, 1];
 
@@ -456,7 +510,7 @@ WHEN (IR[15..8] == [0, 1, 1, 1, 0, 1, 1, 0]) THEN {
     IO = 0;
 }
 
-" ORI: Accum = Accum OR k
+" ORI: Acc = Acc OR k
 WHEN (IR[15..8] == [0, 1, 1, 1, 0, 1, 1, 1]) THEN {
     ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
     ALU_Fblock = [1, 1, 1, 0];
@@ -627,7 +681,7 @@ WHEN (IR[15..8] == [0, 0, 0, 1, 1, 0, 0, 1]) THEN {
     PAU_Controls = [0, 0, 0, 0, 1];
     PAU_Offset = .X.;
 
-    DAU_Controls = [0, 0, 0, 0, 0, 1, 0, 0];
+    DAU_Controls = [1, 0, 0, 0, 0, 1, 0, 0];
 
     DDB_Source = [0, 0, 0, 1];
 
@@ -645,7 +699,7 @@ WHEN (IR[15..8] == [0, 0, 0, 1, 1, 0, 1, 0]) THEN {
     PAU_Controls = [0, 0, 0, 0, 1];
     PAU_Offset = .X.;
 
-    DAU_Controls = [0, 0, 0, 0, 1, 0, 0, 0];
+    DAU_Controls = [1, 0, 0, 0, 1, 0, 0, 0];
 
     DDB_Source = [0, 0, 0, 1];
 
@@ -699,7 +753,7 @@ WHEN (IR[15..8] == [0, 0, 0, 1, 0, 0, 0, 1]) THEN {
     PAU_Controls = [0, 0, 0, 0, 1];
     PAU_Offset = .X.;
 
-    DAU_Controls = [0, 0, 0, 0, 0, 1, 0, 0];
+    DAU_Controls = [1, 0, 0, 0, 0, 1, 0, 0];
 
     DDB_Source = [0, 0, 0, 1];
 
@@ -717,7 +771,7 @@ WHEN (IR[15..8] == [0, 0, 0, 1, 0, 0, 1, 0]) THEN {
     PAU_Controls = [0, 0, 0, 0, 1];
     PAU_Offset = .X.;
 
-    DAU_Controls = [0, 0, 0, 0, 1, 0, 0, 0];
+    DAU_Controls = [1, 0, 0, 0, 1, 0, 0, 0];
 
     DDB_Source = [0, 0, 0, 1];
 
@@ -744,7 +798,7 @@ WHEN (IR[15..8] == [0, 0, 0, 1, 0, 0, 1, 1]) THEN {
     IO = 0;
 }
 
-" TST: update flags based on Accum AND (m)
+" TST: update flags based on Acc AND (m)
 WHEN (IR[15..8] == [0, 1, 0, 0, 1, 1, 0, 0]) THEN {
     ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1];
     ALU_Fblock = [1, 0, 0, 0];
@@ -762,7 +816,7 @@ WHEN (IR[15..8] == [0, 1, 0, 0, 1, 1, 0, 0]) THEN {
     IO = 0;
 }
 
-" TST: update flags based on Accum AND (X+O)
+" TST: update flags based on Acc AND (X+O)
 WHEN (IR[15..8] == [0, 1, 0, 0, 1, 1, 0, 1]) THEN {
     ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1];
     ALU_Fblock = [1, 0, 0, 0];
@@ -771,7 +825,7 @@ WHEN (IR[15..8] == [0, 1, 0, 0, 1, 1, 0, 1]) THEN {
     PAU_Controls = [0, 0, 0, 0, 1];
     PAU_Offset = .X.;
 
-    DAU_Controls = [0, 0, 0, 0, 0, 1, 0, 0];
+    DAU_Controls = [1, 0, 0, 0, 0, 1, 0, 0];
 
     DDB_Source = [0, 0, 0, 1];
 
@@ -780,7 +834,7 @@ WHEN (IR[15..8] == [0, 1, 0, 0, 1, 1, 0, 1]) THEN {
     IO = 0;
 }
 
-" TST: update flags based on Accum AND (S+O)
+" TST: update flags based on Acc AND (S+O)
 WHEN (IR[15..8] == [0, 1, 0, 0, 1, 1, 1, 0]) THEN {
     ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1];
     ALU_Fblock = [1, 0, 0, 0];
@@ -789,7 +843,7 @@ WHEN (IR[15..8] == [0, 1, 0, 0, 1, 1, 1, 0]) THEN {
     PAU_Controls = [0, 0, 0, 0, 1];
     PAU_Offset = .X.;
 
-    DAU_Controls = [0, 0, 0, 0, 1, 0, 0, 0];
+    DAU_Controls = [1, 0, 0, 0, 1, 0, 0, 0];
 
     DDB_Source = [0, 0, 0, 1];
 
@@ -798,7 +852,7 @@ WHEN (IR[15..8] == [0, 1, 0, 0, 1, 1, 1, 0]) THEN {
     IO = 0;
 }
 
-" TSTI: update flags based on Accum AND k
+" TSTI: update flags based on Acc AND k
 WHEN (IR[15..8] == [0, 1, 0, 0, 1, 1, 1, 1]) THEN {
     ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1];
     ALU_Fblock = [1, 0, 0, 0];
@@ -816,9 +870,81 @@ WHEN (IR[15..8] == [0, 1, 0, 0, 1, 1, 1, 1]) THEN {
     IO = 0;
 }
 
+" XOR: Acc = Acc XOR (m)
+WHEN (IR[15..8] == [0, 0, 1, 1, 0, 1, 0, 0]) THEN {
+    ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
+    ALU_Fblock = [0, 1, 1, 0];
+    ALU_Source = [1, 0];
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [0, 0, 0, 0, 0, 0, 0, 1];
+
+    DDB_Source = [0, 0, 0, 1];
+
+    RD = 1;
+    WR = 0;
+    IO = 0;
+}
+
+" XOR: Acc = Acc XOR (X+O)
+WHEN (IR[15..8] == [0, 0, 1, 1, 0, 1, 0, 1]) THEN {
+    ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
+    ALU_Fblock = [0, 1, 1, 0];
+    ALU_Source = [1, 0];
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [1, 0, 0, 0, 0, 1, 0, 0];
+
+    DDB_Source = [0, 0, 0, 1];
+
+    RD = 1;
+    WR = 0;
+    IO = 0;
+}
+
+" XOR: Acc = Acc XOR (S+O)
+WHEN (IR[15..8] == [0, 0, 1, 1, 0, 1, 1, 0]) THEN {
+    ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
+    ALU_Fblock = [0, 1, 1, 0];
+    ALU_Source = [1, 0];
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [1, 0, 0, 0, 1, 0, 0, 0];
+
+    DDB_Source = [0, 0, 0, 1];
+
+    RD = 1;
+    WR = 0;
+    IO = 0;
+}
+
+" XOR: Acc = Acc XOR k
+WHEN (IR[15..8] == [0, 0, 1, 1, 0, 1, 1, 1]) THEN {
+    ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
+    ALU_Fblock = [0, 1, 1, 0];
+    ALU_Source = [0, 1];
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [0, 0, 0, 0, 0, 0, 0, 0];
+
+    DDB_Source = [0, 0, 0, 0];
+
+    RD = 0;
+    WR = 0;
+    IO = 0;
+}
+
 " SECTION: LOAD / STORE INSTRUCTIONS
 
-" LDI: load Accum with k
+" LDI: load Acc with k
 WHEN (IR[15..8] == [1, 0, 0, 0, 1, 0, 0, 1]) THEN {
     ALU_Controls = [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     ALU_Fblock = [0, 0, 0, 0];
@@ -836,7 +962,7 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 1, 0, 0, 1]) THEN {
     IO = 0;
 }
 
-" LDD: load Accum with (m)
+" LDD: load Acc with (m)
 WHEN (IR[15..8] == [1, 0, 0, 0, 0, 0, 0, 0]) THEN {
     ALU_Controls = [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     ALU_Fblock = [0, 0, 0, 0];
@@ -854,7 +980,7 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 0, 0, 0, 0]) THEN {
     IO = 0;
 }
 
-" STD: store Accum at (m)
+" STD: store Acc at (m)
 WHEN (IR[15..8] == [1, 0, 1, 0, 0, 0, 0, 0]) THEN {
     ALU_Controls = 0;
     ALU_Fblock = 0;
