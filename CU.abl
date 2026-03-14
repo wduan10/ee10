@@ -91,6 +91,10 @@ DAU_Controls = [DAU_Controls7..DAU_Controls0]; "8 control signals passed to DAU
 DDB_Source = [DDB_Source3..DDB_Source0]; "one hot encoded signals indicating how to set Data Data Bus
 
 
+" Constants
+DAU_CONTROLS_SOFF = [1, 0, 0, 0, 1, 0, 0, 0];
+
+
 EQUATIONS
 
 IR.CLK = Clock;
@@ -163,7 +167,7 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 0, 0, 1, 0]) THEN {
     PAU_Controls = [0, 0, 0, 0, 1];
     PAU_Offset = .X.;
 
-    DAU_Controls = [1, 0, 0, 0, 1, 0, 0, 0];
+    DAU_Controls = DAU_CONTROLS_SOFF;
 
     DDB_Source = [0, 0, 0, 1];
 
@@ -235,7 +239,7 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 1, 0, 1, 0]) THEN {
     PAU_Controls = [0, 0, 0, 0, 1];
     PAU_Offset = .X.;
 
-    DAU_Controls = [1, 0, 0, 0, 1, 0, 0, 0];
+    DAU_Controls = DAU_CONTROLS_SOFF;
 
     DDB_Source = [0, 0, 0, 1];
 
@@ -307,7 +311,7 @@ WHEN (IR[15..8] == [0, 1, 0, 0, 0, 1, 1, 0]) THEN {
     PAU_Controls = [0, 0, 0, 0, 1];
     PAU_Offset = .X.;
 
-    DAU_Controls = [1, 0, 0, 0, 1, 0, 0, 0];
+    DAU_Controls = DAU_CONTROLS_SOFF;
 
     DDB_Source = [0, 0, 0, 1];
 
@@ -379,7 +383,7 @@ WHEN (IR[15..8] == [0, 0, 1, 1, 0, 0, 1, 0]) THEN {
     PAU_Controls = [0, 0, 0, 0, 1];
     PAU_Offset = .X.;
 
-    DAU_Controls = [1, 0, 0, 0, 1, 0, 0, 0];
+    DAU_Controls = DAU_CONTROLS_SOFF;
 
     DDB_Source = [0, 0, 0, 1];
 
@@ -523,7 +527,7 @@ WHEN (IR[15..8] == [0, 1, 1, 1, 0, 1, 1, 0]) THEN {
     PAU_Controls = [0, 0, 0, 0, 1];
     PAU_Offset = .X.;
 
-    DAU_Controls = [1, 0, 0, 0, 1, 0, 0, 0];
+    DAU_Controls = DAU_CONTROLS_SOFF;
 
     DDB_Source = [0, 0, 0, 1];
 
@@ -721,7 +725,7 @@ WHEN (IR[15..8] == [0, 0, 0, 1, 1, 0, 1, 0]) THEN {
     PAU_Controls = [0, 0, 0, 0, 1];
     PAU_Offset = .X.;
 
-    DAU_Controls = [1, 0, 0, 0, 1, 0, 0, 0];
+    DAU_Controls = DAU_CONTROLS_SOFF;
 
     DDB_Source = [0, 0, 0, 1];
 
@@ -793,7 +797,7 @@ WHEN (IR[15..8] == [0, 0, 0, 1, 0, 0, 1, 0]) THEN {
     PAU_Controls = [0, 0, 0, 0, 1];
     PAU_Offset = .X.;
 
-    DAU_Controls = [1, 0, 0, 0, 1, 0, 0, 0];
+    DAU_Controls = DAU_CONTROLS_SOFF;
 
     DDB_Source = [0, 0, 0, 1];
 
@@ -865,7 +869,7 @@ WHEN (IR[15..8] == [0, 1, 0, 0, 1, 1, 1, 0]) THEN {
     PAU_Controls = [0, 0, 0, 0, 1];
     PAU_Offset = .X.;
 
-    DAU_Controls = [1, 0, 0, 0, 1, 0, 0, 0];
+    DAU_Controls = DAU_CONTROLS_SOFF;
 
     DDB_Source = [0, 0, 0, 1];
 
@@ -937,7 +941,7 @@ WHEN (IR[15..8] == [0, 0, 1, 1, 0, 1, 1, 0]) THEN {
     PAU_Controls = [0, 0, 0, 0, 1];
     PAU_Offset = .X.;
 
-    DAU_Controls = [1, 0, 0, 0, 1, 0, 0, 0];
+    DAU_Controls = DAU_CONTROLS_SOFF;
 
     DDB_Source = [0, 0, 0, 1];
 
@@ -1101,7 +1105,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 0, 0, 1, 1]) THEN {
     PAU_Controls = [0, 0, 0, 0, 1];
     PAU_Offset = .X.;
 
-    DAU_Controls = [1, 0, 0, 0, 1, 0, 0, 0];
+    DAU_Controls = DAU_CONTROLS_SOFF;
 
     DDB_Source = [0, 0, 0, 0];
 
@@ -1299,7 +1303,7 @@ WHEN (IR[15..8] == [1, 0, 1, 1, 0, 0, 1, 1]) THEN {
     PAU_Controls = [0, 0, 0, 0, 1];
     PAU_Offset = .X.;
 
-    DAU_Controls = [1, 0, 0, 0, 1, 0, 0, 0];
+    DAU_Controls = DAU_CONTROLS_SOFF;
 
     DDB_Source = [1, 0, 0, 0];
 
