@@ -106,6 +106,9 @@ ALU_SOURCE_DDB = [1, 0];
 ALU_SOURCE_IR = [0, 1];
 ALU_SOURCE_NONE = [0, 0];
 
+PAU_CONTROLS_INC = [0, 0, 0, 0, 1];
+PAU_CONTROLS_ABSJMP = [1, 0, 0, 0, 0];
+
 DAU_CONTROLS_M = [0, 0, 0, 0, 0, 0, 0, 1];
 DAU_CONTROLS_XOFF = [1, 0, 0, 0, 0, 1, 0, 0];
 DAU_CONTROLS_SOFF = [1, 0, 0, 0, 1, 0, 0, 0];
@@ -122,9 +125,9 @@ IR := ProgramDB;
 WHEN (IR[15..0] == [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
-    ALU_Source = 0;
+    ALU_Source = ALU_SOURCE_NONE;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = 0;
@@ -144,7 +147,7 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 0, 0, 0, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_B;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_M;
@@ -162,7 +165,7 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 0, 0, 0, 1]) THEN {
     ALU_Fblock = ALU_FBLOCK_B;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_XOFF;
@@ -180,7 +183,7 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 0, 0, 1, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_B;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_SOFF;
@@ -198,7 +201,7 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 0, 0, 1, 1]) THEN {
     ALU_Fblock = ALU_FBLOCK_B;
     ALU_Source = ALU_SOURCE_IR; " todo: is this right?
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = 0;
@@ -216,7 +219,7 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 1, 0, 0, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_B;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_M;
@@ -234,7 +237,7 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 1, 0, 0, 1]) THEN {
     ALU_Fblock = ALU_FBLOCK_B;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_XOFF;
@@ -252,7 +255,7 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 1, 0, 1, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_B;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_SOFF;
@@ -270,7 +273,7 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 1, 0, 1, 1]) THEN {
     ALU_Fblock = ALU_FBLOCK_B;
     ALU_Source = ALU_SOURCE_IR;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = 0;
@@ -288,7 +291,7 @@ WHEN (IR[15..8] == [0, 1, 0, 0, 0, 1, 0, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_AND;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_M;
@@ -306,7 +309,7 @@ WHEN (IR[15..8] == [0, 1, 0, 0, 0, 1, 0, 1]) THEN {
     ALU_Fblock = ALU_FBLOCK_AND;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_XOFF;
@@ -324,7 +327,7 @@ WHEN (IR[15..8] == [0, 1, 0, 0, 0, 1, 1, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_AND;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_SOFF;
@@ -342,7 +345,7 @@ WHEN (IR[15..8] == [0, 1, 0, 0, 0, 1, 1, 1]) THEN {
     ALU_Fblock = ALU_FBLOCK_AND;
     ALU_Source = ALU_SOURCE_IR;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = 0;
@@ -360,7 +363,7 @@ WHEN (IR[15..8] == [0, 0, 1, 1, 0, 0, 0, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_NOTB;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_M;
@@ -378,7 +381,7 @@ WHEN (IR[15..8] == [0, 0, 1, 1, 0, 0, 0, 1]) THEN {
     ALU_Fblock = ALU_FBLOCK_NOTB;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_XOFF;
@@ -396,7 +399,7 @@ WHEN (IR[15..8] == [0, 0, 1, 1, 0, 0, 1, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_NOTB;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_SOFF;
@@ -414,7 +417,7 @@ WHEN (IR[15..8] == [0, 0, 1, 1, 0, 0, 1, 1]) THEN {
     ALU_Fblock = ALU_FBLOCK_NOTB;
     ALU_Source = ALU_SOURCE_IR;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = 0;
@@ -432,7 +435,7 @@ WHEN (IR[15..0] == [0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_ONE;
     ALU_Source = ALU_SOURCE_NONE;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = 0;
@@ -450,7 +453,7 @@ WHEN (IR == 0) THEN {
     ALU_Fblock = ALU_FBLOCK_ZERO;
     ALU_Source = ALU_SOURCE_NONE;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = 0;
@@ -468,7 +471,7 @@ WHEN (IR[15..0] == [0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_NOTA;
     ALU_Source = ALU_SOURCE_NONE;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = 0;
@@ -486,7 +489,7 @@ WHEN (IR[15..0] == [0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_NOTA;
     ALU_Source = ALU_SOURCE_NONE;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = 0;
@@ -504,7 +507,7 @@ WHEN (IR[15..8] == [0, 1, 1, 1, 0, 1, 0, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_OR;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_M;
@@ -522,7 +525,7 @@ WHEN (IR[15..8] == [0, 1, 1, 1, 0, 1, 0, 1]) THEN {
     ALU_Fblock = ALU_FBLOCK_OR;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_XOFF;
@@ -540,7 +543,7 @@ WHEN (IR[15..8] == [0, 1, 1, 1, 0, 1, 1, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_OR;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_SOFF;
@@ -558,7 +561,7 @@ WHEN (IR[15..8] == [0, 1, 1, 1, 0, 1, 1, 1]) THEN {
     ALU_Fblock = ALU_FBLOCK_OR;
     ALU_Source = ALU_SOURCE_IR;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = 0;
@@ -576,7 +579,7 @@ WHEN (IR[15..0] == [0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_ZERO;
     ALU_Source = ALU_SOURCE_NONE;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = 0;
@@ -594,7 +597,7 @@ WHEN (IR[15..0] == [0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1]) THEN {
     ALU_Fblock = ALU_FBLOCK_ZERO;
     ALU_Source = ALU_SOURCE_NONE;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = 0;
@@ -612,7 +615,7 @@ WHEN (IR[15..0] == [0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_ZERO;
     ALU_Source = ALU_SOURCE_NONE;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = 0;
@@ -630,7 +633,7 @@ WHEN (IR[15..0] == [0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1]) THEN {
     ALU_Fblock = ALU_FBLOCK_ZERO;
     ALU_Source = ALU_SOURCE_NONE;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = 0;
@@ -648,7 +651,7 @@ WHEN (IR[15..0] == [0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_ZERO;
     ALU_Source = ALU_SOURCE_NONE;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = 0;
@@ -666,7 +669,7 @@ WHEN (IR[15..0] == [0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_ZERO;
     ALU_Source = ALU_SOURCE_NONE;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = 0;
@@ -684,7 +687,7 @@ WHEN (IR[15..0] == [0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_ZERO;
     ALU_Source = ALU_SOURCE_NONE;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = 0;
@@ -702,7 +705,7 @@ WHEN (IR[15..8] == [0, 0, 0, 1, 1, 0, 0, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_NOTB;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_M;
@@ -720,7 +723,7 @@ WHEN (IR[15..8] == [0, 0, 0, 1, 1, 0, 0, 1]) THEN {
     ALU_Fblock = ALU_FBLOCK_NOTB;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_XOFF;
@@ -738,7 +741,7 @@ WHEN (IR[15..8] == [0, 0, 0, 1, 1, 0, 1, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_NOTB;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_SOFF;
@@ -756,7 +759,7 @@ WHEN (IR[15..8] == [0, 0, 0, 1, 1, 0, 1, 1]) THEN {
     ALU_Fblock = ALU_FBLOCK_NOTB;
     ALU_Source = ALU_SOURCE_IR;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = 0;
@@ -774,7 +777,7 @@ WHEN (IR[15..8] == [0, 0, 0, 1, 0, 0, 0, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_NOTB;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_M;
@@ -792,7 +795,7 @@ WHEN (IR[15..8] == [0, 0, 0, 1, 0, 0, 0, 1]) THEN {
     ALU_Fblock = ALU_FBLOCK_NOTB;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_XOFF;
@@ -810,7 +813,7 @@ WHEN (IR[15..8] == [0, 0, 0, 1, 0, 0, 1, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_NOTB;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_SOFF;
@@ -828,7 +831,7 @@ WHEN (IR[15..8] == [0, 0, 0, 1, 0, 0, 1, 1]) THEN {
     ALU_Fblock = ALU_FBLOCK_NOTB;
     ALU_Source = ALU_SOURCE_IR;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = 0;
@@ -846,7 +849,7 @@ WHEN (IR[15..8] == [0, 1, 0, 0, 1, 1, 0, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_AND;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_M;
@@ -864,7 +867,7 @@ WHEN (IR[15..8] == [0, 1, 0, 0, 1, 1, 0, 1]) THEN {
     ALU_Fblock = ALU_FBLOCK_AND;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_XOFF;
@@ -882,7 +885,7 @@ WHEN (IR[15..8] == [0, 1, 0, 0, 1, 1, 1, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_AND;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_SOFF;
@@ -900,7 +903,7 @@ WHEN (IR[15..8] == [0, 1, 0, 0, 1, 1, 1, 1]) THEN {
     ALU_Fblock = ALU_FBLOCK_AND;
     ALU_Source = ALU_SOURCE_IR;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = 0;
@@ -918,7 +921,7 @@ WHEN (IR[15..8] == [0, 0, 1, 1, 0, 1, 0, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_XOR;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_M;
@@ -936,7 +939,7 @@ WHEN (IR[15..8] == [0, 0, 1, 1, 0, 1, 0, 1]) THEN {
     ALU_Fblock = ALU_FBLOCK_XOR;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_XOFF;
@@ -954,7 +957,7 @@ WHEN (IR[15..8] == [0, 0, 1, 1, 0, 1, 1, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_XOR;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_SOFF;
@@ -972,7 +975,7 @@ WHEN (IR[15..8] == [0, 0, 1, 1, 0, 1, 1, 1]) THEN {
     ALU_Fblock = ALU_FBLOCK_XOR;
     ALU_Source = ALU_SOURCE_IR;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = 0;
@@ -992,7 +995,7 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 1, 0, 0, 1]) THEN {
     ALU_Fblock = ALU_FBLOCK_ZERO;
     ALU_Source = ALU_SOURCE_IR;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = 0;
@@ -1010,7 +1013,7 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 0, 0, 0, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_ZERO;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_M;
@@ -1028,7 +1031,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 0, 1, 1, 1]) THEN {
     ALU_Fblock = ALU_FBLOCK_ZERO;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_XOFF;
@@ -1046,7 +1049,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 0, 1, 1, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_ZERO;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = [1, 0, 0, 1, 0, 1, 0, 0];
@@ -1064,7 +1067,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 1, 1, 1, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_ZERO;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = [1, 0, 1, 0, 0, 1, 0, 0];
@@ -1082,7 +1085,7 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 0, 1, 1, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_ZERO;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = [1, 1, 0, 1, 0, 1, 0, 0];
@@ -1100,7 +1103,7 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 1, 1, 1, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_ZERO;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = [1, 1, 1, 0, 0, 1, 0, 0];
@@ -1118,7 +1121,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 0, 0, 1, 1]) THEN {
     ALU_Fblock = ALU_FBLOCK_ZERO;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_SOFF;
@@ -1136,7 +1139,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 0, 0, 1, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_ZERO;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = [1, 0, 0, 1, 1, 0, 0, 0];
@@ -1154,7 +1157,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 1, 0, 1, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_ZERO;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = [1, 0, 1, 0, 1, 0, 0, 0];
@@ -1172,7 +1175,7 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 0, 0, 1, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_ZERO;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = [1, 1, 0, 1, 1, 0, 0, 0];
@@ -1190,7 +1193,7 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 1, 0, 1, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_ZERO;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = [1, 1, 1, 0, 1, 0, 0, 0];
@@ -1206,9 +1209,9 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 1, 0, 1, 0]) THEN {
 WHEN (IR[15..8] == [1, 0, 1, 0, 0, 0, 0, 0]) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
-    ALU_Source = 0;
+    ALU_Source = ALU_SOURCE_NONE;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_M;
@@ -1224,9 +1227,9 @@ WHEN (IR[15..8] == [1, 0, 1, 0, 0, 0, 0, 0]) THEN {
 WHEN (IR[15..8] == [1, 0, 1, 1, 0, 1, 1, 1]) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
-    ALU_Source = 0;
+    ALU_Source = ALU_SOURCE_NONE;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_XOFF;
@@ -1242,9 +1245,9 @@ WHEN (IR[15..8] == [1, 0, 1, 1, 0, 1, 1, 1]) THEN {
 WHEN (IR[15..8] == [1, 0, 1, 1, 0, 1, 1, 0]) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
-    ALU_Source = 0;
+    ALU_Source = ALU_SOURCE_NONE;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = [1, 0, 0, 1, 0, 1, 0, 0];
@@ -1260,9 +1263,9 @@ WHEN (IR[15..8] == [1, 0, 1, 1, 0, 1, 1, 0]) THEN {
 WHEN (IR[15..8] == [1, 0, 1, 1, 1, 1, 1, 0]) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
-    ALU_Source = 0;
+    ALU_Source = ALU_SOURCE_NONE;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = [1, 0, 1, 0, 0, 1, 0, 0];
@@ -1278,9 +1281,9 @@ WHEN (IR[15..8] == [1, 0, 1, 1, 1, 1, 1, 0]) THEN {
 WHEN (IR[15..8] == [1, 0, 1, 0, 0, 1, 1, 0]) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
-    ALU_Source = 0;
+    ALU_Source = ALU_SOURCE_NONE;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = [1, 1, 0, 1, 0, 1, 0, 0];
@@ -1296,9 +1299,9 @@ WHEN (IR[15..8] == [1, 0, 1, 0, 0, 1, 1, 0]) THEN {
 WHEN (IR[15..8] == [1, 0, 1, 0, 1, 1, 1, 0]) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
-    ALU_Source = 0;
+    ALU_Source = ALU_SOURCE_NONE;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = [1, 1, 1, 0, 0, 1, 0, 0];
@@ -1314,9 +1317,9 @@ WHEN (IR[15..8] == [1, 0, 1, 0, 1, 1, 1, 0]) THEN {
 WHEN (IR[15..8] == [1, 0, 1, 1, 0, 0, 1, 1]) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
-    ALU_Source = 0;
+    ALU_Source = ALU_SOURCE_NONE;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_SOFF;
@@ -1332,9 +1335,9 @@ WHEN (IR[15..8] == [1, 0, 1, 1, 0, 0, 1, 1]) THEN {
 WHEN (IR[15..8] == [1, 0, 1, 1, 0, 0, 1, 0]) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
-    ALU_Source = 0;
+    ALU_Source = ALU_SOURCE_NONE;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = [1, 0, 0, 1, 1, 0, 0, 0];
@@ -1350,9 +1353,9 @@ WHEN (IR[15..8] == [1, 0, 1, 1, 0, 0, 1, 0]) THEN {
 WHEN (IR[15..8] == [1, 0, 1, 1, 1, 0, 1, 0]) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
-    ALU_Source = 0;
+    ALU_Source = ALU_SOURCE_NONE;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = [1, 0, 1, 0, 1, 0, 0, 0];
@@ -1368,9 +1371,9 @@ WHEN (IR[15..8] == [1, 0, 1, 1, 1, 0, 1, 0]) THEN {
 WHEN (IR[15..8] == [1, 0, 1, 0, 0, 0, 1, 0]) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
-    ALU_Source = 0;
+    ALU_Source = ALU_SOURCE_NONE;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = [1, 1, 0, 1, 1, 0, 0, 0];
@@ -1386,9 +1389,9 @@ WHEN (IR[15..8] == [1, 0, 1, 0, 0, 0, 1, 0]) THEN {
 WHEN (IR[15..8] == [1, 0, 1, 0, 1, 0, 1, 0]) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
-    ALU_Source = 0;
+    ALU_Source = ALU_SOURCE_NONE;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = [1, 1, 1, 0, 1, 0, 0, 0];
@@ -1406,9 +1409,9 @@ WHEN (IR[15..8] == [1, 0, 1, 0, 1, 0, 1, 0]) THEN {
 WHEN (IR[15..13] == [1, 1, 0]) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
-    ALU_Source = 0;
+    ALU_Source = ALU_SOURCE_NONE;
 
-    PAU_Controls = [1, 0, 0, 0, 0];
+    PAU_Controls = PAU_CONTROLS_ABSJMP;
     PAU_Offset = .X.;
 
     DAU_Controls = 0;
@@ -1424,7 +1427,7 @@ WHEN (IR[15..13] == [1, 1, 0]) THEN {
 WHEN (IR[15..8] == [1, 0, 0, 0, 1, 0, 0, 0]) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
-    ALU_Source = 0;
+    ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = [0, !Flags3 & !Flags0, 0, 0, !(!Flags3 & !Flags0)];
     PAU_Offset = [IR7..IR0];
@@ -1442,7 +1445,7 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 1, 0, 0, 0]) THEN {
 WHEN (IR[15..8] == [1, 0, 0, 0, 1, 1, 0, 0]) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
-    ALU_Source = 0;
+    ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = [0, !Flags3, 0, 0, Flags3];
     PAU_Offset = [IR7..IR0];
@@ -1460,7 +1463,7 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 1, 1, 0, 0]) THEN {
 WHEN (IR[15..8] == [1, 0, 0, 0, 1, 1, 1, 1]) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
-    ALU_Source = 0;
+    ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = [0, Flags3, 0, 0, !Flags3];
     PAU_Offset = [IR7..IR0];
@@ -1478,7 +1481,7 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 1, 1, 1, 1]) THEN {
 WHEN (IR[15..8] == [1, 0, 0, 0, 1, 0, 1, 1]) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
-    ALU_Source = 0;
+    ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = [0, (Flags3 # Flags0), 0, 0, !(Flags3 # Flags0)];
     PAU_Offset = [IR7..IR0];
@@ -1496,7 +1499,7 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 1, 0, 1, 1]) THEN {
 WHEN (IR[15..8] == [1, 0, 0, 1, 1, 1, 1, 1]) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
-    ALU_Source = 0;
+    ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = [0, Flags0, 0, 0, !Flags0];
     PAU_Offset = [IR7..IR0];
@@ -1514,7 +1517,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 1, 1, 1, 1]) THEN {
 WHEN (IR[15..8] == [1, 0, 1, 0, 1, 1, 1, 1]) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
-    ALU_Source = 0;
+    ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = [0, !(Flags1 $ Flags2) & !Flags0, 0, 0, !(!(Flags1 $ Flags2) & !Flags0)];
     PAU_Offset = [IR7..IR0];
@@ -1532,7 +1535,7 @@ WHEN (IR[15..8] == [1, 0, 1, 0, 1, 1, 1, 1]) THEN {
 WHEN (IR[15..8] == [1, 0, 1, 1, 1, 0, 1, 1]) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
-    ALU_Source = 0;
+    ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = [0, !(Flags1 $ Flags2), 0, 0, Flags1 $ Flags2];
     PAU_Offset = [IR7..IR0];
@@ -1550,7 +1553,7 @@ WHEN (IR[15..8] == [1, 0, 1, 1, 1, 0, 1, 1]) THEN {
 WHEN (IR[15..8] == [1, 0, 1, 1, 1, 0, 0, 0]) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
-    ALU_Source = 0;
+    ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = [0, Flags1 $ Flags2, 0, 0, !(Flags1 $ Flags2)];
     PAU_Offset = [IR7..IR0];
@@ -1568,7 +1571,7 @@ WHEN (IR[15..8] == [1, 0, 1, 1, 1, 0, 0, 0]) THEN {
 WHEN (IR[15..8] == [1, 0, 1, 0, 1, 1, 0, 0]) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
-    ALU_Source = 0;
+    ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = [0, (Flags1 $ Flags2) # Flags0, 0, 0, !((Flags1 $ Flags2) # Flags0)];
     PAU_Offset = [IR7..IR0];
@@ -1586,7 +1589,7 @@ WHEN (IR[15..8] == [1, 0, 1, 0, 1, 1, 0, 0]) THEN {
 WHEN (IR[15..8] == [1, 0, 0, 1, 1, 1, 0, 0]) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
-    ALU_Source = 0;
+    ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = [0, !Flags0, 0, 0, Flags0];
     PAU_Offset = [IR7..IR0];
@@ -1604,7 +1607,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 1, 1, 0, 0]) THEN {
 WHEN (IR[15..8] == [1, 0, 0, 1, 1, 0, 0, 0]) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
-    ALU_Source = 0;
+    ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = [0, !Flags1, 0, 0, Flags1];
     PAU_Offset = [IR7..IR0];
@@ -1622,7 +1625,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 1, 0, 0, 0]) THEN {
 WHEN (IR[15..8] == [1, 0, 1, 0, 1, 0, 0, 0]) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
-    ALU_Source = 0;
+    ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = [0, !Flags2, 0, 0, Flags2];
     PAU_Offset = [IR7..IR0];
@@ -1640,7 +1643,7 @@ WHEN (IR[15..8] == [1, 0, 1, 0, 1, 0, 0, 0]) THEN {
 WHEN (IR[15..8] == [1, 0, 0, 1, 1, 0, 1, 1]) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
-    ALU_Source = 0;
+    ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = [0, Flags1, 0, 0, !Flags1];
     PAU_Offset = [IR7..IR0];
@@ -1658,7 +1661,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 1, 0, 1, 1]) THEN {
 WHEN (IR[15..8] == [1, 0, 1, 0, 1, 0, 1, 1]) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
-    ALU_Source = 0;
+    ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = [0, Flags2, 0, 0, !Flags2];
     PAU_Offset = [IR7..IR0];
@@ -1678,9 +1681,9 @@ WHEN (IR[15..8] == [1, 0, 1, 0, 1, 0, 1, 1]) THEN {
 WHEN (IR[15..0] == [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
-    ALU_Source = 0;
+    ALU_Source = ALU_SOURCE_NONE;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = [0, 1, 1, 0, 1, 0, 0, 0];
@@ -1698,7 +1701,7 @@ WHEN (IR[15..0] == [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
     ALU_Fblock = ALU_FBLOCK_ZERO;
     ALU_Source = ALU_SOURCE_DDB;
 
-    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
     DAU_Controls = [0, 0, 0, 1, 1, 0, 0, 0];
