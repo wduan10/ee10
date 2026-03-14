@@ -1568,7 +1568,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 1, 1, 0, 0]) THEN {
     ALU_Fblock = 0;
     ALU_Source = 0;
 
-    PAU_Controls = [0, Flags0, 0, 0, !Flags0];
+    PAU_Controls = [0, !Flags0, 0, 0, Flags0];
     PAU_Offset = [IR7..IR0];
 
     DAU_Controls = [0, 0, 0, 0, 0, 0, 0, 0];
