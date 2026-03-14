@@ -32,7 +32,7 @@ TITLE      'Instruction Decoder'
 "               PAU_Controls[4..0]   - control signals for program access unit
 "               PAU_Offset[7..0]     - offset/immediate value sent to PAU
 "               DAU_Controls[7..0]   - control signals for data access unit
-"               DDB_Source[3..0]     - one-hot data data bus source select
+"               DDB_Source[2..0]     - one-hot data data bus source select
 "               RD                   - data bus read enable
 "               WR                   - data bus write enable
 "               IO                   - memory/I/O select
