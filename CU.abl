@@ -1268,6 +1268,96 @@ WHEN (IR[15..8] == [1, 0, 1, 0, 1, 1, 1, 0]) THEN {
     IO = 0;
 }
 
+" ST: store Accumulator indirect at (S+O)
+WHEN (IR[15..8] == [1, 0, 1, 1, 0, 0, 1, 1]) THEN {
+    ALU_Controls = 0;
+    ALU_Fblock = 0;
+    ALU_Source = 0;
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [1, 0, 0, 0, 1, 0, 0, 0];
+
+    DDB_Source = [1, 0, 0, 0];
+
+    RD = 0;
+    WR = 1;
+    IO = 0;
+}
+
+" ST: store Accumulator indirect at (S+O) then post-increment S
+WHEN (IR[15..8] == [1, 0, 1, 1, 0, 0, 1, 0]) THEN {
+    ALU_Controls = 0;
+    ALU_Fblock = 0;
+    ALU_Source = 0;
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [1, 0, 0, 1, 1, 0, 0, 0];
+
+    DDB_Source = [1, 0, 0, 0];
+
+    RD = 0;
+    WR = 1;
+    IO = 0;
+}
+
+" ST: store Accumulator indirect at (S+O) then post-decrement S
+WHEN (IR[15..8] == [1, 0, 1, 1, 1, 0, 1, 0]) THEN {
+    ALU_Controls = 0;
+    ALU_Fblock = 0;
+    ALU_Source = 0;
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [1, 0, 1, 0, 1, 0, 0, 0];
+
+    DDB_Source = [1, 0, 0, 0];
+
+    RD = 0;
+    WR = 1;
+    IO = 0;
+}
+
+" ST: store Accumulator indirect at (S+O) after pre-increment S
+WHEN (IR[15..8] == [1, 0, 1, 0, 0, 0, 1, 0]) THEN {
+    ALU_Controls = 0;
+    ALU_Fblock = 0;
+    ALU_Source = 0;
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [1, 1, 0, 1, 1, 0, 0, 0];
+
+    DDB_Source = [1, 0, 0, 0];
+
+    RD = 0;
+    WR = 1;
+    IO = 0;
+}
+
+" ST: store Accumulator indirect at (S+O) after pre-decrement S
+WHEN (IR[15..8] == [1, 0, 1, 0, 1, 0, 1, 0]) THEN {
+    ALU_Controls = 0;
+    ALU_Fblock = 0;
+    ALU_Source = 0;
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [1, 1, 1, 0, 1, 0, 0, 0];
+
+    DDB_Source = [1, 0, 0, 0];
+
+    RD = 0;
+    WR = 1;
+    IO = 0;
+}
+
 " SECTION: BRANCH INSTRUCTIONS
 
 " JMP: jump to a
