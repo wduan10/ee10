@@ -27,7 +27,7 @@ TITLE      'Caltech10 CPU'
 " Revision History:
 " 03/11/26   Wilson Duan  Copy template from website
 " 03/11/26   Wilson Duan  Initial revision
-
+" 03/12/26   Wilson Duan  Update DataDB during writes
 
 
 " Pin/Signal Declarations
@@ -188,6 +188,7 @@ DataAB = DAUnit.[DataAddr7..DataAddr0];
 [SReg7..SReg0] = DAUnit.[SReg7..SReg0];
 
 " extract outputs of CUnit
+" mux to select DataDB source during writes
 DataDB = ([Accum7..Accum0] & CUnit.DDB_Source3) #
          ([Flags7..Flags0] & CUnit.DDB_Source2) #
          (DataDB & CUnit.DDB_Source0);

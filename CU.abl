@@ -12,14 +12,36 @@ INTERFACE  (ProgramDB15..ProgramDB0,
 TITLE      'Instruction Decoder'
 
 
-" Description:  todo this + inputs/outputs/pin comments
-" Inputs:
-" Outputs:
+" Description:  This module implements the Control Unit (CU) for the
+"               Caltech10 CPU. It latches the 16-bit instruction from the
+"               program data bus into the instruction register (IR), decodes
+"               the instruction, and generates the control signals needed by
+"               the ALU, program access unit, data access unit, data bus, and
+"               memory/I/O interface.
+
+" Inputs:       ProgramDB[15..0] - 16-bit instruction from program memory
+"               Flags[7..0]      - 8-bit flag register used for decoding
+"                                  conditional instructions
+"               Reset            - system reset
+"               Clock            - system clock
+
+" Outputs:      IR[15..0]            - 16-bit instruction register
+"               ALU_Controls[14..0]  - ALU control signals
+"               ALU_Fblock[3..0]     - F-block function select for ALU logic ops
+"               ALU_Source[1..0]     - one-hot ALU input source select
+"               PAU_Controls[4..0]   - control signals for program access unit
+"               PAU_Offset[7..0]     - offset/immediate value sent to PAU
+"               DAU_Controls[7..0]   - control signals for data access unit
+"               DDB_Source[3..0]     - one-hot data data bus source select
+"               RD                   - data bus read enable
+"               WR                   - data bus write enable
+"               IO                   - memory/I/O select
 
 
 " Revision History:
 " 03/11/26   Wilson Duan  Initial revision
-
+" 03/12/26   Wilson Duan  Add more WHEN statements
+" 03/13/26   Wilson Duan  Add even more WHEN statements
 
 
 " Pin/Signal Declarations
@@ -1367,6 +1389,114 @@ WHEN (IR[15..13] == [1, 1, 0]) THEN {
     ALU_Source = 0;
 
     PAU_Controls = [1, 0, 0, 0, 0];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [0, 0, 0, 0, 0, 0, 0, 0];
+
+    DDB_Source = [0, 0, 0, 0];
+
+    RD = 0;
+    WR = 0;
+    IO = 0;
+}
+
+" JA: if (C = 0) AND (Z = 0) then PC = PC + r + 1
+WHEN (IR[15..8] == [1, 0, 0, 0, 1, 0, 0, 0]) THEN {
+    ALU_Controls = 0;
+    ALU_Fblock = 0;
+    ALU_Source = 0;
+
+    PAU_Controls = [0, !Flags3 & !Flags0, 0, 0, !(!Flags3 & !Flags0)];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [0, 0, 0, 0, 0, 0, 0, 0];
+
+    DDB_Source = [0, 0, 0, 0];
+
+    RD = 0;
+    WR = 0;
+    IO = 0;
+}
+
+" JAE / JNC: if C = 0 then PC = PC + r + 1
+WHEN (IR[15..8] == [1, 0, 0, 0, 1, 1, 0, 0]) THEN {
+    ALU_Controls = 0;
+    ALU_Fblock = 0;
+    ALU_Source = 0;
+
+    PAU_Controls = [0, !Flags3, 0, 0, Flags3];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [0, 0, 0, 0, 0, 0, 0, 0];
+
+    DDB_Source = [0, 0, 0, 0];
+
+    RD = 0;
+    WR = 0;
+    IO = 0;
+}
+
+" JB / JC : if C = 1 then PC = PC + r + 1
+WHEN (IR[15..8] == [1, 0, 0, 0, 1, 1, 1, 1]) THEN {
+    ALU_Controls = 0;
+    ALU_Fblock = 0;
+    ALU_Source = 0;
+
+    PAU_Controls = [0, Flags3, 0, 0, !Flags3];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [0, 0, 0, 0, 0, 0, 0, 0];
+
+    DDB_Source = [0, 0, 0, 0];
+
+    RD = 0;
+    WR = 0;
+    IO = 0;
+}
+
+" JBE: if (C = 1) OR (Z = 1) then PC = PC + r + 1
+WHEN (IR[15..8] == [1, 0, 0, 0, 1, 0, 1, 1]) THEN {
+    ALU_Controls = 0;
+    ALU_Fblock = 0;
+    ALU_Source = 0;
+
+    PAU_Controls = [0, (Flags3 # Flags0), 0, 0, !(Flags3 # Flags0)];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [0, 0, 0, 0, 0, 0, 0, 0];
+
+    DDB_Source = [0, 0, 0, 0];
+
+    RD = 0;
+    WR = 0;
+    IO = 0;
+}
+
+" JE / JZ: if Z = 1 then PC = PC + r + 1
+WHEN (IR[15..8] == [1, 0, 0, 1, 1, 1, 1, 1]) THEN {
+    ALU_Controls = 0;
+    ALU_Fblock = 0;
+    ALU_Source = 0;
+
+    PAU_Controls = [0, Flags0, 0, 0, !Flags0];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [0, 0, 0, 0, 0, 0, 0, 0];
+
+    DDB_Source = [0, 0, 0, 0];
+
+    RD = 0;
+    WR = 0;
+    IO = 0;
+}
+
+" JG: if (S = V) AND (Z = 0) then PC = PC + r + 1
+WHEN (IR[15..8] == [1, 0, 1, 0, 1, 1, 1, 1]) THEN {
+    ALU_Controls = 0;
+    ALU_Fblock = 0;
+    ALU_Source = 0;
+
+    PAU_Controls = [0, !(Flags1 $ Flags2) & !Flags0, 0, 0, !(!(Flags1 $ Flags2) & !Flags0)];
     PAU_Offset = .X.;
 
     DAU_Controls = [0, 0, 0, 0, 0, 0, 0, 0];
