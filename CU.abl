@@ -18,7 +18,7 @@ TITLE      'Instruction Decoder'
 "               the instruction, and generates the control signals needed by
 "               the ALU, program access unit, data access unit, data bus, and
 "               memory/I/O interface.
-
+"
 " Inputs:       ProgramDB[15..0] - 16-bit instruction from program memory
 "               Flags[7..0]      - 8-bit flag register used for decoding
 "                                  conditional instructions
