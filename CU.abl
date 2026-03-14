@@ -112,7 +112,16 @@ PAU_CONTROLS_ABSJMP = [1, 0, 0, 0, 0];
 DAU_CONTROLS_M = [0, 0, 0, 0, 0, 0, 0, 1];
 DAU_CONTROLS_XOFF = [1, 0, 0, 0, 0, 1, 0, 0];
 DAU_CONTROLS_SOFF = [1, 0, 0, 0, 1, 0, 0, 0];
-
+DAU_CONTROLS_XOFF_PRE_INC = [1, 1, 0, 1, 0, 1, 0, 0];
+DAU_CONTROLS_XOFF_PRE_DEC = [1, 1, 1, 0, 0, 1, 0, 0];
+DAU_CONTROLS_XOFF_POST_INC = [1, 0, 0, 1, 0, 1, 0, 0];
+DAU_CONTROLS_XOFF_POST_DEC = [1, 0, 1, 0, 0, 1, 0, 0];
+DAU_CONTROLS_SOFF_PRE_INC = [1, 1, 0, 1, 1, 0, 0, 0];
+DAU_CONTROLS_SOFF_PRE_DEC = [1, 1, 1, 0, 1, 0, 0, 0];
+DAU_CONTROLS_SOFF_POST_INC = [1, 0, 0, 1, 1, 0, 0, 0];
+DAU_CONTROLS_SOFF_POST_DEC = [1, 0, 1, 0, 1, 0, 0, 0];
+DAU_CONTROLS_S_PRE_DEC = [0, 1, 1, 0, 1, 0, 0, 0];
+DAU_CONTROLS_S_POST_INC = [0, 0, 0, 1, 1, 0, 0, 0];
 
 EQUATIONS
 
@@ -1052,7 +1061,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 0, 1, 1, 0]) THEN {
     PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
-    DAU_Controls = [1, 0, 0, 1, 0, 1, 0, 0];
+    DAU_Controls = DAU_CONTROLS_XOFF_POST_INC;
 
     DDB_Source = 0;
 
@@ -1070,7 +1079,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 1, 1, 1, 0]) THEN {
     PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
-    DAU_Controls = [1, 0, 1, 0, 0, 1, 0, 0];
+    DAU_Controls = DAU_CONTROLS_XOFF_POST_DEC;
 
     DDB_Source = 0;
 
@@ -1088,7 +1097,7 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 0, 1, 1, 0]) THEN {
     PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
-    DAU_Controls = [1, 1, 0, 1, 0, 1, 0, 0];
+    DAU_Controls = DAU_CONTROLS_XOFF_PRE_INC;
 
     DDB_Source = 0;
 
@@ -1106,7 +1115,7 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 1, 1, 1, 0]) THEN {
     PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
-    DAU_Controls = [1, 1, 1, 0, 0, 1, 0, 0];
+    DAU_Controls = DAU_CONTROLS_XOFF_PRE_DEC;
 
     DDB_Source = 0;
 
@@ -1142,7 +1151,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 0, 0, 1, 0]) THEN {
     PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
-    DAU_Controls = [1, 0, 0, 1, 1, 0, 0, 0];
+    DAU_Controls = DAU_CONTROLS_SOFF_POST_INC;
 
     DDB_Source = 0;
 
@@ -1160,7 +1169,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 1, 0, 1, 0]) THEN {
     PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
-    DAU_Controls = [1, 0, 1, 0, 1, 0, 0, 0];
+    DAU_Controls = DAU_CONTROLS_SOFF_POST_DEC;
 
     DDB_Source = 0;
 
@@ -1178,7 +1187,7 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 0, 0, 1, 0]) THEN {
     PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
-    DAU_Controls = [1, 1, 0, 1, 1, 0, 0, 0];
+    DAU_Controls = DAU_CONTROLS_SOFF_PRE_INC;
 
     DDB_Source = 0;
 
@@ -1196,7 +1205,7 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 1, 0, 1, 0]) THEN {
     PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
-    DAU_Controls = [1, 1, 1, 0, 1, 0, 0, 0];
+    DAU_Controls = DAU_CONTROLS_SOFF_PRE_DEC;
 
     DDB_Source = 0;
 
@@ -1250,7 +1259,7 @@ WHEN (IR[15..8] == [1, 0, 1, 1, 0, 1, 1, 0]) THEN {
     PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
-    DAU_Controls = [1, 0, 0, 1, 0, 1, 0, 0];
+    DAU_Controls = DAU_CONTROLS_XOFF_POST_INC;
 
     DDB_Source = [1, 0, 0, 0];
 
@@ -1268,7 +1277,7 @@ WHEN (IR[15..8] == [1, 0, 1, 1, 1, 1, 1, 0]) THEN {
     PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
-    DAU_Controls = [1, 0, 1, 0, 0, 1, 0, 0];
+    DAU_Controls = DAU_CONTROLS_XOFF_POST_DEC;
 
     DDB_Source = [1, 0, 0, 0];
 
@@ -1286,7 +1295,7 @@ WHEN (IR[15..8] == [1, 0, 1, 0, 0, 1, 1, 0]) THEN {
     PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
-    DAU_Controls = [1, 1, 0, 1, 0, 1, 0, 0];
+    DAU_Controls = DAU_CONTROLS_XOFF_PRE_INC;
 
     DDB_Source = [1, 0, 0, 0];
 
@@ -1304,7 +1313,7 @@ WHEN (IR[15..8] == [1, 0, 1, 0, 1, 1, 1, 0]) THEN {
     PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
-    DAU_Controls = [1, 1, 1, 0, 0, 1, 0, 0];
+    DAU_Controls = DAU_CONTROLS_XOFF_PRE_DEC;
 
     DDB_Source = [1, 0, 0, 0];
 
@@ -1340,7 +1349,7 @@ WHEN (IR[15..8] == [1, 0, 1, 1, 0, 0, 1, 0]) THEN {
     PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
-    DAU_Controls = [1, 0, 0, 1, 1, 0, 0, 0];
+    DAU_Controls = DAU_CONTROLS_SOFF_POST_INC;
 
     DDB_Source = [1, 0, 0, 0];
 
@@ -1358,7 +1367,7 @@ WHEN (IR[15..8] == [1, 0, 1, 1, 1, 0, 1, 0]) THEN {
     PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
-    DAU_Controls = [1, 0, 1, 0, 1, 0, 0, 0];
+    DAU_Controls = DAU_CONTROLS_SOFF_POST_DEC;
 
     DDB_Source = [1, 0, 0, 0];
 
@@ -1376,7 +1385,7 @@ WHEN (IR[15..8] == [1, 0, 1, 0, 0, 0, 1, 0]) THEN {
     PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
-    DAU_Controls = [1, 1, 0, 1, 1, 0, 0, 0];
+    DAU_Controls = DAU_CONTROLS_SOFF_PRE_INC;
 
     DDB_Source = [1, 0, 0, 0];
 
@@ -1394,7 +1403,7 @@ WHEN (IR[15..8] == [1, 0, 1, 0, 1, 0, 1, 0]) THEN {
     PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
-    DAU_Controls = [1, 1, 1, 0, 1, 0, 0, 0];
+    DAU_Controls = DAU_CONTROLS_SOFF_PRE_DEC;
 
     DDB_Source = [1, 0, 0, 0];
 
@@ -1686,7 +1695,7 @@ WHEN (IR[15..0] == [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
     PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
-    DAU_Controls = [0, 1, 1, 0, 1, 0, 0, 0];
+    DAU_Controls = DAU_CONTROLS_S_PRE_DEC;
 
     DDB_Source = [0, 1, 0, 0];
 
@@ -1704,7 +1713,7 @@ WHEN (IR[15..0] == [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
     PAU_Controls = PAU_CONTROLS_INC
     PAU_Offset = .X.;
 
-    DAU_Controls = [0, 0, 0, 1, 1, 0, 0, 0];
+    DAU_Controls = DAU_CONTROLS_S_POST_INC;
 
     DDB_Source = 0;
 
