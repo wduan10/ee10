@@ -998,7 +998,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 0, 1, 1, 1]) THEN {
     IO = 0;
 }
 
-" LD: load Accumulator indirect from (X+O) then post increment X
+" LD: load Accumulator indirect from (X+O) then post-increment X
 WHEN (IR[15..8] == [1, 0, 0, 1, 0, 1, 1, 0]) THEN {
     ALU_Controls = [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     ALU_Fblock = [0, 0, 0, 0];
@@ -1016,7 +1016,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 0, 1, 1, 0]) THEN {
     IO = 0;
 }
 
-" LD: load Accumulator indirect from (X+O) then post decrement X
+" LD: load Accumulator indirect from (X+O) then post-decrement X
 WHEN (IR[15..8] == [1, 0, 0, 1, 1, 1, 1, 0]) THEN {
     ALU_Controls = [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     ALU_Fblock = [0, 0, 0, 0];
@@ -1034,7 +1034,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 1, 1, 1, 0]) THEN {
     IO = 0;
 }
 
-" LD: load Accumulator indirect from (X+O) after pre increment X
+" LD: load Accumulator indirect from (X+O) after pre-increment X
 WHEN (IR[15..8] == [1, 0, 0, 0, 0, 1, 1, 0]) THEN {
     ALU_Controls = [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     ALU_Fblock = [0, 0, 0, 0];
@@ -1052,7 +1052,7 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 0, 1, 1, 0]) THEN {
     IO = 0;
 }
 
-" LD: load Accumulator indirect from (X+O) after pre decrement X
+" LD: load Accumulator indirect from (X+O) after pre-decrement X
 WHEN (IR[15..8] == [1, 0, 0, 0, 1, 1, 1, 0]) THEN {
     ALU_Controls = [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     ALU_Fblock = [0, 0, 0, 0];
@@ -1088,7 +1088,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 0, 0, 1, 1]) THEN {
     IO = 0;
 }
 
-" LD: load Accumulator indirect from (S+O) then post increment S
+" LD: load Accumulator indirect from (S+O) then post-increment S
 WHEN (IR[15..8] == [1, 0, 0, 1, 0, 0, 1, 0]) THEN {
     ALU_Controls = [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     ALU_Fblock = [0, 0, 0, 0];
@@ -1106,7 +1106,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 0, 0, 1, 0]) THEN {
     IO = 0;
 }
 
-" LD: load Accumulator indirect from (S+O) then post decrement S
+" LD: load Accumulator indirect from (S+O) then post-decrement S
 WHEN (IR[15..8] == [1, 0, 0, 1, 1, 0, 1, 0]) THEN {
     ALU_Controls = [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     ALU_Fblock = [0, 0, 0, 0];
@@ -1124,7 +1124,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 1, 0, 1, 0]) THEN {
     IO = 0;
 }
 
-" LD: load Accumulator indirect from (S+O) after pre increment S
+" LD: load Accumulator indirect from (S+O) after pre-increment S
 WHEN (IR[15..8] == [1, 0, 0, 0, 0, 0, 1, 0]) THEN {
     ALU_Controls = [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     ALU_Fblock = [0, 0, 0, 0];
@@ -1142,7 +1142,7 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 0, 0, 1, 0]) THEN {
     IO = 0;
 }
 
-" LD: load Accumulator indirect from (S+O) after pre decrement S
+" LD: load Accumulator indirect from (S+O) after pre-decrement S
 WHEN (IR[15..8] == [1, 0, 0, 0, 1, 0, 1, 0]) THEN {
     ALU_Controls = [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     ALU_Fblock = [0, 0, 0, 0];
@@ -1170,6 +1170,96 @@ WHEN (IR[15..8] == [1, 0, 1, 0, 0, 0, 0, 0]) THEN {
     PAU_Offset = .X.;
 
     DAU_Controls = [0, 0, 0, 0, 0, 0, 0, 1];
+
+    DDB_Source = [1, 0, 0, 0];
+
+    RD = 0;
+    WR = 1;
+    IO = 0;
+}
+
+" ST: store Accumulator indirect at (X+O)
+WHEN (IR[15..8] == [1, 0, 1, 1, 0, 1, 1, 1]) THEN {
+    ALU_Controls = 0;
+    ALU_Fblock = 0;
+    ALU_Source = 0;
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [1, 0, 0, 0, 0, 1, 0, 0];
+
+    DDB_Source = [1, 0, 0, 0];
+
+    RD = 0;
+    WR = 1;
+    IO = 0;
+}
+
+" ST: store Accumulator indirect at (X+O) then post-increment X
+WHEN (IR[15..8] == [1, 0, 1, 1, 0, 1, 1, 0]) THEN {
+    ALU_Controls = 0;
+    ALU_Fblock = 0;
+    ALU_Source = 0;
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [1, 0, 0, 1, 0, 1, 0, 0];
+
+    DDB_Source = [1, 0, 0, 0];
+
+    RD = 0;
+    WR = 1;
+    IO = 0;
+}
+
+" ST: store Accumulator indirect at (X+O) then post-decrement X
+WHEN (IR[15..8] == [1, 0, 1, 1, 1, 1, 1, 0]) THEN {
+    ALU_Controls = 0;
+    ALU_Fblock = 0;
+    ALU_Source = 0;
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [1, 0, 1, 0, 0, 1, 0, 0];
+
+    DDB_Source = [1, 0, 0, 0];
+
+    RD = 0;
+    WR = 1;
+    IO = 0;
+}
+
+" ST: store Accumulator indirect at (X+O) after pre-increment X
+WHEN (IR[15..8] == [1, 0, 1, 0, 0, 1, 1, 0]) THEN {
+    ALU_Controls = 0;
+    ALU_Fblock = 0;
+    ALU_Source = 0;
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [1, 1, 0, 1, 0, 1, 0, 0];
+
+    DDB_Source = [1, 0, 0, 0];
+
+    RD = 0;
+    WR = 1;
+    IO = 0;
+}
+
+" ST: store Accumulator indirect at (X+O) after pre-decrement X
+WHEN (IR[15..8] == [1, 0, 1, 0, 1, 1, 1, 0]) THEN {
+    ALU_Controls = 0;
+    ALU_Fblock = 0;
+    ALU_Source = 0;
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [1, 1, 1, 0, 0, 1, 0, 0];
 
     DDB_Source = [1, 0, 0, 0];
 
