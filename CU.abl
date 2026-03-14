@@ -726,7 +726,7 @@ WHEN (IR[15..8] == [0, 0, 0, 1, 0, 0, 1, 0]) THEN {
     IO = 0;
 }
 
-" SUB: Acc = Acc – k
+" SUBI: Acc = Acc – k
 WHEN (IR[15..8] == [0, 0, 0, 1, 0, 0, 1, 1]) THEN {
     ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0];
     ALU_Fblock = [0, 1, 0, 1];
