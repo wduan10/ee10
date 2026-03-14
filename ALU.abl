@@ -182,6 +182,6 @@ StatusRegisterUnit.Hold = Load;
 StatusRegisterUnit.Pop = Pop;
 
 " StatusRegister outputs
-[Flags7..Flags0] = !StatusRegisterUnit.[Flags7..Flags0];
+[Flags7..Flags0] = StatusRegisterUnit.[Flags7..Flags0];
 
 END ALU
