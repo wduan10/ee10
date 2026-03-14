@@ -178,7 +178,7 @@ StatusRegisterUnit.RLC = RLC;
 
 StatusRegisterUnit.Clock = Clock;
 StatusRegisterUnit.Reset = Reset;
-StatusRegisterUnit.Hold = Load;
+StatusRegisterUnit.Hold = Load # Hold;
 StatusRegisterUnit.Pop = Pop;
 
 " StatusRegister outputs
