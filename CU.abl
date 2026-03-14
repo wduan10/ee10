@@ -240,24 +240,6 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 1, 0, 1, 1]) THEN {
     IO = 0;
 }
 
-" NOT: Accum = !Accum
-WHEN (IR[15..0] == [0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
-    ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
-    ALU_Fblock = [0, 0, 1, 1];
-    ALU_Source = [0, 0];
-
-    PAU_Controls = [0, 0, 0, 0, 1];
-    PAU_Offset = .X.;
-
-    DAU_Controls = [0, 0, 0, 0, 0, 0, 0, 0];
-
-    DDB_Source = [0, 0, 0, 0];
-
-    RD = 0;
-    WR = 0;
-    IO = 0;
-}
-
 " ANDI: Accum = Accum AND k
 WHEN (IR[15..8] == [0, 1, 0, 0, 0, 1, 1, 1]) THEN {
     ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
@@ -276,11 +258,83 @@ WHEN (IR[15..8] == [0, 1, 0, 0, 0, 1, 1, 1]) THEN {
     IO = 0;
 }
 
-" ORI: Accum = Accum OR k
-WHEN (IR[15..8] == [0, 1, 1, 1, 0, 1, 1, 1]) THEN {
-    ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
-    ALU_Fblock = [1, 1, 1, 0];
+" CMP: update flags based on Acc – (m)
+WHEN (IR[15..8] == [0, 0, 1, 1, 0, 0, 0, 0]) THEN {
+    ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0];
+    ALU_Fblock = [0, 1, 0, 1];
+    ALU_Source = [1, 0];
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [0, 0, 0, 0, 0, 0, 0, 1];
+
+    DDB_Source = [0, 0, 0, 1];
+
+    RD = 1;
+    WR = 0;
+    IO = 0;
+}
+
+" CMP: update flags based on Acc – (X+O)
+WHEN (IR[15..8] == [0, 0, 1, 1, 0, 0, 0, 1]) THEN {
+    ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0];
+    ALU_Fblock = [0, 1, 0, 1];
+    ALU_Source = [1, 0];
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [1, 0, 0, 0, 0, 1, 0, 0];
+
+    DDB_Source = [0, 0, 0, 1];
+
+    RD = 1;
+    WR = 0;
+    IO = 0;
+}
+
+" CMP: update flags based on Acc – (S+O)
+WHEN (IR[15..8] == [0, 0, 1, 1, 0, 0, 1, 0]) THEN {
+    ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0];
+    ALU_Fblock = [0, 1, 0, 1];
+    ALU_Source = [1, 0];
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [1, 0, 0, 0, 1, 0, 0, 0];
+
+    DDB_Source = [0, 0, 0, 1];
+
+    RD = 1;
+    WR = 0;
+    IO = 0;
+}
+
+" CMPI: update flags based on Acc – k
+WHEN (IR[15..8] == [0, 0, 1, 1, 0, 0, 1, 1]) THEN {
+    ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0];
+    ALU_Fblock = [0, 1, 0, 1];
     ALU_Source = [0, 1];
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [0, 0, 0, 0, 0, 0, 0, 0];
+
+    DDB_Source = [0, 0, 0, 0];
+
+    RD = 0;
+    WR = 0;
+    IO = 0;
+}
+
+" DEC: Accum = Accum - 1
+WHEN (IR[15..0] == [0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
+    ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0];
+    ALU_Fblock = [1, 1, 1, 1];
+    ALU_Source = [0, 0];
 
     PAU_Controls = [0, 0, 0, 0, 1];
     PAU_Offset = .X.;
@@ -312,11 +366,29 @@ WHEN (IR == 0) THEN {
     IO = 0;
 }
 
-" DEC: Accum = Accum - 1
-WHEN (IR[15..0] == [0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
-    ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0];
-    ALU_Fblock = [1, 1, 1, 1];
+" NOT: Accum = !Accum
+WHEN (IR[15..0] == [0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
+    ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
+    ALU_Fblock = [0, 0, 1, 1];
     ALU_Source = [0, 0];
+
+    PAU_Controls = [0, 0, 0, 0, 1];
+    PAU_Offset = .X.;
+
+    DAU_Controls = [0, 0, 0, 0, 0, 0, 0, 0];
+
+    DDB_Source = [0, 0, 0, 0];
+
+    RD = 0;
+    WR = 0;
+    IO = 0;
+}
+
+" ORI: Accum = Accum OR k
+WHEN (IR[15..8] == [0, 1, 1, 1, 0, 1, 1, 1]) THEN {
+    ALU_Controls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
+    ALU_Fblock = [1, 1, 1, 0];
+    ALU_Source = [0, 1];
 
     PAU_Controls = [0, 0, 0, 0, 1];
     PAU_Offset = .X.;
