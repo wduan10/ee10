@@ -102,7 +102,7 @@ CU              INTERFACE  (ProgramDB15..ProgramDB0,
                                ALU_Controls14..ALU_Controls0, ALU_Fblock3..ALU_Fblock0, ALU_Source1, ALU_Source0,
                                PAU_Controls4..PAU_Controls0, PAU_Offset7..PAU_Offset0,
                                DAU_Controls7..DAU_Controls0,
-                               DDB_Source2..DDB_Source0,
+                               DDB_Source3..DDB_Source0,
                                RD, WR, IO,
                                State2..State0);
 
@@ -190,8 +190,9 @@ DataAB = DAUnit.[DataAddr7..DataAddr0];
 
 " extract outputs of CUnit
 " mux to select DataDB source during writes
-DataDB = ([Accum7..Accum0] & CUnit.DDB_Source2) #
-         ([Flags7..Flags0] & CUnit.DDB_Source1) #
+DataDB = ([Accum7..Accum0] & CUnit.DDB_Source3) #
+         ([Flags7..Flags0] & CUnit.DDB_Source2) #
+         ([0, 0, 0, PAUnit.[PC12..PC8]] & CUnit.DDB_Source1) #
          (PAUnit.[PC7..PC0] & CUnit.DDB_Source0);
 RD = CUnit.RD;
 WR = CUnit.WR;
