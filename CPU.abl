@@ -193,7 +193,7 @@ DataAB = DAUnit.[DataAddr7..DataAddr0];
 " mux to select DataDB source during writes
 DataDB = ([Accum7..Accum0] & CUnit.DDB_Source3) #
          ([Flags7..Flags0] & CUnit.DDB_Source2) #
-         ([0, 0, 0, PAUnit.[PC12..PC8]] & CUnit.DDB_Source1) #
+         ([0, 0, 0, PAUnit.PC12..PAUnit.PC8] & CUnit.DDB_Source1) #
          (PAUnit.[PC7..PC0] & CUnit.DDB_Source0);
 RD = CUnit.RD;
 WR = CUnit.WR;
