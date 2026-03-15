@@ -103,7 +103,8 @@ CU              INTERFACE  (ProgramDB15..ProgramDB0,
                                PAU_Controls4..PAU_Controls0, PAU_Offset7..PAU_Offset0,
                                DAU_Controls7..DAU_Controls0,
                                DDB_Source2..DDB_Source0,
-                               RD, WR, IO);
+                               RD, WR, IO,
+                               State2..State0);
 
 " create instances of the modules
 PAUnit    FUNCTIONAL_BLOCK  ProgramAccess;

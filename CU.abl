@@ -7,7 +7,8 @@ INTERFACE  (ProgramDB15..ProgramDB0,
                PAU_Controls4..PAU_Controls0, PAU_Offset7..PAU_Offset0,
                DAU_Controls7..DAU_Controls0,
                DDB_Source2..DDB_Source0,
-               RD, WR, IO);
+               RD, WR, IO,
+               State2..State0);
 
 TITLE      'Instruction Decoder'
 
@@ -36,6 +37,7 @@ TITLE      'Instruction Decoder'
 "               RD                   - data bus read enable
 "               WR                   - data bus write enable
 "               IO                   - memory/I/O select
+"               State2..State0       - FSM for CALL, RTS instructions
 
 
 " Revision History:
@@ -73,6 +75,7 @@ RD			pin;	"output  read signal for the Data data bus
 WR			pin;	"output  write signal for the Data data bus
 IO			pin;	"output  accessing memory (0) or I/O (1)
 
+State2..State0 pin ISTYPE 'REG'; "output  FSM for CALL, RTS instructions
 
 " Internal signals
 
@@ -88,7 +91,7 @@ PAU_Controls = [PAU_Controls4..PAU_Controls0]; "5 control signals passed to PAU
 PAU_Offset = [PAU_Offset7..PAU_Offset0]; "8 bits of data/offset passed to PAU
 DAU_Controls = [DAU_Controls7..DAU_Controls0]; "8 control signals passed to DAU
 DDB_Source = [DDB_Source2..DDB_Source0]; "one hot encoded signals indicating how to set Data Data Bus
-
+STATE = [State2..State0]; "FSM for CALL, RTS instructions
 
 " Constants
 
@@ -125,8 +128,29 @@ DAU_CONTROLS_S_POST_INC = [0, 0, 0, 1, 1, 0, 0, 0];
 DDB_SOURCE_ACC = [1, 0, 0];
 DDB_SOURCE_FLAGS = [0, 1, 0];
 
+" FSM possible states
+STATE_INIT = [0, 0, 0];
+STATE_WR_PC_HIGH = [0, 0, 1];
+STATE_RD_PC_HIGH = [0, 1, 0];
+STATE_WR_PC_LOW = [0, 1, 1];
+STATE_DONE = [1, 0, 0];
+
+" CALL and RTS instructions
+CALL = [1, 1, 1, .X., .X., .X., .X., .X., .X., .X., .X., .X., .X., .X., .X., .X.];
+RTS = [0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0];
 
 EQUATIONS
+
+STATE.CLK = Clock;
+STATE.CLR = Reset;
+
+TRUTH_TABLE ([IR, STATE] :> [STATE])
+[ CALL, STATE_INIT ] :> [ STATE_WR_PC_HIGH ];
+[ RTS, STATE_INIT ] :> [ STATE_RD_PC_HIGH ];
+[ CALL, STATE_WR_PC_HIGH ] :> [ STATE_WR_PC_LOW ];
+[ RTS, STATE_RD_PC_HIGH ] :> [ STATE_DONE ];
+[ CALL, STATE_WR_PC_LOW ] :> [ STATE_DONE ];
+[ .X., STATE_DONE ] :> [ STATE_INIT ];
 
 IR.CLK = Clock;
 IR.CLR = Reset;
