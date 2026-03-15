@@ -1758,7 +1758,7 @@ WHEN (IR[15..0] == [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
 
 " CALL: Call subroutine
 " state 1: STATE_INIT
-WHEN (IR == CALL & FSM == STATE_INIT) THEN {
+WHEN ((IR == CALL) & (FSM == STATE_INIT)) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
     ALU_Source = ALU_SOURCE_NONE;
@@ -1776,7 +1776,7 @@ WHEN (IR == CALL & FSM == STATE_INIT) THEN {
 }
 
 " state 2: STATE_WR_PC_HIGH
-WHEN (IR == CALL & FSM == STATE_WR_PC_HIGH) THEN {
+WHEN ((IR == CALL) & (FSM == STATE_WR_PC_HIGH)) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
     ALU_Source = ALU_SOURCE_NONE;
@@ -1794,7 +1794,7 @@ WHEN (IR == CALL & FSM == STATE_WR_PC_HIGH) THEN {
 }
 
 " state 3: STATE_WR_PC_LOW
-WHEN (IR == CALL & FSM == STATE_WR_PC_LOW) THEN {
+WHEN ((IR == CALL) & (FSM == STATE_WR_PC_LOW)) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
     ALU_Source = ALU_SOURCE_NONE;
@@ -1812,7 +1812,7 @@ WHEN (IR == CALL & FSM == STATE_WR_PC_LOW) THEN {
 }
 
 " state 4: STATE_DONE
-WHEN (IR == CALL & FSM == STATE_DONE) THEN {
+WHEN ((IR == CALL) & (FSM == STATE_DONE)) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
     ALU_Source = ALU_SOURCE_NONE;
