@@ -10,7 +10,7 @@ INTERFACE  (ProgramDB15..ProgramDB0,
                RD, WR, IO,
                State2..State0);
 
-TITLE      'Instruction Decoder'
+TITLE      'Instruction Decoder and Finite State Machine'
 
 
 " Description:  This module implements the Control Unit (CU) for the
@@ -18,7 +18,8 @@ TITLE      'Instruction Decoder'
 "               program data bus into the instruction register (IR), decodes
 "               the instruction, and generates the control signals needed by
 "               the ALU, program access unit, data access unit, data bus, and
-"               memory/I/O interface.
+"               memory/I/O interface. It includes a Finite State Machine (FSM)
+"               to account for the CALL and RTS instructions.
 "
 " Inputs:       ProgramDB[15..0] - 16-bit instruction from program memory
 "               Flags[7..0]      - 8-bit flag register used for decoding
@@ -44,6 +45,8 @@ TITLE      'Instruction Decoder'
 " 03/11/26   Wilson Duan  Initial revision
 " 03/12/26   Wilson Duan  Add more WHEN statements
 " 03/13/26   Wilson Duan  Add even more WHEN statements
+" 03/14/26   Wilson Duan  Add FSM states and WHEN statements
+" 03/14/26   Wilson Duan  Add to DDB_Source for FSM
 
 
 " Pin/Signal Declarations
