@@ -145,10 +145,6 @@ STATE_DONE = [1, 0, 0];
 CALL = [1, 1, 1, .X., .X., .X., .X., .X., .X., .X., .X., .X., .X., .X., .X., .X.];
 RTS = [0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0];
 
-EQUATIONS
-
-FSM.CLK = Clock;
-FSM.CLR = Reset;
 
 TRUTH_TABLE ([IR, FSM] :> [FSM])
 [ CALL, STATE_INIT ] :> [ STATE_WR_PC_HIGH ];
@@ -158,6 +154,11 @@ TRUTH_TABLE ([IR, FSM] :> [FSM])
 [ CALL, STATE_WR_PC_LOW ] :> [ STATE_DONE ];
 [ .X., STATE_DONE ] :> [ STATE_INIT ];
 
+
+EQUATIONS
+
+FSM.CLK = Clock;
+FSM.CLR = Reset;
 IR.CLK = Clock;
 IR.CLR = Reset;
 
