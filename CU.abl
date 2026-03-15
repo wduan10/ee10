@@ -1479,7 +1479,7 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 1, 0, 0, 0]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = [0, !Flags3 & !Flags0, 0, 0, !(!Flags3 & !Flags0)];
-    PAU_Offset = [IR7..IR0];
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -1497,7 +1497,7 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 1, 1, 0, 0]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = [0, !Flags3, 0, 0, Flags3];
-    PAU_Offset = [IR7..IR0];
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -1515,7 +1515,7 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 1, 1, 1, 1]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = [0, Flags3, 0, 0, !Flags3];
-    PAU_Offset = [IR7..IR0];
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -1533,7 +1533,7 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 1, 0, 1, 1]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = [0, (Flags3 # Flags0), 0, 0, !(Flags3 # Flags0)];
-    PAU_Offset = [IR7..IR0];
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -1551,7 +1551,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 1, 1, 1, 1]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = [0, Flags0, 0, 0, !Flags0];
-    PAU_Offset = [IR7..IR0];
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -1569,7 +1569,7 @@ WHEN (IR[15..8] == [1, 0, 1, 0, 1, 1, 1, 1]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = [0, !(Flags1 $ Flags2) & !Flags0, 0, 0, !(!(Flags1 $ Flags2) & !Flags0)];
-    PAU_Offset = [IR7..IR0];
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -1587,7 +1587,7 @@ WHEN (IR[15..8] == [1, 0, 1, 1, 1, 0, 1, 1]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = [0, !(Flags1 $ Flags2), 0, 0, Flags1 $ Flags2];
-    PAU_Offset = [IR7..IR0];
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -1605,7 +1605,7 @@ WHEN (IR[15..8] == [1, 0, 1, 1, 1, 0, 0, 0]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = [0, Flags1 $ Flags2, 0, 0, !(Flags1 $ Flags2)];
-    PAU_Offset = [IR7..IR0];
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -1623,7 +1623,7 @@ WHEN (IR[15..8] == [1, 0, 1, 0, 1, 1, 0, 0]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = [0, (Flags1 $ Flags2) # Flags0, 0, 0, !((Flags1 $ Flags2) # Flags0)];
-    PAU_Offset = [IR7..IR0];
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -1641,7 +1641,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 1, 1, 0, 0]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = [0, !Flags0, 0, 0, Flags0];
-    PAU_Offset = [IR7..IR0];
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -1659,7 +1659,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 1, 0, 0, 0]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = [0, !Flags1, 0, 0, Flags1];
-    PAU_Offset = [IR7..IR0];
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -1677,7 +1677,7 @@ WHEN (IR[15..8] == [1, 0, 1, 0, 1, 0, 0, 0]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = [0, !Flags2, 0, 0, Flags2];
-    PAU_Offset = [IR7..IR0];
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -1695,7 +1695,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 1, 0, 1, 1]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = [0, Flags1, 0, 0, !Flags1];
-    PAU_Offset = [IR7..IR0];
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -1713,7 +1713,7 @@ WHEN (IR[15..8] == [1, 0, 1, 0, 1, 0, 1, 1]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = [0, Flags2, 0, 0, !Flags2];
-    PAU_Offset = [IR7..IR0];
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
