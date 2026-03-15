@@ -162,7 +162,9 @@ FSM.CLR = Reset;
 IR.CLK = Clock;
 IR.CLR = Reset;
 
-IR := ProgramDB;
+" when we are in states of FSM other than STATE_DONE, we do not update IR
+IR := (IR & ((IR == CALL) & (FSM != STATE_DONE))) #
+      (ProgramDB & !((IR == CALL) & (FSM != STATE_DONE)));
 
 " NOP: No operation
 WHEN (IR[15..0] == [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]) THEN {
@@ -1799,7 +1801,7 @@ WHEN ((IR == CALL) & (FSM == STATE_WR_PC_LOW)) THEN {
     ALU_Fblock = ALU_FBLOCK_ZERO;
     ALU_Source = ALU_SOURCE_NONE;
 
-    PAU_Controls = 0;
+    PAU_Controls = PAU_CONTROLS_ABSJMP;
     PAU_Offset = .X.;
 
     DAU_Controls = DAU_CONTROLS_S_PRE_DEC;
@@ -1817,7 +1819,7 @@ WHEN ((IR == CALL) & (FSM == STATE_DONE)) THEN {
     ALU_Fblock = ALU_FBLOCK_ZERO;
     ALU_Source = ALU_SOURCE_NONE;
 
-    PAU_Controls = PAU_CONTROLS_ABSJMP;
+    PAU_Controls = PAU_CONTROLS_INC;
     PAU_Offset = .X.;
 
     DAU_Controls = 0;
