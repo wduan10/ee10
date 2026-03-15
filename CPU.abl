@@ -101,7 +101,7 @@ CU              INTERFACE  (ProgramDB15..ProgramDB0,
                             Reset, Clock
                             -> IR15..IR0,
                                ALU_Controls14..ALU_Controls0, ALU_Fblock3..ALU_Fblock0, ALU_Source1, ALU_Source0,
-                               PAU_Controls4..PAU_Controls0, PAU_Offset7..PAU_Offset0,
+                               PAU_Controls4..PAU_Controls0, PAU_Offset_Source,
                                DAU_Controls7..DAU_Controls0,
                                DDB_Source3..DDB_Source0,
                                RD, WR, IO,
@@ -157,7 +157,10 @@ ALUnit.Reset = Reset;
 [Flags7..Flags0] = ALUnit.[Flags7..Flags0];
 
 " pass in inputs to PAUnit
-PAUnit.[Offset7..Offset0] = CUnit.[PAU_Offset7..PAU_Offset0];
+
+" mux to determine offset input to PAUnit
+PAUnit.[Offset7..Offset0] = (CUnit.[IR7..IR0] & !CUnit.PAU_Offset_Source) #
+                            (DataDB & CUnit.PAU_Offset_Source);
 PAUnit.[Direct12..Direct0] = CUnit.[IR12..IR0];
 PAUnit.Step = CUnit.PAU_Controls0;
 PAUnit.StackUpper = CUnit.PAU_Controls1;

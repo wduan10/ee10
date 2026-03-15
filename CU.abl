@@ -4,7 +4,7 @@ INTERFACE  (ProgramDB15..ProgramDB0,
             Reset, Clock
             -> IR15..IR0,
                ALU_Controls14..ALU_Controls0, ALU_Fblock3..ALU_Fblock0, ALU_Source1, ALU_Source0,
-               PAU_Controls4..PAU_Controls0, PAU_Offset7..PAU_Offset0,
+               PAU_Controls4..PAU_Controls0, PAU_Offset_Source,
                DAU_Controls7..DAU_Controls0,
                DDB_Source3..DDB_Source0,
                RD, WR, IO,
@@ -32,7 +32,7 @@ TITLE      'Instruction Decoder and Finite State Machine'
 "               ALU_Fblock[3..0]     - F-block function select for ALU logic ops
 "               ALU_Source[1..0]     - one-hot ALU input source select
 "               PAU_Controls[4..0]   - control signals for program access unit
-"               PAU_Offset[7..0]     - offset/immediate value sent to PAU
+"               PAU_Offset_Source    - control signal for pau offset source
 "               DAU_Controls[7..0]   - control signals for data access unit
 "               DDB_Source[3..0]     - one-hot data data bus source select
 "               RD                   - data bus read enable
@@ -67,7 +67,9 @@ ALU_Source1, ALU_Source0 pin; "output  one hot encoded signals indicating where 
                               "        ALU_Source1 equals 1 when input comes from Data Data Buses
                               "        ALU_Source0 equals 1 when input comes from instruction register
 PAU_Controls4..PAU_Controls0 pin; "output  5 control signals passed to PAU
-PAU_Offset7..PAU_Offset0 pin; "output  8 bits of data/offset passed to PAU
+PAU_Offset_Source pin; "output  control signal for pau offset source
+                       "        PAU_Offset_Source equals 0 when offset is from instruction register
+                       "        PAU_Offset_Source equals 1 when offset is from Data Data Bus
 DAU_Controls7..DAU_Controls0 pin; "output  8 control signals passed to DAU
 DDB_Source3..DDB_Source0 pin; "output  one hot encoded signals indicating how to set Data Data Bus
                               "        DDB_Source3 equals 1 when input comes from Accumulator
@@ -92,7 +94,6 @@ ALU_Controls = [ALU_Controls14..ALU_Controls0]; "15 control signals passed to th
 ALU_Fblock = [ALU_Fblock3..ALU_Fblock0]; "4 bits prescribing an F-block function in ALU
 ALU_Source = [ALU_Source1, ALU_Source0]; "one hot encoded signals indicating where ALU should source its input from
 PAU_Controls = [PAU_Controls4..PAU_Controls0]; "5 control signals passed to PAU
-PAU_Offset = [PAU_Offset7..PAU_Offset0]; "8 bits of data/offset passed to PAU
 DAU_Controls = [DAU_Controls7..DAU_Controls0]; "8 control signals passed to DAU
 DDB_Source = [DDB_Source3..DDB_Source0]; "one hot encoded signals indicating how to set Data Data Bus
 FSM = [State2..State0]; "FSM for CALL, RTS instructions
@@ -113,6 +114,8 @@ ALU_SOURCE_IR = [0, 1];
 ALU_SOURCE_NONE = [0, 0];
 
 PAU_CONTROLS_INC = [0, 0, 0, 0, 1];
+PAU_CONTROLS_STACK_UPPER = [0, 0, 0, 1, 0];
+PAU_CONTROLS_STACK_LOWER = [0, 0, 1, 0, 0];
 PAU_CONTROLS_ABSJMP = [1, 0, 0, 0, 0];
 
 DAU_CONTROLS_M = [0, 0, 0, 0, 0, 0, 0, 1];
@@ -163,8 +166,9 @@ IR.CLK = Clock;
 IR.CLR = Reset;
 
 " when we are in states of FSM other than STATE_DONE, we do not update IR
-IR := (IR & ((IR == CALL) & (FSM != STATE_DONE))) #
-      (ProgramDB & !((IR == CALL) & (FSM != STATE_DONE)));
+" in other words, wait until the last cycle to load the IR if executing a CALL or RTS instruction
+IR := (IR & (((IR == CALL) # (IR == RTS)) & (FSM != STATE_DONE))) #
+      (ProgramDB & !(((IR == CALL) # (IR == RTS)) & (FSM != STATE_DONE)));
 
 " NOP: No operation
 WHEN (IR[15..0] == [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]) THEN {
@@ -173,7 +177,7 @@ WHEN (IR[15..0] == [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -193,7 +197,7 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 0, 0, 0, 0]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_M;
 
@@ -211,7 +215,7 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 0, 0, 0, 1]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_XOFF;
 
@@ -229,7 +233,7 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 0, 0, 1, 0]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_SOFF;
 
@@ -247,7 +251,7 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 0, 0, 1, 1]) THEN {
     ALU_Source = ALU_SOURCE_IR; " todo: is this right?
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -265,7 +269,7 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 1, 0, 0, 0]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_M;
 
@@ -283,7 +287,7 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 1, 0, 0, 1]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_XOFF;
 
@@ -301,7 +305,7 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 1, 0, 1, 0]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_SOFF;
 
@@ -319,7 +323,7 @@ WHEN (IR[15..8] == [0, 1, 1, 0, 1, 0, 1, 1]) THEN {
     ALU_Source = ALU_SOURCE_IR;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -337,7 +341,7 @@ WHEN (IR[15..8] == [0, 1, 0, 0, 0, 1, 0, 0]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_M;
 
@@ -355,7 +359,7 @@ WHEN (IR[15..8] == [0, 1, 0, 0, 0, 1, 0, 1]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_XOFF;
 
@@ -373,7 +377,7 @@ WHEN (IR[15..8] == [0, 1, 0, 0, 0, 1, 1, 0]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_SOFF;
 
@@ -391,7 +395,7 @@ WHEN (IR[15..8] == [0, 1, 0, 0, 0, 1, 1, 1]) THEN {
     ALU_Source = ALU_SOURCE_IR;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -409,7 +413,7 @@ WHEN (IR[15..8] == [0, 0, 1, 1, 0, 0, 0, 0]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_M;
 
@@ -427,7 +431,7 @@ WHEN (IR[15..8] == [0, 0, 1, 1, 0, 0, 0, 1]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_XOFF;
 
@@ -445,7 +449,7 @@ WHEN (IR[15..8] == [0, 0, 1, 1, 0, 0, 1, 0]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_SOFF;
 
@@ -463,7 +467,7 @@ WHEN (IR[15..8] == [0, 0, 1, 1, 0, 0, 1, 1]) THEN {
     ALU_Source = ALU_SOURCE_IR;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -481,7 +485,7 @@ WHEN (IR[15..0] == [0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -499,7 +503,7 @@ WHEN (IR == 0) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -517,7 +521,7 @@ WHEN (IR[15..0] == [0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -535,7 +539,7 @@ WHEN (IR[15..0] == [0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -553,7 +557,7 @@ WHEN (IR[15..8] == [0, 1, 1, 1, 0, 1, 0, 0]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_M;
 
@@ -571,7 +575,7 @@ WHEN (IR[15..8] == [0, 1, 1, 1, 0, 1, 0, 1]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_XOFF;
 
@@ -589,7 +593,7 @@ WHEN (IR[15..8] == [0, 1, 1, 1, 0, 1, 1, 0]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_SOFF;
 
@@ -607,7 +611,7 @@ WHEN (IR[15..8] == [0, 1, 1, 1, 0, 1, 1, 1]) THEN {
     ALU_Source = ALU_SOURCE_IR;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -625,7 +629,7 @@ WHEN (IR[15..0] == [0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -643,7 +647,7 @@ WHEN (IR[15..0] == [0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -661,7 +665,7 @@ WHEN (IR[15..0] == [0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -679,7 +683,7 @@ WHEN (IR[15..0] == [0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -697,7 +701,7 @@ WHEN (IR[15..0] == [0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -715,7 +719,7 @@ WHEN (IR[15..0] == [0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -733,7 +737,7 @@ WHEN (IR[15..0] == [0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -751,7 +755,7 @@ WHEN (IR[15..8] == [0, 0, 0, 1, 1, 0, 0, 0]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_M;
 
@@ -769,7 +773,7 @@ WHEN (IR[15..8] == [0, 0, 0, 1, 1, 0, 0, 1]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_XOFF;
 
@@ -787,7 +791,7 @@ WHEN (IR[15..8] == [0, 0, 0, 1, 1, 0, 1, 0]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_SOFF;
 
@@ -805,7 +809,7 @@ WHEN (IR[15..8] == [0, 0, 0, 1, 1, 0, 1, 1]) THEN {
     ALU_Source = ALU_SOURCE_IR;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -823,7 +827,7 @@ WHEN (IR[15..8] == [0, 0, 0, 1, 0, 0, 0, 0]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_M;
 
@@ -841,7 +845,7 @@ WHEN (IR[15..8] == [0, 0, 0, 1, 0, 0, 0, 1]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_XOFF;
 
@@ -859,7 +863,7 @@ WHEN (IR[15..8] == [0, 0, 0, 1, 0, 0, 1, 0]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_SOFF;
 
@@ -877,7 +881,7 @@ WHEN (IR[15..8] == [0, 0, 0, 1, 0, 0, 1, 1]) THEN {
     ALU_Source = ALU_SOURCE_IR;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -895,7 +899,7 @@ WHEN (IR[15..8] == [0, 1, 0, 0, 1, 1, 0, 0]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_M;
 
@@ -913,7 +917,7 @@ WHEN (IR[15..8] == [0, 1, 0, 0, 1, 1, 0, 1]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_XOFF;
 
@@ -931,7 +935,7 @@ WHEN (IR[15..8] == [0, 1, 0, 0, 1, 1, 1, 0]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_SOFF;
 
@@ -949,7 +953,7 @@ WHEN (IR[15..8] == [0, 1, 0, 0, 1, 1, 1, 1]) THEN {
     ALU_Source = ALU_SOURCE_IR;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -967,7 +971,7 @@ WHEN (IR[15..8] == [0, 0, 1, 1, 0, 1, 0, 0]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_M;
 
@@ -985,7 +989,7 @@ WHEN (IR[15..8] == [0, 0, 1, 1, 0, 1, 0, 1]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_XOFF;
 
@@ -1003,7 +1007,7 @@ WHEN (IR[15..8] == [0, 0, 1, 1, 0, 1, 1, 0]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_SOFF;
 
@@ -1021,7 +1025,7 @@ WHEN (IR[15..8] == [0, 0, 1, 1, 0, 1, 1, 1]) THEN {
     ALU_Source = ALU_SOURCE_IR;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -1041,7 +1045,7 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 1, 0, 0, 1]) THEN {
     ALU_Source = ALU_SOURCE_IR;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -1059,7 +1063,7 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 0, 0, 0, 0]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_M;
 
@@ -1077,7 +1081,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 0, 1, 1, 1]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_XOFF;
 
@@ -1095,7 +1099,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 0, 1, 1, 0]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_XOFF_POST_INC;
 
@@ -1113,7 +1117,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 1, 1, 1, 0]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_XOFF_POST_DEC;
 
@@ -1131,7 +1135,7 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 0, 1, 1, 0]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_XOFF_PRE_INC;
 
@@ -1149,7 +1153,7 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 1, 1, 1, 0]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_XOFF_PRE_DEC;
 
@@ -1167,7 +1171,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 0, 0, 1, 1]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_SOFF;
 
@@ -1185,7 +1189,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 0, 0, 1, 0]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_SOFF_POST_INC;
 
@@ -1203,7 +1207,7 @@ WHEN (IR[15..8] == [1, 0, 0, 1, 1, 0, 1, 0]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_SOFF_POST_DEC;
 
@@ -1221,7 +1225,7 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 0, 0, 1, 0]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_SOFF_PRE_INC;
 
@@ -1239,7 +1243,7 @@ WHEN (IR[15..8] == [1, 0, 0, 0, 1, 0, 1, 0]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_SOFF_PRE_DEC;
 
@@ -1257,7 +1261,7 @@ WHEN (IR[15..8] == [1, 0, 1, 0, 0, 0, 0, 0]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_M;
 
@@ -1275,7 +1279,7 @@ WHEN (IR[15..8] == [1, 0, 1, 1, 0, 1, 1, 1]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_XOFF;
 
@@ -1293,7 +1297,7 @@ WHEN (IR[15..8] == [1, 0, 1, 1, 0, 1, 1, 0]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_XOFF_POST_INC;
 
@@ -1311,7 +1315,7 @@ WHEN (IR[15..8] == [1, 0, 1, 1, 1, 1, 1, 0]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_XOFF_POST_DEC;
 
@@ -1329,7 +1333,7 @@ WHEN (IR[15..8] == [1, 0, 1, 0, 0, 1, 1, 0]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_XOFF_PRE_INC;
 
@@ -1347,7 +1351,7 @@ WHEN (IR[15..8] == [1, 0, 1, 0, 1, 1, 1, 0]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_XOFF_PRE_DEC;
 
@@ -1365,7 +1369,7 @@ WHEN (IR[15..8] == [1, 0, 1, 1, 0, 0, 1, 1]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_SOFF;
 
@@ -1383,7 +1387,7 @@ WHEN (IR[15..8] == [1, 0, 1, 1, 0, 0, 1, 0]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_SOFF_POST_INC;
 
@@ -1401,7 +1405,7 @@ WHEN (IR[15..8] == [1, 0, 1, 1, 1, 0, 1, 0]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_SOFF_POST_DEC;
 
@@ -1419,7 +1423,7 @@ WHEN (IR[15..8] == [1, 0, 1, 0, 0, 0, 1, 0]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_SOFF_PRE_INC;
 
@@ -1437,7 +1441,7 @@ WHEN (IR[15..8] == [1, 0, 1, 0, 1, 0, 1, 0]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_SOFF_PRE_DEC;
 
@@ -1457,7 +1461,7 @@ WHEN (IR[15..13] == [1, 1, 0]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = PAU_CONTROLS_ABSJMP;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -1729,7 +1733,7 @@ WHEN (IR[15..0] == [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_S_PRE_DEC;
 
@@ -1747,7 +1751,7 @@ WHEN (IR[15..0] == [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
     ALU_Source = ALU_SOURCE_DDB;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_S_POST_INC;
 
@@ -1758,7 +1762,7 @@ WHEN (IR[15..0] == [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]) THEN {
     IO = 0;
 }
 
-" CALL: Call subroutine
+" CALL: direct subroutine call
 " state 1: STATE_INIT
 WHEN ((IR == CALL) & (FSM == STATE_INIT)) THEN {
     ALU_Controls = 0;
@@ -1766,7 +1770,7 @@ WHEN ((IR == CALL) & (FSM == STATE_INIT)) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = 0;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
@@ -1784,7 +1788,7 @@ WHEN ((IR == CALL) & (FSM == STATE_WR_PC_HIGH)) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = 0;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_S_PRE_DEC;
 
@@ -1802,7 +1806,7 @@ WHEN ((IR == CALL) & (FSM == STATE_WR_PC_LOW)) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = PAU_CONTROLS_ABSJMP;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = DAU_CONTROLS_S_PRE_DEC;
 
@@ -1820,7 +1824,62 @@ WHEN ((IR == CALL) & (FSM == STATE_DONE)) THEN {
     ALU_Source = ALU_SOURCE_NONE;
 
     PAU_Controls = PAU_CONTROLS_INC;
-    PAU_Offset = .X.;
+    PAU_Offset_Source = 0;
+
+    DAU_Controls = 0;
+
+    DDB_Source = 0;
+
+    RD = 0;
+    WR = 0;
+    IO = 0;
+}
+
+" RTS: return from subroutine (PC popped from stack)
+" state 1: STATE_INIT
+WHEN ((IR == RTS) & (FSM == STATE_INIT)) THEN {
+    ALU_Controls = 0;
+    ALU_Fblock = ALU_FBLOCK_ZERO;
+    ALU_Source = ALU_SOURCE_NONE;
+
+    PAU_Controls = PAU_CONTROLS_STACK_LOWER;
+    PAU_Offset_Source = 1;
+
+    DAU_Controls = DAU_CONTROLS_S_POST_INC;
+
+    DDB_Source = 0;
+
+    RD = 1;
+    WR = 0;
+    IO = 0;
+}
+
+" state 2: STATE_RD_PC_HIGH
+WHEN ((IR == RTS) & (FSM == STATE_RD_PC_HIGH)) THEN {
+    ALU_Controls = 0;
+    ALU_Fblock = ALU_FBLOCK_ZERO;
+    ALU_Source = ALU_SOURCE_NONE;
+
+    PAU_Controls = PAU_CONTROLS_STACK_UPPER;
+    PAU_Offset_Source = 1;
+
+    DAU_Controls = DAU_CONTROLS_S_POST_INC;
+
+    DDB_Source = 0;
+
+    RD = 1;
+    WR = 0;
+    IO = 0;
+}
+
+" state 3: STATE_DONE
+WHEN ((IR == RTS) & (FSM == STATE_RD_PC_HIGH)) THEN {
+    ALU_Controls = 0;
+    ALU_Fblock = ALU_FBLOCK_ZERO;
+    ALU_Source = ALU_SOURCE_NONE;
+
+    PAU_Controls = PAU_CONTROLS_INC;
+    PAU_Offset_Source = 0;
 
     DAU_Controls = 0;
 
