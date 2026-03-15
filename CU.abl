@@ -1873,7 +1873,7 @@ WHEN ((IR == RTS) & (FSM == STATE_RD_PC_HIGH)) THEN {
 }
 
 " state 3: STATE_DONE
-WHEN ((IR == RTS) & (FSM == STATE_RD_PC_HIGH)) THEN {
+WHEN ((IR == RTS) & (FSM == STATE_DONE)) THEN {
     ALU_Controls = 0;
     ALU_Fblock = ALU_FBLOCK_ZERO;
     ALU_Source = ALU_SOURCE_NONE;
